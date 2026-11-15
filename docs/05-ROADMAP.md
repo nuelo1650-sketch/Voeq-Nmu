@@ -143,6 +143,33 @@ through pipeline stages 1–6), the reviewer approves, the applicant receives
 the approval email and sees the status change — end to end, with no payment
 step involved.
 
+### The review workbench (what "properly review" means)
+
+The mock dossier demonstrated layout, not review craft. The real review
+screen is built as a workbench and is not considered done until all of this
+exists:
+
+- **The applicant's evidence, full size.** Every uploaded image opens in the
+  review screen at full resolution with zoom — signed URLs, the original
+  file, never a squeezed thumbnail. Certificate, owner photo, business photo
+  each in its own frame with its validation result attached.
+- **Checklist before decision.** The reviewer steps through the required
+  items (CAC status, photo legibility, category fit, campus correct, consent
+  recorded) and each item is marked before an approve button unlocks. No
+  one-click approvals without the checklist.
+- **Side-by-side revisions.** When an application comes back after a
+  correction request, the reviewer sees the previous revision next to the new
+  one, with what changed highlighted — no re-reading from scratch.
+- **Reasons that are written, not invented.** The correction composer ships
+  with the reviewer playbook's reason templates (see 5.7), editable per case,
+  so rejections are specific and kind by default.
+- **One reference, whole history.** Every state change, email sent, note
+  added and decision made is on one timeline visible while deciding.
+- **Keyboard-fast, phone-capable.** Desktop review is keyboard-driven
+  (shortcut to next-in-queue, checklist marks, decision keys); the same
+  screen still passes at 390px because the Media Unit checks the queue on
+  phones too.
+
 ---
 
 ## Phase 2 — Fees & the dedicated account (spec §20 Phase 2, as revised by `docs/07`)
