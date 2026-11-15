@@ -21,6 +21,10 @@ These are not deliverables; they are constraints every deliverable must satisfy.
 | **No fabricated data** | The product ships with honest empty states. No invented counts, names or dates anywhere in UI or seed content. |
 | **Staff access** | Staff sign-in lives at an unlinked `/staff` route. No staff entry point on any public page. |
 | **Public fee sentence** | The only public statement of cost is: applying is free; if approved, a single transfer of ₦5,200 into the University's account completes registration. The ₦5,000/₦200 division appears only on the applicant's own status page and in the finance ledger. |
+| **Two admin families** | **Platform (Voeq)** and **Register (Media Unit)** accounts are mutually exclusive — one account never holds both. Roles attach to accounts, not people; grants and revocations are themselves audited events, including self-assignments (Q-P6 decision, doc 07 §4.6). |
+| **The log cannot lie** | `audit_log` is append-only with no UPDATE/DELETE grant at the database level, hash-chained per entity, acting account on every row. Nothing gets missing in action. |
+| **No silent states** | Every payment/entry state change — including exceptions and their exact reason — emails the applicant via Resend at the moment it happens. An orphaned credit emails the person what went wrong; the email never lies (Q-P6 decision). |
+| **Review before consequential action** | Confirm fee, write-off, period close, role grant: each shows a review screen with the exact effect, requires explicit logged agreeance, then executes. |
 
 ---
 
@@ -137,6 +141,7 @@ updated.
 | 1.14 | Correction loop — same reference, new revision, history preserved | §6, §19 |
 | 1.15 | Applicant status page + `ApplicationTimeline` | §15 |
 | 1.16 | Reviewer history view | §3.2 |
+| 1.17 | **The Voeq funnel** — after the applicant submits, the success screen asks *"Do you also want to sell on Voeq?"* and links to `https://voeq.ng/for-vendors`; the same invitation rides along in the approval email. Registration for the register becomes a lead for the marketplace — a win for both sides (Kai, 15 Nov). | — |
 
 **Gate:** an applicant applies **on a phone** (verified at 390px, images pass
 through pipeline stages 1–6), the reviewer approves, the applicant receives
@@ -175,7 +180,10 @@ exists:
 ## Phase 2 — Fees & the dedicated account (spec §20 Phase 2, as revised by `docs/07`)
 
 *Model: one NMU-owned dedicated account; every ₦5,200 credit divides into
-₦5,000 school (memorandum) + ₦200 Voeq (revenue). Blocked on Q-P1–Q-P8.*
+₦5,000 school (memorandum) + ₦200 Voeq (revenue). Q-P1, Q-P2, Q-P5, Q-P6 and
+Q-P8 decided 15 Nov — see `docs/07` §8. Q-P3/Q-P4 (titles + bank details)
+requested from the Media Unit; the CSV importer is built against the real
+bank's format, so Phase 2 starts only after §8.1 lands.*
 
 | # | Deliverable | Spec / doc |
 | --- | --- | --- |

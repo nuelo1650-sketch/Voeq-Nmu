@@ -45,18 +45,29 @@ than a shared one.
 - **The fee split is not public.** No amounts on any public surface; one
   honest sentence on the landing; the breakdown appears only on the
   applicant's own authenticated status page; never in a public API.
-- **Payment: school-owned account, no custody.** Students transfer directly to
-  the University; Voeq tracks, verifies, reconciles and records. Agency /
-  receivable ledger mode, not custody. See `docs/07-PAYMENT-PIPELINE.md`.
+- **Payment: one dedicated NMU-owned account, money divided at the account.**
+  Every ₦5,200 credit divides into ₦5,000 school (memorandum) + ₦200 Voeq
+  (revenue, a receivable until remitted). No custody. Verification chain with
+  no room for mistakes: bank statement CSV as the only origin of truth,
+  exact-amount reference matching, maker-checker, logged agreeance. See
+  `docs/07-PAYMENT-PIPELINE.md` §2.6.
+
+### Decisions taken (15 Nov, evening)
+
+- **Q-P1** weekly sweep + weekly remittance + monthly reconciliation; signing
+  is a logged check, not a signature ceremony.
+- **Q-P2** the ₦200 fee is as read in the document; changes come back to Kai.
+- **Q-P5** refunds: mitigation only — a negative-allocation row, no workflow UI.
+- **Q-P6** orphaned credits under Media Unit roles; two mutually exclusive
+  admin families (platform vs register), role-based not person-bound, audit
+  log never deletable, every exception emails the applicant its exact reason.
+- **Q-P8** per-registration ledger, built simple to read.
 
 ### Still open
 
-- **The one question that blocks the payment build** — is the student asked for
-  ₦5,200 in one transfer, or ₦5,000 with the Department paying the ₦200
-  separately? (`docs/07-PAYMENT-PIPELINE.md` §2, Q-P1)
-- The **formal title of the reviewing authority** — the spec says "Media
-  Department"; confirm the exact official name for correspondence and
-  certificates.
+- **Q-P3 + Q-P4** — formal titles and bank/account details; a single
+  onboarding list (11 items) has been sent to the school's Media Unit,
+  `docs/07` §8.1.
 - **Marketplace-repo agreement** on a new `institutionalVerifications` field
   rather than reusing voeq.ng's existing `verified` boolean (ADR-006).
 - The **specification document's title page** still says "Niger Delta University

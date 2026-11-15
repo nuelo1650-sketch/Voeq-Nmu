@@ -11,7 +11,8 @@
 >
 > **§2 is the model. §3 is the one question that must be answered before any
 > code is written. §4 is who does what. §5 is the gaps. §6 is what I would
-> change. §7 is the build order.**
+> change. §7 is the business risk. §8 is the open questions. §9 is the build
+> order.**
 
 ---
 
@@ -178,6 +179,62 @@ can count what:
 **Recommendation: the dedicated account.** The phrase "a place to count money" is
 the strongest argument for it — a general account cannot be counted.
 
+### 2.6 How a payment is verified — the no-mistake chain
+
+Kai's requirement: *"a method that allows no room for mistakes."* The method is
+a chain where **every link is enforced in code and none in policy**, and where
+no single signal is ever trusted alone:
+
+```
+approval ──▶ fee_intent (NMU-2026-XXXX, ₦5,200 exact, rate snapshot)
+                │
+student pays ──▶ the reference is in the transfer narration
+                │
+nightly ────────▶ bank's own statement CSV ──▶ hashed, stored as evidence
+                │                             ONLY this file creates a
+                │                             bank_credit row (never a
+                │                             screenshot, never an alert)
+                ▼
+matcher: reference-first · exact-amount-only · date-window
+                │   anything imperfect → exception queue. No guessing,
+                │   no fuzzy matching, no partial matches.
+                ▼
+MAKER stages the match ──▶ CHECKER (different account) sees intent,
+                           credit and proposed allocation side by side
+                           and confirms. Nobody confirms alone.
+                ▼
+allocation posts (₦5,000 memo / ₦200 revenue) ──▶ registered
+                ──▶ Resend email to the applicant, same moment
+```
+
+The rules that leave no room for mistakes:
+
+1. **Intent first.** No fee intent, nothing to match, nothing confirmable. A
+   payment cannot exist for a reference the register did not issue.
+2. **The bank's file is the only origin of truth.** A `bank_credit` row can be
+   created by the statement import alone. Screenshots, alerts and phone calls
+   can annotate; they can never create state.
+3. **Exact amount only.** ₦5,150 is not ₦5,200. No tolerance, no rounding —
+   an off-amount credit is an exception for a human, automatically.
+4. **Reference-first, never reference-alone.** The reference selects the
+   candidate; the exact amount and a date window must agree. Two of three
+   signals is not a match.
+5. **Nothing auto-confirms.** Matching may *stage*; only a checker account —
+   a different person from the maker — confirms. The confirm action is
+   gated on the checklist being viewed.
+6. **Nothing happens twice.** A second credit with the same reference + amount
+   warns and waits; it can never post a second allocation.
+7. **Nothing silent.** Every transition — awaiting evidence, matched, exception
+   with its exact reason, confirmed — emails the applicant via Resend at the
+   moment it happens.
+8. **Nothing unlogged.** Every action lands in the append-only, hash-chained
+   audit log; `audit_log` has no UPDATE/DELETE grant at the database level.
+
+The applicant-visible state machine this produces (doc §5.2):
+`awaiting_bank_evidence → matched → confirmed` — with an emailed, specific
+message at each step, including the exception path: *an orphaned or
+mismatched credit emails the person its exact concern* (Q-P6 decision, §8).
+
 ---
 
 ## 3. The question that must be answered before code is written
@@ -283,6 +340,41 @@ where the append-only trail lives. That is the "place to count money".
 and *writing off an exception*. Everything else is single-operator. Over-applying
 maker-checker makes the process slow enough that people route around it, which is
 worse than not having it.
+
+### 4.6 Two admin families that cannot mix (Q-P6 decision, 15 Nov)
+
+Kai's requirement: *"voeq admin dashboard and media admin dashboard — same
+admin, different moderation actions and jobs — these can't get mixed up in any
+manner or way."* Architecturally:
+
+| | **Platform family (Voeq)** | **Register family (Media Unit)** |
+| --- | --- | --- |
+| Scope | The website in general: institutions, categories, fee schedule, integrations, monitoring | The register itself: reviewing applications, requesting corrections, approving, the fee ledger |
+| Can it touch the other family? | **No.** A platform account cannot review an application or confirm a fee | **No.** A register account cannot change fee schedules, grant roles, or alter institution config |
+| Super admin | Lives here: grants and revokes roles, opens periods | Does not exist here |
+
+Rules, all enforced in code:
+
+1. **Families are mutually exclusive.** An account holds roles from one family
+   or the other — never both. The permission matrix rejects any assignment
+   that would mix them.
+2. **Roles attach to accounts, not people.** Nobody is "the admin"; an account
+   is granted privileges, and grants are revocable. Person-bound admin is how
+   mistakes become unrecoverable.
+3. **Every grant and revocation is itself an audited event** — who granted,
+   what, to whom, when. Including self-assignments: a super admin granting
+   themselves a role is logged like any other action.
+4. **The audit log is never deletable.** Append-only at the database level
+   (no UPDATE/DELETE grants on `audit_log` for any role, including super
+   admin), hash-chained per entity, with the acting account on every row.
+   Nothing gets missing in action — not orphaned credits, not double payments,
+   not role changes, nothing.
+5. **Consequential actions allow review before execution.** Destructive or
+   money-touching actions (confirm fee, write-off, period close, role grant)
+   present a review screen with the exact effect spelled out, require explicit
+   agreeance, and log the agreeance. Signing (Q-P1) is deliberately this
+   light: **a logged check, not a signature ceremony** — the record is in the
+   audit chain, not in a scanned signature.
 
 ---
 
@@ -527,16 +619,43 @@ double-payment risks from the applicant's experience entirely.
 
 ## 8. Open questions
 
-| # | Question | Owner | Blocks |
+> **Status after Kai's answers, 15 Nov 2026 (evening):** Q-P1, Q-P2, Q-P5,
+> Q-P6 and Q-P8 are **decided**. Q-P3 and Q-P4 are pending — a single
+> onboarding list has been sent to the school's Media Unit (see §8.1).
+
+| # | Question | Status | Decision |
 | --- | --- | --- | --- |
-| **Q-P1** | The settlement schedule: sweep cadence for the school share, remittance cadence for the Voeq share, and who signs the monthly split | Media Department + NMU central finance | The settlement jobs, the ageing report, the stop rule |
-| **Q-P2** | Is the ₦200 platform fee agreed in writing, and for how long? | Kai + Media Department | The fee schedule table, the revenue model |
-| **Q-P3** | Formal title of the reviewing authority and of the account operator | Media Department | Bank forms, remittance advice, the Terms |
-| **Q-P4** | Which bank, whose name on the dedicated account, who holds the portal credentials? | NMU central finance | The feed implementation |
-| **Q-P5** | Who refunds, in what timescale, and how is a refund recorded? | NMU central finance | The ledger's refund path |
-| **Q-P6** | What happens to a credit that cannot be matched after 90 days? | NMU + Voeq | The suspense account and its policy |
-| **Q-P7** | Can NMU give read-only statement access? | NMU central finance | A later optimisation, not a blocker |
-| **Q-P8** | Does the Department want a per-registration ledger, or only a weekly split summary? | Media Department | Whether we build the allocation model or something much lighter |
+| **Q-P1** | Settlement schedule | **Decided** | Weekly sweep + weekly remittance + monthly reconciliation. Signing is a **logged check/agreeance** tracked in the audit chain — not a rigorous manual signature ceremony. |
+| **Q-P2** | ₦200 in writing | **Decided** | The fee is as read in the document. No versioning concern — any change comes back to Kai here and is worked through deliberately. The `fee_schedule` table still snapshots rates per intent (costs nothing, protects history). |
+| **Q-P3** | Formal titles | **Pending** — details requested from the Media Unit (§8.1) |
+| **Q-P4** | Bank & account details | **Pending** — same request (§8.1) |
+| **Q-P5** | Refunds | **Decided** | No refund policy exists at the school; refunds are expected to be rare. Build **mitigation only**: the ledger carries a negative-allocation row so a refund *can* be recorded and seen, but no refund workflow UI is built now. Edge-case ready. |
+| **Q-P6** | Orphaned credits & admin separation | **Decided** | Orphaned credits sit under **Media Unit roles**. Two mutually exclusive admin families (platform vs register) per §4.6, role-based not person-bound, every action logged, logs never deletable. Money-touching actions show a review screen before executing. **Every exception emails the applicant via Resend with the exact concern** — the email must never lie about what happened. |
+| **Q-P7** | Read-only bank access | Unchanged — later optimisation |
+| **Q-P8** | Ledger granularity | **Decided** | Per-registration ledger, built **simple to read**: one row per credit with its ₦5,000/₦200 division, plain-language statuses, totals at top — the UX bar is "the finance officer understands it without training." |
+
+### 8.1 What we ask the school's Media Unit for (Q-P3 + Q-P4, one list)
+
+1. **Bank name and branch** the dedicated account is held at.
+2. **Account name** — exact, as it appears on the statement.
+3. **Account number** of the dedicated registration account.
+4. **Account type** — must be **current**, not savings, for a collection account.
+5. **Bank code** (NIBSS/sort) — needed on the remittance advice.
+6. **Proof the account is NMU's** — a bank letter or statement header showing
+   the account name is the University, not an individual (this is the custody
+   proof, not a formality).
+7. **Statement routine** — who exports the daily CSV, to which email address,
+   and at what time (proposed: nightly by 23:00).
+8. **Formal title of the reviewing authority** — the exact official name for
+   the Terms, certificates and correspondence (also fixes the spec's title
+   page, which still says the wrong university).
+9. **Formal title of the account operator** and **who at central finance**
+   sweeps the school share and executes the remittance (name + title for the
+   reconciliation record).
+10. **Support email and phone number** the Media Unit will answer applicants
+    from — these go on the status page and in every email footer.
+11. **Portal credentials holder** — who can log into the bank portal to export
+    statements (used for handover documentation only; Voeq never holds them).
 
 ---
 
