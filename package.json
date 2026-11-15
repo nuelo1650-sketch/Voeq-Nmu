@@ -1,0 +1,21 @@
+{
+  "name": "voeq-registry",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "db:generate": "npm run generate --workspace @voeq/db",
+    "db:migrate": "npm run migrate:dev --workspace @voeq/db",
+    "db:seed": "npm run seed --workspace @voeq/db",
+    "dev": "npm run dev --workspace @voeq/registry"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,45 @@
+@import "tailwindcss";
+/* The real voeq.ng token layer — same file the marketplace ships (doc 05 0.2). */
+@import "@voeq/design-system/tokens.css";
+
+/*
+  Tailwind v4 theme mapping — alias the voeq token names into Tailwind's
+  utility namespaces with a `vq-` prefix so the two layers never collide.
+  `inline` emits the var() reference, so values stay owned by tokens.css.
+*/
+@theme inline {
+  --color-vq-cream: var(--color-cream);
+  --color-vq-glass: var(--color-glass-white);
+  --color-vq-forest: var(--color-forest);
+  --color-vq-forest-mid: var(--color-forest-mid);
+  --color-vq-forest-dark: var(--color-forest-dark);
+  --color-vq-amber: var(--color-amber);
+  --color-vq-amber-dark: var(--color-amber-dark);
+  --color-vq-amber-light: var(--color-amber-light);
+  --color-vq-ink: var(--color-ink);
+  --color-vq-ink-muted: var(--color-ink-muted);
+  --color-vq-ink-subtle: var(--color-ink-subtle);
+
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-ui: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "IBM Plex Mono", monospace;
+
+  --radius-vq: 12px;
+  --radius-vq-lg: 16px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-glass-white);
+  color: var(--color-ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-forest);
+  outline-offset: 2px;
+}

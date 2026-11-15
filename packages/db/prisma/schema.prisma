@@ -1,0 +1,482 @@
+// ---------------------------------------------------------------------------
+// voeq-registry — Prisma schema (Phase 0, docs/05-ROADMAP.md 0.3)
+//
+// Conventions (binding):
+//   - Money is ALWAYS integer minor units (kobo). ₦5,000 = 500000, ₦200 = 20000.
+//     Every amount field ends in `Minor`.
+//   - The ₦5,000/₦200 split is an ALLOCATION, not a payment (doc 07 §6.2.7).
+//   - The audit log is append-only: the app role has no UPDATE/DELETE grant on
+//     AuditLog (enforced at the database level in migrations/000_audit_immutable).
+//   - Admin identity is a Google account email (doc 07 §4.7); there are no
+//     staff passwords anywhere in this schema.
+//   - Two mutually exclusive admin families: platform (Voeq) and register
+//     (Media Unit) — enforced in @voeq/core's permission matrix (doc 07 §4.6).
+// ---------------------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum AdminFamily {
+  platform // Voeq: website, institutions, fee schedule, role grants
+  register // Media Unit: review, corrections, the fee ledger
+}
+
+enum AccountStatus {
+  active
+  suspended
+  disabled
+}
+
+enum ApplicationStatus {
+  draft
+  submitted
+  under_review
+  needs_correction
+  approved
+  rejected
+  registered
+  suspended
+  closed
+}
+
+enum PublicationStatus {
+  not_published
+  published
+  unpublished
+}
+
+enum DecisionKind {
+  approve
+  reject
+  request_corrections
+}
+
+enum ImageField {
+  cac_certificate
+  owner_photo
+  business_photo
+}
+
+enum ImageStatus {
+  uploaded
+  validated
+  rejected
+  promoted
+}
+
+enum ConsentType {
+  declaration
+  terms
+  privacy
+  public_listing
+}
+
+enum FeeIntentStatus {
+  issued
+  awaiting_bank_evidence
+  matched
+  confirmed
+  voided
+}
+
+enum CreditStatus {
+  unmatched
+  matched
+  excepted
+}
+
+enum AllocationKind {
+  payment
+  refund // Q-P5 mitigation: a recorded negative allocation; no workflow UI
+}
+
+enum AllocationStatus {
+  staged
+  confirmed
+  written_off
+}
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+}
+
+// ---------------------------------------------------------------------------
+// Institutions and taxonomy
+// ---------------------------------------------------------------------------
+
+model Institution {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  prefix    String   @default("NMU") // reference prefix: NMU-2026-0001
+  status    AccountStatus @default(active)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  campuses  Campus[]
+  categories Category[]
+  staff     StaffAccount[]
+  applications Application[]
+  referenceSequences ReferenceSequence[]
+  feeSchedules FeeSchedule[]
+}
+
+model Campus {
+  id            String  @id @default(cuid())
+  institutionId String
+  name          String
+  slug          String
+  isDefault     Boolean @default(false)
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  applications Application[]
+
+  @@unique([institutionId, slug])
+}
+
+model Category {
+  id            String  @id @default(cuid())
+  institutionId String
+  name          String
+  slug          String
+  sortOrder     Int     @default(0)
+  active        Boolean @default(true)
+
+  institution  Institution @relation(fields: [institutionId], references: [id])
+  applications Application[]
+
+  @@unique([institutionId, slug])
+}
+
+// Per-institution, per-year counter behind reference NMU-2026-0001.
+model ReferenceSequence {
+  id            String @id @default(cuid())
+  institutionId String
+  year          Int
+  last          Int    @default(0)
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  @@unique([institutionId, year])
+}
+
+// ---------------------------------------------------------------------------
+// Staff identity — Google OAuth only (doc 07 §4.7). No passwords exist.
+// ---------------------------------------------------------------------------
+
+model StaffAccount {
+  id           String      @id @default(cuid())
+  email        String      @unique // the verified Google account email
+  name         String?
+  family       AdminFamily // platform or register — one family per account, never both
+  institutionId String?    // null = platform-side (Voeq)
+  status       AccountStatus @default(active)
+  lastLoginAt  DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  institution  Institution? @relation(fields: [institutionId], references: [id])
+  roleGrants   RoleGrant[]
+
+  @@index([family, institutionId])
+}
+
+// Privileges attach to accounts, not people. Every grant and revocation is
+// itself audited (writeAudit on grant/revoke), including self-assignments.
+model RoleGrant {
+  id             String   @id @default(cuid())
+  staffAccountId String
+  permissionKey  String
+  grantedByEmail String
+  grantedAt      DateTime @default(now())
+  revokedByEmail String?
+  revokedAt      DateTime?
+
+  staffAccount StaffAccount @relation(fields: [staffAccountId], references: [id])
+
+  @@index([staffAccountId])
+  @@index([permissionKey])
+}
+
+// Applicant access without an account: magic-link tokens, SHA-256 hashed at rest.
+model MagicToken {
+  id            String    @id @default(cuid())
+  tokenHash     String    @unique
+  email         String
+  applicationId String?
+  purpose       String    @default("applicant_access")
+  expiresAt     DateTime
+  usedAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([email])
+  @@index([applicationId])
+}
+
+// ---------------------------------------------------------------------------
+// Applications
+// ---------------------------------------------------------------------------
+
+model Application {
+  id             String   @id @default(cuid())
+  reference      String   @unique // NMU-2026-0001
+  institutionId  String
+  campusId       String
+  categoryId     String
+  status         ApplicationStatus @default(draft)
+  publicationStatus PublicationStatus @default(not_published) // separate from registration (ADR-006)
+
+  // Business snapshot (latest revision is authoritative; history in revisions)
+  businessName        String
+  ownerName           String
+  ownerPhone          String
+  contactEmail        String
+  businessDescription String?
+
+  currentRevisionId String? @unique
+
+  submittedAt  DateTime?
+  decidedAt    DateTime?
+  registeredAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  campus      Campus      @relation(fields: [campusId], references: [id])
+  category    Category    @relation(fields: [categoryId], references: [id])
+
+  revisions   ApplicationRevision[]
+  consents    ConsentRecord[]
+  decisions   Decision[]
+  feeIntent   FeeIntent?
+
+  @@index([institutionId, status])
+  @@index([status, submittedAt])
+  @@index([campusId])
+  @@index([categoryId])
+}
+
+model ApplicationRevision {
+  id           String   @id @default(cuid())
+  applicationId String
+  revisionNo   Int
+  data         Json // full form snapshot — history preserved, never mutated
+  ip           String?
+  userAgent    String?
+  submittedAt  DateTime @default(now())
+
+  application Application       @relation(fields: [applicationId], references: [id])
+  images      ApplicationImage[]
+  consents    ConsentRecord[]
+
+  @@unique([applicationId, revisionNo])
+}
+
+model ApplicationImage {
+  id             String     @id @default(cuid())
+  revisionId     String
+  field          ImageField
+  r2Key          String     @unique // private R2 bucket; no public URL ever
+  originalName   String
+  mimeType       String
+  sizeBytes      Int
+  width          Int?
+  height         Int?
+  checksumSha256 String
+  status         ImageStatus @default(uploaded)
+  validation     Json? // magic-bytes + dimension validation results
+  promotedPublicId String? // Cloudinary public id after approval (stage 8)
+  promotedAt     DateTime?
+  createdAt      DateTime   @default(now())
+
+  revision ApplicationRevision @relation(fields: [revisionId], references: [id])
+
+  @@index([revisionId, field])
+}
+
+model ConsentRecord {
+  id           String      @id @default(cuid())
+  applicationId String
+  revisionId   String
+  type         ConsentType
+  docVersion   String // terms/privacy version accepted
+  acceptedAt   DateTime    @default(now())
+  ip           String?
+  userAgent    String?
+
+  application Application       @relation(fields: [applicationId], references: [id])
+  revision    ApplicationRevision @relation(fields: [revisionId], references: [id])
+
+  @@unique([revisionId, type])
+}
+
+model Decision {
+  id            String       @id @default(cuid())
+  applicationId String
+  revisionId    String? // the revision the decision was made on
+  kind          DecisionKind
+  reason        String? // required for reject / request_corrections
+  items         Json? // structured correction items
+  decidedByEmail String
+  decidedAt     DateTime     @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id])
+
+  @@index([applicationId])
+}
+
+// ---------------------------------------------------------------------------
+// Money — one dedicated NMU account, the split is an allocation (doc 07 §2)
+// ---------------------------------------------------------------------------
+
+// Versioned rate (doc 07 §5.6). Every intent snapshots the rate it was
+// issued under; history never restates.
+model FeeSchedule {
+  id            String   @id @default(cuid())
+  institutionId String
+  version       Int
+  effectiveFrom DateTime
+  schoolMinor   Int // ₦5,000 = 500000
+  voeqMinor     Int // ₦200 = 20000
+  currency      String   @default("NGN")
+  createdAt     DateTime @default(now())
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  intents     FeeIntent[]
+
+  @@unique([institutionId, version])
+}
+
+// Issued at approval. The intent IS the payment code: reference NMU-2026-XXXX.
+// Status machine: issued → awaiting_bank_evidence → matched → confirmed
+// (see @voeq/core state-machines).
+model FeeIntent {
+  id          String          @id @default(cuid())
+  applicationId String        @unique
+  reference   String          @unique // equals the application reference
+  scheduleId  String
+  schoolMinor Int
+  voeqMinor   Int
+  totalMinor  Int
+  currency    String          @default("NGN")
+  status      FeeIntentStatus @default(issued)
+  issuedAt    DateTime        @default(now())
+  confirmedAt DateTime?
+
+  application Application   @relation(fields: [applicationId], references: [id])
+  schedule    FeeSchedule   @relation(fields: [scheduleId], references: [id])
+  allocations FeeAllocation[]
+}
+
+// One import batch per statement file. The file is hashed on arrival; the
+// hash is the evidence anchor. Re-importing a different file for the same
+// day fails loudly against the row hashes.
+model BankFeedImport {
+  id             String   @id @default(cuid())
+  fileName       String
+  fileHashSha256 String   @unique
+  sourceBankCode String?
+  importedByEmail String
+  importedAt     DateTime @default(now())
+  rowCount       Int
+  notes          String?
+
+  credits BankCredit[]
+}
+
+model BankCredit {
+  id              String       @id @default(cuid())
+  importId        String
+  txnDate         DateTime
+  narration       String
+  payerName       String?
+  amountMinor     Int
+  currency        String       @default("NGN")
+  sourceBankCode  String?
+  referenceExtracted String? // parsed from the narration, best effort
+  rowHashSha256   String       @unique // dedupe across re-imports
+  status          CreditStatus @default(unmatched)
+
+  import      BankFeedImport  @relation(fields: [importId], references: [id])
+  allocations FeeAllocation[]
+
+  @@index([status])
+  @@index([txnDate])
+}
+
+// The split is an allocation, not a payment (doc 07 §6.2.7). Two lines of
+// intent per confirmed credit: school memorandum + Voeq revenue.
+// Staged by a maker, confirmed by a different account (maker-checker).
+model FeeAllocation {
+  id                String          @id @default(cuid())
+  creditId          String
+  intentId          String
+  kind              AllocationKind  @default(payment) // refund = negative allocation (Q-P5)
+  schoolMinor       Int
+  voeqMinor         Int
+  totalMinor        Int // signed: positive for payment, negative for refund
+  status            AllocationStatus @default(staged)
+  stagedByEmail     String
+  stagedAt          DateTime        @default(now())
+  confirmedByEmail  String?
+  confirmedAt       DateTime?
+  writtenOffByEmail String?
+  writtenOffReason  String?
+
+  credit BankCredit @relation(fields: [creditId], references: [id])
+  intent FeeIntent  @relation(fields: [intentId], references: [id])
+
+  @@index([intentId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Notification outbox (transactional outbox, doc 05 0.5; consumed by pg-boss)
+// ---------------------------------------------------------------------------
+
+model Notification {
+  id         String             @id @default(cuid())
+  topic      String // e.g. "application.received", "fee.confirmed"
+  payload    Json
+  status     NotificationStatus @default(pending)
+  attempts   Int                @default(0)
+  lastError  String?
+  availableAt DateTime           @default(now())
+  sentAt     DateTime?
+  createdAt  DateTime           @default(now())
+
+  @@index([status, availableAt])
+}
+
+// ---------------------------------------------------------------------------
+// Audit log — append-only, hash-chained per entity (doc 07 §4.6, §6.2.1).
+// The app role has no UPDATE/DELETE grant on this table (migrations override).
+// ---------------------------------------------------------------------------
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  entityType String // "Application", "FeeIntent", "RoleGrant", ...
+  entityId   String // polymorphic — deliberately NOT a foreign key
+  action     String // "application.submitted", "fee.confirmed", ...
+  actorEmail String? // the Google account email (null = system action)
+  actorFamily AdminFamily?
+  data       Json?
+  prevHash   String? // SHA-256 of the previous entry for the same entity
+  hash       String   // SHA-256(prevHash + canonical(entry))
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorEmail])
+}

@@ -17,7 +17,10 @@ than a shared one.
 
 ## Status
 
-**Design prototype rebuilt on the new direction. Application code not started.**
+**Phase 0 in progress — foundations.** Workspaces, Prisma schema (core + the
+five money tables), packages/core (state machines, permission matrix, audit
+hash chain), outbox + Resend adapter, Next.js 15 app with Google-OAuth-only
+staff auth and the two admin families. Application flow: Phase 1.
 
 | | |
 | --- | --- |
