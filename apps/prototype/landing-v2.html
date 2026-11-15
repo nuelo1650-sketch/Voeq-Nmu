@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business Register — Nigeria Maritime University</title>
+<meta name="description" content="The official business register of the Nigeria Maritime University. One application, reviewed by a person, listed for the whole campus when approved. A Voeq service for NMU.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
+<!-- The real voeq.ng token layer — same file the marketplace ships. -->
+<link rel="stylesheet" href="../../packages/design-system/src/tokens.css">
+<script src="site.js" defer></script>
+<style>
+/* ============================================================
+   landing-v2 — Voeq grammar, marine as a detail.
+   Built entirely on the marketplace --color-*/--role-* tokens.
+   No register-grammar rules here; this page speaks voeq.ng.
+   ============================================================ */
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--color-glass-white);
+  color: var(--color-ink);
+  font-family: var(--role-font-ui);
+  font-size: 17px;
+  line-height: 1.55;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { margin: 0; font-family: var(--role-font-display); color: var(--color-forest-dark); font-weight: 500; }
+a { color: inherit; }
+.mono {
+  font-family: var(--role-font-mono);
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+/* ---------- nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(250, 246, 236, .92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--role-border);
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  height: 64px; display: flex; align-items: center; gap: 32px;
+}
+.wordmark {
+  display: flex; align-items: baseline; gap: 10px;
+  text-decoration: none; margin-right: 8px;
+}
+.wordmark b {
+  font-family: var(--role-font-display);
+  font-size: 26px; font-weight: 600; color: var(--color-forest);
+  letter-spacing: -.02em;
+}
+.wordmark span {
+  font-family: var(--role-font-mono);
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--color-ink-muted);
+  padding-left: 10px; border-left: 1px solid var(--role-border);
+}
+.nav-links { display: flex; gap: 4px; align-items: center; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--color-ink-muted);
+  text-decoration: none; padding: 8px 14px; border-radius: 9px;
+  position: relative; transition: color .15s, background .15s;
+}
+.nav-links a::after {
+  content: ""; position: absolute; left: 14px; right: 14px; bottom: 4px;
+  height: 2px; border-radius: 2px; background: var(--color-amber);
+  transform: scaleX(0); transform-origin: left; transition: transform .22s ease;
+}
+.nav-links a:hover { color: var(--color-forest); background: rgba(30,59,47,.05); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-cta { margin-left: auto; }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--role-font-ui); font-size: 15px; font-weight: 600;
+  padding: 13px 26px; border-radius: 999px; text-decoration: none;
+  transition: background .15s, border-color .15s, transform .15s, box-shadow .15s;
+  cursor: pointer;
+}
+.btn--forest {
+  background: var(--color-forest); color: var(--color-glass-white);
+  box-shadow: var(--shadow-md);
+}
+.btn--forest:hover { background: var(--color-forest-mid); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+.btn--ghost {
+  background: rgba(255,255,255,.5); color: var(--color-forest);
+  border: 1.5px solid rgba(15,42,29,.22);
+}
+.btn--ghost:hover { background: rgba(255,255,255,.85); border-color: rgba(15,42,29,.4); transform: translateY(-1px); }
+.btn--sm { padding: 10px 20px; font-size: 14px; }
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(900px 560px at 12% -8%, rgba(232,163,61,.14), transparent 60%),
+    radial-gradient(760px 560px at 104% 108%, rgba(15,42,29,.10), transparent 62%);
+  border-bottom: 1px solid var(--role-border);
+}
+.hero-chart {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  max-width: 1200px; margin: 0 auto; padding: 104px 24px 120px;
+}
+.eyebrow {
+  font-family: var(--role-font-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--color-amber-dark);
+  display: flex; align-items: center; gap: 12px; margin: 0 0 22px;
+}
+.eyebrow::after { content: ""; width: 44px; height: 1px; background: rgba(212,146,42,.5); }
+.hero h1 {
+  font-size: clamp(2.75rem, 6.4vw, 5.25rem);
+  line-height: 1.06; letter-spacing: -.022em; font-weight: 500;
+  max-width: 15ch; margin-bottom: 24px;
+}
+.hero h1 em { font-style: italic; color: var(--color-forest-mid); }
+.hero-sub {
+  font-size: 20px; color: var(--color-ink-muted);
+  max-width: 54ch; margin: 0 0 36px;
+}
+.hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.hero-note {
+  margin-top: 14px; font-size: 14px; color: var(--color-ink-subtle);
+}
+.hero-points {
+  position: relative;
+  max-width: 1200px; margin: 0 auto; padding: 0 24px 72px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.point {
+  background: rgba(255,255,255,.55); border: 1px solid rgba(15,42,29,.10);
+  border-radius: 12px; padding: 18px 22px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.point i {
+  flex: none; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-amber); margin-top: 7px;
+}
+.point p { margin: 0; font-size: 14.5px; color: var(--color-ink-muted); }
+.point p b { color: var(--color-forest); font-weight: 600; }
+
+/* ---------- shared section shell ---------- */
+.section {
+  max-width: 1200px; margin: 0 auto; padding: 88px 24px;
+}
+.section-head { max-width: 640px; margin-bottom: 44px; }
+.section-head .mono { color: var(--color-amber-dark); margin-bottom: 14px; display: block; }
+.section-head h2 {
+  font-size: clamp(1.9rem, 3.4vw, 2.75rem);
+  line-height: 1.15; letter-spacing: -.015em; margin-bottom: 14px;
+}
+.section-head p { margin: 0; font-size: 17px; color: var(--color-ink-muted); }
+
+/* ---------- steps ---------- */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.step {
+  background: var(--color-white); border: 1px solid rgba(15,42,29,.08);
+  border-radius: 16px; padding: 32px 28px 28px;
+  box-shadow: var(--shadow-sm);
+}
+.step-num {
+  font-family: var(--role-font-mono); font-size: 13px; font-weight: 500;
+  color: var(--color-amber-dark); letter-spacing: .12em;
+  display: block; margin-bottom: 18px;
+}
+.step h3 { font-size: 22px; margin-bottom: 10px; }
+.step p { margin: 0; font-size: 15px; color: var(--color-ink-muted); }
+.step .step-meta {
+  display: inline-block; margin-top: 18px;
+  font-family: var(--role-font-mono); font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--color-forest-mid);
+  background: var(--role-accent-subtle, #e8f0ea);
+  border-radius: 999px; padding: 5px 12px;
+}
+
+/* ---------- documents (what you need) ---------- */
+.docs {
+  background: var(--color-white);
+  border: 1px solid rgba(15,42,29,.08); border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  overflow: hidden;
+}
+.docs-list { padding: 36px; margin: 0; list-style: none; }
+.docs-list li {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 0; border-bottom: 1px solid rgba(15,42,29,.07);
+  font-size: 15.5px;
+}
+.docs-list li:last-child { border-bottom: 0; }
+.docs-list li i {
+  flex: none; width: 20px; height: 20px; border-radius: 50%; margin-top: 2px;
+  background: var(--role-accent-subtle, #e8f0ea);
+  color: var(--color-forest-mid); font-style: normal;
+  font-size: 11px; font-weight: 700; line-height: 20px; text-align: center;
+}
+.docs-list li span b { color: var(--color-forest); font-weight: 600; }
+.docs-list li span { color: var(--color-ink-muted); display: block; }
+.docs-aside {
+  background: var(--color-cream);
+  border-left: 1px solid rgba(15,42,29,.08);
+  padding: 36px;
+}
+.docs-aside h3 { font-size: 19px; margin-bottom: 10px; }
+.docs-aside p { margin: 0 0 16px; font-size: 14.5px; color: var(--color-ink-muted); }
+.docs-aside a { color: var(--color-forest-mid); font-weight: 600; }
+
+/* ---------- the water band (directory) ---------- */
+.water {
+  position: relative; overflow: hidden;
+  background: var(--color-forest-dark, #0b211a);
+  color: #eef3ec;
+}
+.water-chart { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.water-inner { position: relative; max-width: 1200px; margin: 0 auto; padding: 96px 24px; }
+.water .mono { color: var(--color-amber-light, #f5c36a); opacity: .85; }
+.water h2 {
+  color: #eef3ec;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  letter-spacing: -.018em; line-height: 1.12;
+  max-width: 18ch; margin: 18px 0 16px;
+}
+.water-sub { max-width: 52ch; margin: 0 0 40px; color: #9fb3a4; font-size: 17px; }
+.empty {
+  background: rgba(245,241,232,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  padding: 44px 40px;
+  max-width: 680px;
+}
+.empty-count {
+  font-family: var(--role-font-mono); font-size: 40px; font-weight: 500;
+  color: var(--color-amber-light); letter-spacing: -.02em; line-height: 1;
+  display: block; margin-bottom: 18px;
+}
+.empty p { margin: 0 0 8px; color: rgba(238,243,236,.85); font-size: 16px; max-width: 46ch; }
+.empty small {
+  display: block; margin-top: 14px;
+  font-family: var(--role-font-mono); font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(159,179,164,.85);
+}
+.water-foot {
+  margin-top: 28px; font-size: 14px; color: rgba(159,179,164,.9);
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+}
+.water-foot .mono { font-size: 11px; }
+
+/* ---------- fees ---------- */
+.fee-card {
+  background: var(--color-white); border: 1px solid rgba(15,42,29,.08);
+  border-radius: 16px; box-shadow: var(--shadow-sm);
+  padding: 40px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px;
+  align-items: center;
+}
+.fee-card h3 { font-size: 24px; margin-bottom: 12px; }
+.fee-card .fee-line { margin: 0; font-size: 16px; color: var(--color-ink-muted); max-width: 48ch; }
+.fee-facts { display: grid; gap: 12px; }
+.fee-fact {
+  display: flex; gap: 12px; align-items: baseline;
+  padding: 14px 18px; border-radius: 12px;
+  background: var(--color-cream); border: 1px solid rgba(15,42,29,.08);
+  font-size: 14.5px; color: var(--color-ink-muted);
+}
+.fee-fact b { color: var(--color-forest); font-weight: 600; white-space: nowrap; }
+
+/* ---------- footer ---------- */
+.footer {
+  border-top: 1px solid var(--role-border);
+  background: var(--color-glass-white);
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto; padding: 40px 24px 56px;
+  display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;
+}
+.footer-brand b {
+  font-family: var(--role-font-display); font-size: 20px; font-weight: 600;
+  color: var(--color-forest);
+}
+.footer-brand p { margin: 6px 0 0; font-size: 13px; color: var(--color-ink-subtle); max-width: 34ch; }
+.footer-links { margin-left: auto; display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+.footer-links a {
+  font-size: 13.5px; color: var(--color-ink-muted); text-decoration: none;
+}
+.footer-links a:hover { color: var(--color-forest); text-decoration: underline; }
+.footer-base {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px 36px;
+  font-family: var(--role-font-mono); font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--color-ink-subtle);
+}
+
+/* ---------- cookie banner (Voeq styling; site.js injects the markup) ---------- */
+.cookie {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  background: var(--color-white);
+  border-top: 1px solid var(--role-border);
+  box-shadow: 0 -8px 24px rgba(15,42,29,.12);
+  transform: translateY(100%); transition: transform .3s cubic-bezier(.2,.6,.2,1);
+}
+.cookie.is-open { transform: translateY(0); }
+.cookie .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.cookie-inner {
+  display: grid; grid-template-columns: 1fr auto; gap: 32px;
+  padding: 22px 0; align-items: center;
+}
+.cookie h4 {
+  font-family: var(--role-font-display); font-size: 17px; font-weight: 600;
+  color: var(--color-forest-dark); margin: 0 0 6px;
+}
+.cookie p { margin: 0; font-size: 13.5px; color: var(--color-ink-muted); max-width: 68ch; }
+.cookie a { color: var(--color-forest-mid); font-weight: 600; }
+.cookie-actions { display: flex; gap: 10px; align-items: center; }
+.cookie-actions .btn { padding: 10px 18px; font-size: 13.5px; }
+/* site.js uses register button names — map them to Voeq pills here */
+.cookie .btn--primary { background: var(--color-forest); color: var(--color-glass-white); border: 0; border-radius: 999px; }
+.cookie .btn--primary:hover { background: var(--color-forest-mid); }
+.cookie .btn--outline, .cookie .btn--ghost {
+  background: rgba(255,255,255,.5); color: var(--color-forest);
+  border: 1.5px solid rgba(15,42,29,.22); border-radius: 999px;
+}
+.cookie .btn--outline:hover, .cookie .btn--ghost:hover { border-color: rgba(15,42,29,.4); }
+.cookie-detail {
+  display: none;
+  margin-top: 14px; overflow-x: auto;
+  max-height: 220px; overflow-y: auto;
+}
+.cookie-detail.is-open { display: block; }
+.cookie-detail table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cookie-detail th, .cookie-detail td {
+  text-align: left; padding: 8px 16px 8px 0;
+  border-bottom: 1px solid rgba(15,42,29,.08); vertical-align: top;
+  color: var(--color-ink-muted); font-weight: 400;
+}
+.cookie-detail th {
+  font-family: var(--role-font-mono); font-size: 10px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--color-ink-subtle);
+}
+.cookie-detail td.mono { font-family: var(--role-font-mono); font-size: 12px; color: var(--color-forest); }
+@media (max-width: 900px) {
+  .cookie-inner { grid-template-columns: 1fr; gap: 14px; }
+  .cookie-actions { flex-wrap: wrap; }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .hero-inner { padding: 72px 24px 88px; }
+  .hero-points, .steps { grid-template-columns: 1fr; }
+  .docs { grid-template-columns: 1fr; }
+  .docs-aside { border-left: 0; border-top: 1px solid rgba(15,42,29,.08); }
+  .fee-card { grid-template-columns: 1fr; padding: 28px; gap: 28px; }
+  .section { padding: 64px 24px; }
+  .empty { padding: 32px 24px; }
+}
+@media (max-width: 560px) {
+  .wordmark span { display: none; }
+  .nav-inner { gap: 16px; }
+  .nav-cta .btn { white-space: nowrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== NAV — no staff entry, ever ==================== -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="landing-v2.html">
+      <b>voeq</b>
+      <span>NMU Business Register</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#directory">Directory</a>
+      <a href="#fees">Fees</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn--forest btn--sm" href="apply.html">Start an application</a>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== HERO — voeq warmth, the ocean underneath ==================== -->
+<section class="hero">
+  <!-- Bathymetric chart: the campus waters, drawn once, quiet but present -->
+  <svg class="hero-chart" viewBox="0 0 1440 780" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#0F2A1D" stroke-width="1">
+      <path d="M 1180,180 C 1240,150 1330,170 1370,220 C 1410,270 1400,340 1340,380 C 1270,430 1150,420 1100,370 C 1055,325 1070,255 1110,215 C 1130,195 1150,190 1180,180 Z" stroke-opacity=".10"/>
+      <path d="M 1150,150 C 1230,105 1360,130 1420,200 C 1470,260 1470,360 1395,420 C 1305,490 1120,470 1050,400 C 990,340 995,230 1060,180 C 1090,155 1120,165 1150,150 Z" stroke-opacity=".07"/>
+      <path d="M 1110,120 C 1220,60 1390,90 1470,180 C 1540,260 1540,390 1450,465 C 1340,555 1090,530 1000,430 C 925,350 925,205 1010,140 C 1040,120 1080,135 1110,120 Z" stroke-opacity=".05"/>
+      <path d="M 220,470 C 290,430 400,445 450,500 C 500,555 485,640 420,675 C 345,715 230,695 190,635 C 155,580 170,505 220,470 Z" stroke-opacity=".09"/>
+      <path d="M 180,430 C 270,375 430,395 505,465 C 575,530 560,660 465,715 C 360,775 185,750 125,665 C 75,595 90,485 180,430 Z" stroke-opacity=".06"/>
+      <path d="M -60,600 C 240,540 430,680 710,635 C 980,592 1170,710 1500,640" stroke-opacity=".14"/>
+      <path d="M -60,640 C 250,585 445,715 725,672 C 995,630 1180,745 1500,680" stroke-opacity=".10" stroke-dasharray="2 6"/>
+    </g>
+    <g font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" fill="#0F2A1D" fill-opacity=".38">
+      <text x="1064" y="556">OKERENKOKO CHANNEL · 4.2 m</text>
+      <text x="128" y="762">KURUTIE RIDGE · 1.8 m</text>
+    </g>
+    <!-- the constellation: two warm points on the chart -->
+    <g>
+      <circle cx="1211" cy="268" r="10" fill="#E8A33D" fill-opacity=".16"/>
+      <circle cx="1211" cy="268" r="4" fill="#E8A33D"/>
+      <circle cx="336" cy="564" r="10" fill="#E8A33D" fill-opacity=".16"/>
+      <circle cx="336" cy="564" r="4" fill="#E8A33D"/>
+    </g>
+  </svg>
+
+  <div class="hero-inner">
+    <p class="eyebrow">Nigeria Maritime University · Okerenkoko &amp; Kurutie</p>
+    <h1>Your business, on the university&rsquo;s <em>record</em>.</h1>
+    <p class="hero-sub">One application to the Media Unit. A person reads it, approves it, and your business joins the official NMU directory &mdash; the list students and staff check first.</p>
+    <div class="hero-ctas">
+      <a class="btn btn--forest" href="apply.html">Start an application</a>
+      <a class="btn btn--ghost" href="directory.html">Browse the directory</a>
+    </div>
+    <p class="hero-note">Applying is free. Nothing is charged until your entry is approved.</p>
+  </div>
+
+  <div class="hero-points">
+    <div class="point"><i></i><p><b>Read by a person.</b> Every application is reviewed by the Media Unit &mdash; nothing is auto-accepted.</p></div>
+    <div class="point"><i></i><p><b>One decision, five days.</b> The department commits to a decision within five working days.</p></div>
+    <div class="point"><i></i><p><b>Listed where it counts.</b> Approved entries appear in the public NMU directory, searchable campus-wide.</p></div>
+  </div>
+</section>
+
+<!-- ==================== HOW IT WORKS ==================== -->
+<section class="section" id="how">
+  <div class="section-head">
+    <span class="mono">How it works</span>
+    <h2>Three steps between you and the record.</h2>
+    <p>No letters, no running between offices. The whole thing happens here, and you can track it from your phone.</p>
+  </div>
+  <div class="steps">
+    <article class="step">
+      <span class="step-num">01</span>
+      <h3>Apply</h3>
+      <p>Tell us about the business, upload your registration documents, and agree to the terms. Takes a few minutes, saves as you go.</p>
+      <span class="step-meta">About 10 minutes</span>
+    </article>
+    <article class="step">
+      <span class="step-num">02</span>
+      <h3>Review</h3>
+      <p>The Media Unit reads every application. If something is missing, you get an email asking for it &mdash; you never start over.</p>
+      <span class="step-meta">Five working days</span>
+    </article>
+    <article class="step">
+      <span class="step-num">03</span>
+      <h3>Approved &amp; listed</h3>
+      <p>Once approved, one transfer completes the registration and your entry goes live in the NMU directory with its own reference.</p>
+      <span class="step-meta">Listed publicly</span>
+    </article>
+  </div>
+</section>
+
+<!-- ==================== WHAT YOU NEED ==================== -->
+<section class="section" style="padding-top:0">
+  <div class="section-head">
+    <span class="mono">Before you start</span>
+    <h2>Have these ready and it goes faster.</h2>
+  </div>
+  <div class="docs">
+    <ul class="docs-list">
+      <li><i>A</i><span><b>CAC registration certificate</b> &mdash; or your business name reservation, if registration is still in progress.</span></li>
+      <li><i>B</i><span><b>A passport photo of the owner</b> &mdash; a clear front-facing photo, phone camera is fine.</span></li>
+      <li><i>C</i><span><b>A photo of the business</b> &mdash; your shop, stall or workspace as it stands.</span></li>
+      <li><i>D</i><span><b>A contact that reaches you</b> &mdash; phone number and email, for the decision letter.</span></li>
+    </ul>
+    <aside class="docs-aside">
+      <h3>Applying from a phone?</h3>
+      <p>The whole application works on a phone, and photos are compressed before upload to save your data.</p>
+      <p>You can leave halfway and come back &mdash; your progress is saved against a reference you keep.</p>
+      <a href="apply.html">Start now &rarr;</a>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== THE DIRECTORY — honest, empty, deep water ==================== -->
+<section class="water" id="directory">
+  <svg class="water-chart" viewBox="0 0 1440 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#EEF3EC" stroke-width="1">
+      <path d="M 900,80 C 1010,40 1180,70 1260,150 C 1330,225 1320,340 1230,395 C 1120,460 930,430 860,340 C 800,265 810,125 900,80 Z" stroke-opacity=".08"/>
+      <path d="M 850,50 C 990,-10 1220,25 1320,120 C 1405,205 1400,365 1290,440 C 1160,525 910,490 820,385 C 745,295 750,105 850,50 Z" stroke-opacity=".05"/>
+      <path d="M -60,180 C 260,130 480,240 760,205 C 1040,170 1240,260 1500,215" stroke-opacity=".10"/>
+      <path d="M -60,230 C 270,180 495,285 775,255 C 1055,225 1250,310 1500,268" stroke-opacity=".07" stroke-dasharray="2 6"/>
+    </g>
+    <g>
+      <circle cx="1120" cy="230" r="12" fill="#F5C36A" fill-opacity=".14"/>
+      <circle cx="1120" cy="230" r="4" fill="#F5C36A" fill-opacity=".8"/>
+    </g>
+    <g font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" fill="#EEF3EC" fill-opacity=".30">
+      <text x="964" y="480">OPU-OKOLO DEPTH LINE · SOUNDINGS PENDING</text>
+    </g>
+  </svg>
+
+  <div class="water-inner">
+    <span class="mono">The directory</span>
+    <h2>Businesses on the record.</h2>
+    <p class="water-sub">Every approved business gets a public entry here &mdash; name, category, campus and a reference. The university checks this list before it spends a naira with anyone.</p>
+
+    <!-- Honest launch state: the register is empty until the first approvals land. -->
+    <div class="empty">
+      <span class="empty-count">0</span>
+      <p>The register opens with the first approvals. When a business is registered, its entry appears right here &mdash; searchable by name, campus and category.</p>
+      <small>No entries yet · Register is open · Be the first on the record</small>
+    </div>
+
+    <p class="water-foot">
+      <span class="mono">Soundings</span>
+      The chart behind this panel is the water off Okerenkoko. It will fill with markers as the register fills with businesses.
+    </p>
+  </div>
+</section>
+
+<!-- ==================== FEES ==================== -->
+<section class="section" id="fees">
+  <div class="section-head">
+    <span class="mono">Fees</span>
+    <h2>One payment, after approval.</h2>
+  </div>
+  <div class="fee-card">
+    <div>
+      <h3>Nothing is charged today.</h3>
+      <p class="fee-line">Applying is free. If your application is approved, a single transfer of <b style="color:var(--color-forest)">&#8358;5,200</b> into the University&rsquo;s account completes the registration. No other fees, ever.</p>
+    </div>
+    <div class="fee-facts">
+      <div class="fee-fact"><b>Apply &mdash; free</b><span>The application itself costs nothing.</span></div>
+      <div class="fee-fact"><b>Pay once</b><span>Only after approval, directly to the University&rsquo;s account &mdash; not to a person.</span></div>
+      <div class="fee-fact"><b>Track it</b><span>Your status page shows the payment step and confirms when it is recorded.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <b>voeq &times; NMU</b>
+      <p>The official business register of the Nigeria Maritime University, operated by the Media Unit.</p>
+    </div>
+    <nav class="footer-links" aria-label="Legal">
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="cookies.html">Cookies</a>
+      <a href="directory.html">Directory</a>
+      <a href="status.html">Track an application</a>
+    </nav>
+  </div>
+  <div class="footer-base">Okerenkoko &amp; Kurutie, Delta State &middot; A Voeq service for Nigeria Maritime University</div>
+</footer>
+
+</body>
+</html>

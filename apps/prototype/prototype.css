@@ -1293,6 +1293,9 @@ p.measure-wide { max-width: var(--measure-wide); }
   padding-top: var(--space-md);
   margin-top: var(--space-md);
   display: none;
+  /* The 5-row cookie table is wider than a phone: let it scroll inside the
+     banner instead of expanding the document (found on landing-v2 at 390px). */
+  overflow-x: auto;
 }
 .cookie-detail.is-open { display: block; }
 .cookie-detail table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
