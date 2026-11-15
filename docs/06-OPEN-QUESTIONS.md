@@ -1,8 +1,12 @@
 # Open Questions & Decisions
 
 Two groups: the spec's own §21 list, and findings from reading the spec
-against production voeq.ng. **Q1 and Q2 are blocking** — they affect the
-institution's name on official records and the shape of the public badge.
+against production voeq.ng.
+
+**Status:** Q1 is **resolved** (institution = Nigeria Maritime University).
+Q2 and Q3 remain open. The payment model is deliberately **not hardcoded** —
+it is per-institution configuration, and the default arrangement is a
+discussion item rather than an assumption.
 
 Owner column: **MD** = Media Department · **VO** = Voeq · **ENG** = this repo.
 
@@ -10,7 +14,7 @@ Owner column: **MD** = Media Department · **VO** = Voeq · **ENG** = this repo.
 
 ## A. Blocking — resolve before Phase 1
 
-### Q1 — What is the institution's legal name? 🔴
+### Q1 — What is the institution's legal name? ✅ RESOLVED
 
 **Finding.** The spec names the institution *"Niger Delta University of Marine
 Studies (NMU)"*. Production voeq.ng names it **"Nigeria Maritime University"**,
@@ -23,15 +27,16 @@ It appears to conflate **Niger Delta University** (NDU — a different, real
 university in Bayelsa State) with **Nigeria Maritime University** (NMU —
 Okerenkoko, Delta State).
 
-**Why it blocks.** This name goes on registration records, reference numbers,
-approval and rejection emails, payment instructions, the public directory, and
-the NMU badge on the marketplace. A wrong institutional name on official
-registration documents is a real-world problem, not a copy nit.
+**Decision (confirmed 15 Nov 2026):** the institution is **Nigeria Maritime
+University**. Code `NMU`. Campuses Okerenkoko and Kurutie. The registry's
+`institutions.code` is `NMU`, so reference numbers read `NMU-2026-0001` and
+match the existing campus slugs.
 
-**Recommendation.** Institution = **Nigeria Maritime University**, code `NMU`,
-campuses Okerenkoko and Kurutie. Correct the document title before it goes out.
-
-**Decision:** ______________________ · **Owner:** MD + VO · **Needed by:** Phase 0
+**Follow-up:** the specification document's title page still says "Niger Delta
+University of Marine Studies". Correct it before it is circulated as the
+signed-off requirement, and before it is used to produce any official
+registration record. The registry seed and all copy use "Nigeria Maritime
+University".
 
 ---
 
@@ -76,8 +81,7 @@ affects the marketplace's own data model.
 
 | # | Decision | Impact | Owner | Needed by |
 | --- | --- | --- | --- | --- |
-| 4 | Separate (₦5,000 + ₦200) or combined payment? | Payment model, instructions, receipts, confirmation flow | MD | Phase 2 |
-| 5 | Who confirms the university's fee? | `payments.confirm` permission assignment | MD | Phase 2 |
+| 4 | Separate (₦5,000 + ₦200) or combined payment? | Payment model, instructions, receipts, confirmation flow | MD | Phase 2 || 5 | Who confirms the university's fee? | `payments.confirm` permission assignment | MD | Phase 2 |
 | 6 | Official payment details and channels | Payment instruction page content | MD | Phase 2 |
 | 7 | Payment-confirmation procedure | Is a receipt screenshot enough, or a bank statement match? | MD | Phase 2 |
 | 8 | Is there a payment deadline? | Expiry logic, reminders, expired applications | MD | Phase 2 |
@@ -90,6 +94,13 @@ affects the marketplace's own data model.
 > The fee amounts in §21 (₦5,000 university fee, ₦200 Voeq fee) are used as
 > **seed values only**. Everything downstream reads from
 > `institution_payment_config`, so a change is a config edit, not a release.
+
+> **Both arrangements are already built for.** The prototype currently shows
+> the **separate** model — two payment blocks, one receipt each, confirmed
+> independently — because it is the stricter case: if separate works, combined
+> works too (it is the same machinery with one fee component instead of two).
+> Nothing needs re-architecting whichever way the Media Department decides.
+> The default arrangement is a discussion item, not an assumption.
 
 ---
 

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" data-env="cream">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business registration application — NMU · Voeq</title>
+<link rel="stylesheet" href="prototype.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap row gap-4">
+    <a href="index.html" class="nav-logo">voeq</a>
+    <span class="nav-mark"><span class="nav-mark-dot"></span> NMU Business Registry</span>
+    <div class="nav-spacer"></div>
+    <a href="status.html" class="small" style="color:rgba(245,241,232,.82)">Save and finish later</a>
+  </div>
+</nav>
+
+<div class="wrap" style="padding-top:var(--space-xl)">
+
+  <!-- ================= header + stepper ================= -->
+  <div class="spread wrap-row" style="align-items:flex-end">
+    <div>
+      <span class="eyebrow">Business registration application</span>
+      <h1 class="h1 mt-3">Apply to register your business</h1>
+      <p class="sub mt-2">Draft saved just now · <span class="mono">NMU-2026-0042</span> will be issued when you submit.</p>
+    </div>
+  </div>
+
+  <div class="stepper mt-6" id="stepper">
+    <div class="step done"><span class="step-dot">✓</span><span class="step-label">About you</span><span class="step-rule done"></span></div>
+    <div class="step current" data-step="1"><span class="step-dot">2</span><span class="step-label">Your business</span><span class="step-rule"></span></div>
+    <div class="step" data-step="2"><span class="step-dot">3</span><span class="step-label">Statement</span><span class="step-rule"></span></div>
+    <div class="step" data-step="3"><span class="step-dot">4</span><span class="step-label">Materials</span><span class="step-rule"></span></div>
+    <div class="step" data-step="4"><span class="step-dot">5</span><span class="step-label">Online presence</span><span class="step-rule"></span></div>
+    <div class="step" data-step="5"><span class="step-dot">6</span><span class="step-label">Declaration</span></div>
+  </div>
+
+  <div class="mprogress mt-4">
+    <div class="spread" style="margin-bottom:8px">
+      <span class="small" style="font-weight:500" id="mstep">Step 2 of 6</span>
+      <span class="small sub" id="mname">Your business</span>
+    </div>
+    <div class="mprogress-bar"><div class="mprogress-fill" id="mfill" style="width:33%"></div></div>
+  </div>
+
+  <div class="split split-side mt-6">
+
+    <!-- ================= form ================= -->
+    <form class="card card-pad-lg" id="form" novalidate>
+
+      <!-- STEP 1 — About you -->
+      <section class="step-pane" data-pane="0">
+        <h2 class="h3">About you</h2>
+        <p class="sub small mt-2">The Media Department contacts the applicant if they need anything.</p>
+
+        <div class="stack gap-4 mt-6">
+          <div class="field">
+            <label class="label" for="fullname">Full name <span class="req">*</span></label>
+            <input class="input" id="fullname" value="Ada Chukwuemeka" autocomplete="name">
+          </div>
+
+          <div class="kv-split" style="gap:var(--space-md)">
+            <div class="field">
+              <label class="label" for="phone">Phone number <span class="req">*</span></label>
+              <input class="input" id="phone" value="0803 456 7890" inputmode="tel" autocomplete="tel">
+              <span class="hint">A number we can reach you on. We may call if something is unclear.</span>
+            </div>
+            <div class="field">
+              <label class="label" for="email">Email address</label>
+              <input class="input" id="email" value="ada@khimculinary.ng" type="email" autocomplete="email">
+              <span class="hint">Optional, but we strongly recommend it — it's how you'll receive decisions and your payment instructions.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="label">Your relationship with the business <span class="req">*</span></span>
+            <div class="choice-grid mt-2">
+              <label class="choice"><input type="radio" name="rel" checked><span><span class="choice-title">Owner</span><span class="choice-sub">You own the business</span></span></label>
+              <label class="choice"><input type="radio" name="rel"><span><span class="choice-title">Manager</span><span class="choice-sub">You manage it day to day</span></span></label>
+              <label class="choice"><input type="radio" name="rel"><span><span class="choice-title">Authorised representative</span><span class="choice-sub">You act on the owner's behalf</span></span></label>
+              <label class="choice"><input type="radio" name="rel"><span><span class="choice-title">Other</span><span class="choice-sub">Tell us in the next field</span></span></label>
+            </div>
+          </div>
+
+          <div class="field hide" id="relOther">
+            <label class="label" for="relDetail">Please explain your relationship <span class="req">*</span></label>
+            <textarea class="textarea" id="relDetail" style="min-height:88px" placeholder="e.g. I am the business partner of the registered owner."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2 — Your business -->
+      <section class="step-pane" data-pane="1">
+        <h2 class="h3">Your business</h2>
+        <p class="sub small mt-2">How the Media Department will identify and categorise it.</p>
+
+        <div class="stack gap-4 mt-6">
+          <div class="field">
+            <label class="label" for="bizname">Business name <span class="req">*</span></label>
+            <input class="input" id="bizname" value="Khim Culinary Institute">
+            <span class="hint">The name you trade under. It does not have to match a company registration.</span>
+          </div>
+
+          <div class="field">
+            <label class="label" for="category">Business category <span class="req">*</span></label>
+            <select class="select" id="category">
+              <option>Food and Drinks</option>
+              <option>Fashion and Clothing</option>
+              <option>Technology</option>
+              <option>Beauty and Personal Care</option>
+              <option>Laundry</option>
+              <option>Education and Tutoring</option>
+              <option>Printing and Graphics</option>
+              <option>Accessories</option>
+              <option>General Essentials</option>
+              <option>Professional Services</option>
+              <option>Other</option>
+            </select>
+            <span class="hint">Pick the closest match. If your business fits more than one, choose your main activity.</span>
+          </div>
+
+          <div class="field">
+            <label class="label" for="desc">What does the business do? <span class="req">*</span></label>
+            <textarea class="textarea" id="desc">We are a student-run culinary institute on the Okerenkoko campus. We bake cakes, pastries and snacks, and take food orders for campus events — birthdays, conferences, departmental dinners. We also run short pastry workshops for students who want to learn.</textarea>
+            <span class="hint">A few sentences. Keep it clear and specific.</span>
+          </div>
+
+          <div class="field">
+            <label class="label" for="location">Where does the business operate? <span class="req">*</span></label>
+            <input class="input" id="location" value="Beside the Main Gate, Okerenkoko campus">
+          </div>
+
+          <div class="field">
+            <span class="label">Campus <span class="req">*</span></span>
+            <div class="choice-grid mt-2">
+              <label class="choice"><input type="checkbox" checked><span><span class="choice-title">Okerenkoko</span><span class="choice-sub">Delta State</span></span></label>
+              <label class="choice"><input type="checkbox"><span><span class="choice-title">Kurutie</span><span class="choice-sub">Bayelsa State</span></span></label>
+            </div>
+            <span class="hint">Select both if you operate at either campus.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3 — Statement -->
+      <section class="step-pane" data-pane="2">
+        <h2 class="h3">Business statement</h2>
+        <p class="sub small mt-2">This replaces the formal letter the Media Department used to ask for.</p>
+
+        <div class="card card-pad mt-4" style="background:var(--nmu-tide-soft);border-color:var(--nmu-tide-line)">
+          <div class="row gap-3" style="align-items:flex-start">
+            <span class="icon-lg" style="color:var(--nmu-tide);margin-top:2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+            <div>
+              <div class="t-name">Write a brief statement introducing your business, explaining its purpose, the products or services it offers, and what it intends to provide to the university community.</div>
+              <div class="small sub mt-2">Your statement should give the Media Department a clear understanding of your business and how it operates.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field mt-4">
+          <label class="label" for="statement">Your statement <span class="req">*</span></label>
+          <textarea class="textarea" id="statement" style="min-height:220px">Khim Culinary Institute was founded in 2024 by a group of Food Science and Technology students at Nigeria Maritime University, Okerenkoko campus. We noticed that students on campus had few reliable options for cakes, pastries and event catering, and that most of what was available was expensive or inconsistent.
+
+We bake cakes, pastries, cupcakes and snacks using a small commercial kitchen near the Main Gate, and we take pre-orders for campus events including birthdays, conferences and departmental dinners. We offer student pickup at discounted rates and delivery within the campus.
+
+Our aim is to make celebration food affordable and dependable for the university community, while training and employing students in professional baking. We run free pastry workshops each semester and currently work with eight student interns from the department. We intend to expand into packaged snacks and small-scale catering for the University's own events.</textarea>
+          <div class="spread">
+            <span class="hint">Aim for 100–300 words.</span>
+            <span class="hint mono" id="count">1,043 characters</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4 — Materials -->
+      <section class="step-pane" data-pane="3">
+        <h2 class="h3">Promotional materials</h2>
+        <p class="sub small mt-2">Anything that represents the business. This becomes your listing image.</p>
+
+        <div class="stack gap-4 mt-6">
+          <div class="field">
+            <span class="label">Business flyer <span class="req">*</span></span>
+            <div class="dropzone mt-2">
+              <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 20h16"/></svg>
+              <div class="dz-title">Drop your flyer here, or tap to choose</div>
+              <div class="dz-sub">JPG, PNG or PDF · up to 5MB · photos are compressed on your phone before upload</div>
+            </div>
+            <span class="hint mt-2">This may include your business name, products, services and contact details.</span>
+          </div>
+
+          <div class="stack gap-2">
+            <span class="label">Additional business images</span>
+            <div class="file-row">
+              <div class="file-thumb" style="background:linear-gradient(140deg,#0b3543,#16687f)"></div>
+              <div class="grow">
+                <div class="file-name">khim-flyer-2026.jpg</div>
+                <div class="file-meta">1.8 MB → 168 KB compressed · JPG</div>
+                <div class="bar mt-2"><div class="bar-fill" style="width:100%"></div></div>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm">Remove</button>
+            </div>
+            <div class="file-row">
+              <div class="file-thumb" style="background:linear-gradient(140deg,#12333e,#2d5a3d)"></div>
+              <div class="grow">
+                <div class="file-name">pastry-counter.jpg</div>
+                <div class="file-meta">2.4 MB → 191 KB compressed · JPG</div>
+                <div class="bar mt-2"><div class="bar-fill" style="width:100%"></div></div>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm">Remove</button>
+            </div>
+          </div>
+
+          <div class="card card-pad card-sunken">
+            <div class="row gap-3" style="align-items:flex-start">
+              <span class="icon" style="color:var(--nmu-tide);margin-top:2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v11"/><path d="m8 10 4 4 4-4"/><path d="M5 20h14"/></svg></span>
+              <div class="small sub">Your photos are resized and compressed on your device before they are sent, so a 4MB phone photo becomes roughly 150KB. It uploads faster and costs you less data.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 5 — Online presence -->
+      <section class="step-pane" data-pane="4">
+        <h2 class="h3">Online presence</h2>
+        <p class="sub small mt-2">Help the Department understand what you do, especially if you sell online.</p>
+
+        <div class="stack gap-4 mt-6">
+          <div class="field">
+            <span class="label">Does your business have an online presence? <span class="req">*</span></span>
+            <div class="choice-grid mt-2">
+              <label class="choice"><input type="radio" name="online" checked><span><span class="choice-title">Yes</span><span class="choice-sub">I have a page, store or portfolio</span></span></label>
+              <label class="choice"><input type="radio" name="online"><span><span class="choice-title">No</span><span class="choice-sub">I trade offline only</span></span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="website">Business website or online store</label>
+            <input class="input" id="website" value="https://khimculinary.ng" placeholder="https://">
+            <span class="hint">Optional. Leave blank if you don't have one.</span>
+          </div>
+
+          <div class="field">
+            <label class="label" for="social">Social media business page</label>
+            <input class="input" id="social" value="https://instagram.com/khimculinary">
+            <span class="hint">Instagram, Facebook, TikTok — whichever is your main page.</span>
+          </div>
+
+          <div class="field">
+            <label class="label" for="otherplat">Other digital platform</label>
+            <input class="input" id="otherplat" value="https://wa.me/2348034567890">
+            <span class="hint">A service platform, portfolio, or anywhere else your work can be seen.</span>
+          </div>
+
+          <div class="field">
+            <label class="label" for="digexp">Explain what you provide digitally <span class="req">*</span></label>
+            <textarea class="textarea" id="digexp" style="min-height:96px">Customers order and pay through our Instagram page and WhatsApp. We post the week's menu on Mondays and confirm orders by message, then deliver to the campus gate or hostel on the day.</textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 6 — Declaration & review -->
+      <section class="step-pane" data-pane="5">
+        <h2 class="h3">Declaration and consent</h2>
+        <p class="sub small mt-2">Read these, then confirm and submit.</p>
+
+        <div class="stack gap-3 mt-6">
+          <div class="card card-pad">
+            <div class="t-name">A. Accuracy of information</div>
+            <ul class="stack gap-2 mt-3 small sub" style="padding-left:18px;margin:0">
+              <li>All information submitted is accurate and complete.</li>
+              <li>Uploaded flyers, images and supporting materials genuinely represent the business.</li>
+              <li>The applicant is authorised to submit the application on behalf of the business.</li>
+            </ul>
+          </div>
+          <div class="card card-pad">
+            <div class="t-name">B. Compliance with university requirements</div>
+            <ul class="stack gap-2 mt-3 small sub" style="padding-left:18px;margin:0">
+              <li>The business is expected to comply with applicable university rules and regulations.</li>
+              <li>The Media Department reserves the right to review applications and determine whether businesses qualify for registration.</li>
+              <li>Registration may be withdrawn if information supplied is false or the business violates applicable requirements.</li>
+            </ul>
+          </div>
+          <div class="card card-pad">
+            <div class="t-name">C. Registration and public listing</div>
+            <ul class="stack gap-2 mt-3 small sub" style="padding-left:18px;margin:0">
+              <li>The application must be approved before payment is made through the registration process.</li>
+              <li>Successful registration will result in the business being included in the university's business directory on Voeq.</li>
+              <li>Relevant business information, including name, category, description, promotional materials and appropriate contact details, may be displayed publicly.</li>
+              <li>Personal information and administrative documents submitted during registration will not automatically be displayed publicly.</li>
+            </ul>
+          </div>
+        </div>
+
+        <label class="check mt-4">
+          <input type="checkbox" checked>
+          <span class="small">I have read and understood the declarations above and confirm that the information submitted is accurate.</span>
+        </label>
+
+        <hr class="rule mt-6" style="margin-block:var(--space-lg)">
+
+        <h3 class="h3">Review your application</h3>
+        <p class="sub small mt-2">Check everything below before you submit.</p>
+
+        <div class="card card-pad mt-4">
+          <div class="row spread"><span class="small sub">Applicant</span><button type="button" class="btn btn-ghost btn-sm">Edit</button></div>
+          <dl class="spec mt-3">
+            <dt>Full name</dt><dd>Ada Chukwuemeka</dd>
+            <dt>Phone</dt><dd>0803 456 7890</dd>
+            <dt>Email</dt><dd>ada@khimculinary.ng</dd>
+            <dt>Relationship</dt><dd>Owner</dd>
+          </dl>
+        </div>
+
+        <div class="card card-pad mt-3">
+          <div class="row spread"><span class="small sub">Business</span><button type="button" class="btn btn-ghost btn-sm">Edit</button></div>
+          <dl class="spec mt-3">
+            <dt>Business name</dt><dd>Khim Culinary Institute</dd>
+            <dt>Category</dt><dd>Food and Drinks</dd>
+            <dt>What it does</dt><dd>We are a student-run culinary institute on the Okerenkoko campus…</dd>
+            <dt>Location</dt><dd>Beside the Main Gate, Okerenkoko campus</dd>
+            <dt>Campus</dt><dd>Okerenkoko</dd>
+          </dl>
+        </div>
+
+        <div class="card card-pad mt-3">
+          <div class="row spread"><span class="small sub">Materials and links</span><button type="button" class="btn btn-ghost btn-sm">Edit</button></div>
+          <dl class="spec mt-3">
+            <dt>Flyer</dt><dd>khim-flyer-2026.jpg</dd>
+            <dt>Images</dt><dd>1 additional image</dd>
+            <dt>Website</dt><dd>khimculinary.ng</dd>
+            <dt>Social page</dt><dd>instagram.com/khimculinary</dd>
+          </dl>
+        </div>
+
+        <div class="banner banner-nmu mt-4">
+          <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></svg>
+          <div>
+            <div class="banner-title">Nothing is charged today</div>
+            <div class="banner-body">Applying is free. If the Media Department approves your application, you will receive the payment instructions on this page and by email.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= actions ================= -->
+      <hr class="rule mt-6" style="margin-block:var(--space-lg)">
+      <div class="spread wrap-row">
+        <a href="status.html" class="btn btn-ghost">Save and finish later</a>
+        <div class="row gap-3">
+          <button type="button" class="btn btn-outline" id="back">Back</button>
+          <button type="button" class="btn btn-nmu" id="next">Continue →</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- ================= side rail ================= -->
+    <aside class="stack gap-3">
+      <div class="card card-pad">
+        <div class="t-name">Your progress</div>
+        <div class="row spread mt-3"><span class="small sub">Completed</span><span class="small mono">2 of 6</span></div>
+        <div class="bar mt-2"><div class="bar-fill" style="width:33%"></div></div>
+        <p class="hint mt-3">Your answers save automatically. You can close this page and pick up where you left off.</p>
+      </div>
+
+      <div class="card card-pad">
+        <div class="t-name">What happens after you submit</div>
+        <div class="timeline mt-4">
+          <div class="tl-item upcoming" style="padding-bottom:20px">
+            <span class="tl-dot"></span>
+            <div class="tl-title">The Media Department reviews</div>
+            <div class="tl-meta">Usually within 5 working days</div>
+          </div>
+          <div class="tl-item upcoming" style="padding-bottom:20px">
+            <span class="tl-dot"></span>
+            <div class="tl-title">You get a decision</div>
+            <div class="tl-meta">Approved, or asked for a correction</div>
+          </div>
+          <div class="tl-item upcoming" style="padding-bottom:20px">
+            <span class="tl-dot"></span>
+            <div class="tl-title">You pay</div>
+            <div class="tl-meta">Instructions appear on your status page</div>
+          </div>
+          <div class="tl-item upcoming">
+            <span class="tl-dot"></span>
+            <div class="tl-title">You're listed</div>
+            <div class="tl-meta">In the NMU business directory</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-pad card-sunken">
+        <div class="t-name">Need help?</div>
+        <p class="small sub mt-2">Call or WhatsApp the NMU Media Department on <span class="mono">0803 000 0000</span>, Monday to Friday, 9am–4pm.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="wrap spread small" style="color:rgba(245,241,232,.5)">
+    <span>© 2026 Voeq · NMU Media Department</span>
+    <span>Your details are only used to process this registration.</span>
+  </div>
+</footer>
+
+<script>
+  var panes = document.querySelectorAll('.step-pane');
+  var steps = document.querySelectorAll('.step');
+  var current = 1;
+  var names = ['About you','Your business','Business statement','Promotional materials','Online presence','Declaration and review'];
+
+  function render() {
+    panes.forEach(function (p, i) { p.classList.toggle('hide', i !== current); });
+    steps.forEach(function (s, i) {
+      s.classList.toggle('done', i < current);
+      s.classList.toggle('current', i === current);
+      var dot = s.querySelector('.step-dot');
+      dot.textContent = i < current ? '✓' : (i + 1);
+      var rule = s.querySelector('.step-rule');
+      if (rule) rule.classList.toggle('done', i < current);
+    });
+    document.getElementById('mfill').style.width = ((current + 1) / 6 * 100) + '%';
+    document.getElementById('mstep').textContent = 'Step ' + (current + 1) + ' of 6';
+    document.getElementById('mname').textContent = names[current];
+    document.getElementById('back').style.visibility = current === 0 ? 'hidden' : 'visible';
+    document.getElementById('next').textContent = current === 5 ? 'Submit application →' : 'Continue →';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('next').addEventListener('click', function () {
+    if (current < 5) { current++; render(); }
+    else { window.location.href = 'status.html'; }
+  });
+  document.getElementById('back').addEventListener('click', function () {
+    if (current > 0) { current--; render(); }
+  });
+
+  document.querySelectorAll('input[name="rel"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      document.getElementById('relOther').classList.toggle('hide', r.value !== 'other' || !r.checked);
+    });
+  });
+
+  var stmt = document.getElementById('statement');
+  if (stmt) {
+    var c = document.getElementById('count');
+    var upd = function () { c.textContent = stmt.value.length.toLocaleString() + ' characters'; };
+    stmt.addEventListener('input', upd); upd();
+  }
+
+  render();
+</script>
+
+</body>
+</html>

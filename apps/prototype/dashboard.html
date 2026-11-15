@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-env="deep">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Media Department dashboard — NMU · Voeq</title>
+<link rel="stylesheet" href="prototype.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap row gap-4">
+    <a href="index.html" class="nav-logo">voeq</a>
+    <span class="nav-mark"><span class="nav-mark-dot"></span> Media Unit · NMU</span>
+    <div class="nav-spacer"></div>
+    <div class="nav-links">
+      <a href="dashboard.html">Applications</a>
+      <a href="payments.html">Payments</a>
+      <a href="#">Directory</a>
+      <a href="#">Reports</a>
+    </div>
+    <span class="badge" style="background:rgba(245,241,232,.12);color:#f5f1e8">A. Igwe · Media Unit</span>
+  </div>
+</nav>
+
+<div class="wrap" style="padding-top:var(--space-xl)">
+
+  <div class="spread wrap-row" style="align-items:flex-end">
+    <div>
+      <span class="eyebrow">Nigeria Maritime University</span>
+      <h1 class="h1 mt-3">Applications</h1>
+    </div>
+    <div class="row gap-2">
+      <button class="btn btn-outline btn-sm">Export</button>
+      <button class="btn btn-nmu btn-sm">+ New institution</button>
+    </div>
+  </div>
+
+  <!-- ================= metrics ================= -->
+  <div class="metrics mt-6">
+    <div class="metric"><div class="metric-value">184</div><div class="metric-label">Total applications</div></div>
+    <div class="metric alert"><div class="metric-value">23</div><div class="metric-label">Awaiting review</div></div>
+    <div class="metric"><div class="metric-value">9</div><div class="metric-label">Under review</div></div>
+    <div class="metric alert"><div class="metric-value">7</div><div class="metric-label">Needs correction</div></div>
+    <div class="metric"><div class="metric-value">31</div><div class="metric-label">Approved, awaiting payment</div></div>
+    <div class="metric alert"><div class="metric-value">12</div><div class="metric-label">Payment awaiting confirmation</div></div>
+    <div class="metric"><div class="metric-value">96</div><div class="metric-label">Registered businesses</div></div>
+    <div class="metric"><div class="metric-value">6</div><div class="metric-label">Rejected</div></div>
+  </div>
+
+  <!-- ================= filters ================= -->
+  <div class="filters mt-4">
+    <input class="input" placeholder="Search reference, business or applicant…">
+    <select class="select"><option>All statuses</option><option>Submitted</option><option>Under Review</option><option>Requires Correction</option><option>Approved — Awaiting Payment</option><option>Rejected</option></select>
+    <select class="select"><option>All categories</option><option>Food and Drinks</option><option>Fashion and Clothing</option><option>Technology</option><option>Laundry</option></select>
+    <select class="select"><option>All campuses</option><option>Okerenkoko</option><option>Kurutie</option></select>
+    <select class="select"><option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option><option>All time</option></select>
+    <span class="grow"></span>
+    <span class="small sub">184 results</span>
+  </div>
+
+  <!-- ================= table ================= -->
+  <div class="table-wrap mt-4">
+    <table>
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Business</th>
+          <th>Applicant</th>
+          <th>Category</th>
+          <th>Campus</th>
+          <th>Submitted</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="t-ref">NMU-2026-0042</td>
+          <td><div class="t-name">Khim Culinary Institute</div></td>
+          <td>Ada Chukwuemeka</td>
+          <td>Food and Drinks</td>
+          <td>Okerenkoko</td>
+          <td class="t-sub">4 Nov 2026</td>
+          <td><span class="badge badge-gold badge-dot">Approved — awaiting payment</span></td>
+          <td><span class="badge badge-warning badge-dot">Awaiting payment</span></td>
+          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+        </tr>
+        <tr>
+          <td class="t-ref">NMU-2026-0043</td>
+          <td><div class="t-name">Campus Bakes &amp; Co</div></td>
+          <td>Tunde Alabi</td>
+          <td>Food and Drinks</td>
+          <td>Kurutie</td>
+          <td class="t-sub">14 Nov 2026</td>
+          <td><span class="badge badge-accent badge-dot">Submitted</span></td>
+          <td><span class="badge badge-dot">Not required yet</span></td>
+          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+        </tr>
+        <tr>
+          <td class="t-ref">NMU-2026-0044</td>
+          <td><div class="t-name">PixelThread Studios</div></td>
+          <td>Grace Nwosu</td>
+          <td>Printing and Graphics</td>
+          <td>Okerenkoko</td>
+          <td class="t-sub">14 Nov 2026</td>
+          <td><span class="badge badge-accent badge-dot">Submitted</span></td>
+          <td><span class="badge badge-dot">Not required yet</span></td>
+          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+        </tr>
+        <tr>
+          <td class="t-ref">NMU-2026-0041</td>
+          <td><div class="t-name">Ade Tailoring House</div></td>
+          <td>Chidi Okoro</td>
+          <td>Fashion and Clothing</td>
+          <td>Kurutie</td>
+          <td class="t-sub">3 Nov 2026</td>
+          <td><span class="badge badge-warning badge-dot">Requires correction</span></td>
+          <td><span class="badge badge-dot">Not required yet</span></td>
+          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+        </tr>
+        <tr>
+          <td class="t-ref">NMU-2026-0040</td>
+          <td><div class="t-name">Zuri Mobile Repairs</div></td>
+          <td>Blessing Eze</td>
+          <td>Technology</td>
+          <td>Okerenkoko</td>
+          <td class="t-sub">2 Nov 2026</td>
+          <td><span class="badge badge-accent badge-dot">Under review</span></td>
+          <td><span class="badge badge-dot">Not required yet</span></td>
+          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+        </tr>
+        <tr>
+          <td class="t-ref">NMU-2026-0039</td>
+          <td><div class="t-name">Bayside Foods</div></td>
+          <td>Ibrahim Yusuf</td>
+          <td>Food and Drinks</td>
+          <td>Kurutie</td>
+          <td class="t-sub">1 Nov 2026</td>
+          <td><span class="badge badge-success badge-dot">Registered / Verified</span></td>
+          <td><span class="badge badge-success badge-dot">Payment confirmed</span></td>
+          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+        </tr>
+        <tr>
+          <td class="t-ref">NMU-2026-0038</td>
+          <td><div class="t-name">Larus Graphics Ltd</div></td>
+          <td>Sade Ojo</td>
+          <td>Printing and Graphics</td>
+          <td>Kurutie</td>
+          <td class="t-sub">30 Oct 2026</td>
+          <td><span class="badge badge-success badge-dot">Registered / Verified</span></td>
+          <td><span class="badge badge-success badge-dot">Payment confirmed</span></td>
+          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+        </tr>
+        <tr>
+          <td class="t-ref">NMU-2026-0037</td>
+          <td><div class="t-name">Fresh Fit Laundry</div></td>
+          <td>Michael Udo</td>
+          <td>Laundry</td>
+          <td>Okerenkoko</td>
+          <td class="t-sub">29 Oct 2026</td>
+          <td><span class="badge badge-danger badge-dot">Rejected</span></td>
+          <td><span class="badge badge-dot">Not required yet</span></td>
+          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row spread mt-4">
+    <span class="small sub">Showing 1–8 of 184</span>
+    <div class="row gap-2">
+      <button class="btn btn-outline btn-sm">Previous</button>
+      <button class="btn btn-outline btn-sm">Next</button>
+    </div>
+  </div>
+
+  <!-- ================= recent activity ================= -->
+  <div class="kv-split mt-6" style="align-items:start">
+    <div class="card card-pad">
+      <div class="spread">
+        <h2 class="h3">Recent decisions</h2>
+        <a href="#" class="small" style="color:var(--nmu-tide)">View all</a>
+      </div>
+      <div class="timeline mt-5">
+        <div class="tl-item done" style="padding-bottom:20px">
+          <span class="tl-dot"></span>
+          <div class="tl-title">Approved — Bayside Foods</div>
+          <div class="tl-meta">NMU-2026-0039 · A. Igwe · 1 Nov 2026, 2:14pm</div>
+        </div>
+        <div class="tl-item done" style="padding-bottom:20px">
+          <span class="tl-dot"></span>
+          <div class="tl-title">Correction requested — Ade Tailoring House</div>
+          <div class="tl-meta">NMU-2026-0041 · A. Igwe · 31 Oct 2026, 11:52am</div>
+          <div class="tl-body">"Flyer does not show the business name or a contact number."</div>
+        </div>
+        <div class="tl-item done" style="padding-bottom:20px">
+          <span class="tl-dot"></span>
+          <div class="tl-title">Rejected — Fresh Fit Laundry</div>
+          <div class="tl-meta">NMU-2026-0037 · D. Bello · 29 Oct 2026, 4:07pm</div>
+          <div class="tl-body">"The uploaded flyer belongs to another business."</div>
+        </div>
+        <div class="tl-item done">
+          <span class="tl-dot"></span>
+          <div class="tl-title">Payment confirmed — Larus Graphics Ltd</div>
+          <div class="tl-meta">NMU-2026-0038 · Finance · 30 Oct 2026, 9:20am</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-pad">
+      <h2 class="h3">Payments awaiting confirmation</h2>
+      <p class="small sub mt-2">12 applications have payment evidence waiting.</p>
+      <div class="stack gap-3 mt-5">
+        <div class="row spread card card-pad card-sunken" style="padding:14px">
+          <div>
+            <div class="t-name">Khim Culinary Institute</div>
+            <div class="t-sub mono">NMU-2026-0042 · ₦5,000.00 · 14 Nov</div>
+          </div>
+          <a href="payments.html" class="btn btn-outline btn-sm">Review</a>
+        </div>
+        <div class="row spread card card-pad card-sunken" style="padding:14px">
+          <div>
+            <div class="t-name">Ada Obi Designs</div>
+            <div class="t-sub mono">NMU-2026-0035 · ₦5,200.00 · 13 Nov</div>
+          </div>
+          <a href="payments.html" class="btn btn-outline btn-sm">Review</a>
+        </div>
+        <div class="row spread card card-pad card-sunken" style="padding:14px">
+          <div>
+            <div class="t-name">Anchor Books</div>
+            <div class="t-sub mono">NMU-2026-0033 · ₦5,000.00 · 12 Nov</div>
+          </div>
+          <a href="payments.html" class="btn btn-outline btn-sm">Review</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

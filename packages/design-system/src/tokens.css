@@ -1,10 +1,10 @@
-# ---- Voeq Design System — tokens -------------------------------------------------
-# Extracted verbatim from the live voeq.ng production CSS (Next.js + Tailwind v4).
-# Source of truth: voeq.ng  |  Extracted: 2026-11-15
-#
-# These are the REAL production values. Do not eyeball-adjust them: the registry
-# portal must feel native to the marketplace, not adjacent to it.
-# ---------------------------------------------------------------------------
+/* ---- Voeq Design System — tokens ----------------------------------------
+   Extracted verbatim from the live voeq.ng production CSS (Next.js + Tailwind v4).
+   Source of truth: voeq.ng  |  Extracted: 2026-11-15
+
+   These are the REAL production values. Do not eyeball-adjust them: the registry
+   portal must feel native to the marketplace, not adjacent to it.
+   -------------------------------------------------------------------------- */
 
 :root {
   /* Fonts — provided by the host app via next/font (woff2 self-hosted). */
@@ -138,6 +138,61 @@
   --glass-bg-strong: rgba(245, 241, 232, 0.15);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-blur: blur(20px) saturate(180%);
+}
+
+/* ---------------------------------------------------------------------------
+   NMU INSTITUTIONAL BRAND LAYER
+   ---------------------------------------------------------------------------
+   A warm hybrid: voeq.ng's paper-and-forest foundation carries the product,
+   and a deep maritime-teal layer gives the NMU surfaces their own identity.
+
+   Division of labour:
+     cream / forest / gold  →  shared with voeq.ng. The marketplace voice.
+     nmu-deep / nmu-tide    →  NMU only. Institutional voice, NMU badge,
+                               masthead, section markers, form accents.
+   Never use the NMU layer inside a marketplace surface, and never use the
+   voeq.ng palette inside an NMU institutional band without the NMU badge.
+   --------------------------------------------------------------------------- */
+
+:root,
+:root[data-env="cream"] {
+  /* Deep maritime teal — masthead ground, seals, the NMU badge */
+  --nmu-deep: #0b3543;
+  --nmu-deep-strong: #07252f;
+  --nmu-deep-line: #17495a;
+
+  /* Tide — NMU interactive accent (links, focused controls) */
+  --nmu-tide: #12586b;
+  --nmu-tide-hover: #0e4757;
+  --nmu-tide-soft: #e6eff1;
+  --nmu-tide-line: #b9d4da;
+
+  /* The NMU badge — deliberately distinct from the marketplace "Verified" mark */
+  --nmu-badge-bg: #0b3543;
+  --nmu-badge-ink: #f5f1e8;
+  --nmu-badge-dot: #e8a33d;
+
+  /* Panel ground for NMU-owned surfaces */
+  --nmu-panel: #ffffff;
+  --nmu-panel-sunken: #f4f1ea;
+}
+
+[data-env="deep"] {
+  --nmu-deep: #0a2c37;
+  --nmu-deep-strong: #071f28;
+  --nmu-deep-line: #1d4e5e;
+
+  --nmu-tide: #6fc3d8;
+  --nmu-tide-hover: #8fd4e6;
+  --nmu-tide-soft: #10333d;
+  --nmu-tide-line: #24596a;
+
+  --nmu-badge-bg: #0b3543;
+  --nmu-badge-ink: #9fe1cb;
+  --nmu-badge-dot: #e8a33d;
+
+  --nmu-panel: #12333e;
+  --nmu-panel-sunken: #0c2630;
 }
 
 /* Body defaults — mirror voeq.ng exactly */

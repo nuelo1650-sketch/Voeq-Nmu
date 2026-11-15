@@ -103,7 +103,69 @@ Rules:
 
 ---
 
-## 3. Surface plan
+## 3. The NMU institutional layer
+
+**Direction confirmed 15 Nov 2026: warm hybrid.** voeq.ng's paper-and-forest
+foundation carries the product; a **maritime-teal layer** gives the NMU
+surfaces their own institutional identity. The registry is recognisably Voeq,
+and recognisably *the university's*, not a generic government form.
+
+Tokens live in `packages/design-system/src/tokens.css` under `--nmu-*`.
+
+| Token | Cream | Deep | Used for |
+| --- | --- | --- | --- |
+| `--nmu-deep` | `#0b3543` | `#0a2c37` | Masthead ground, NMU badge, seals |
+| `--nmu-deep-strong` | `#07252f` | `#071f28` | Hover / pressed states |
+| `--nmu-tide` | `#12586b` | `#6fc3d8` | NMU interactive accent — links, primary buttons, focus rings |
+| `--nmu-tide-soft` | `#e6eff1` | `#10333d` | Tinted surfaces (selected cards, callouts) |
+| `--nmu-tide-line` | `#b9d4da` | `#24596a` | Borders on tinted surfaces |
+| `--nmu-badge-bg` | `#0b3543` | `#0b3543` | The **NMU Registered** badge ground |
+| `--nmu-badge-ink` | `#f5f1e8` | `#9fe1cb` | Badge text |
+| `--nmu-badge-dot` | `#e8a33d` | `#e8a33d` | Badge dot — the shared gold |
+
+### 3.1 Division of labour
+
+| Surface | Colour voice |
+| --- | --- |
+| Marketplace (voeq.ng) | forest + gold + cream. **No NMU teal.** |
+| NMU applicant portal | cream ground, forest nav, **tide** for actions and focus |
+| NMU institutional bands (fees, masthead, footer) | `--nmu-deep` ground with cream and gold |
+| NMU dashboard | `deep` environment, tide as the interactive accent |
+| The NMU badge | `--nmu-badge-bg` with a gold dot — on **any** surface |
+
+The teal never appears on a marketplace surface unless it is part of the NMU
+badge. The gold is shared across both products; it is the connective tissue.
+
+### 3.2 The NMU badge
+
+```
+┌────────────────────────────────┐
+│  ●  NMU Registered             │   --nmu-badge-bg, --nmu-badge-ink, gold dot
+└────────────────────────────────┘
+```
+
+Distinct from the marketplace's existing `Verified` badge, which stays
+forest-on-cream and means something different. A business can be Voeq-verified
+but not NMU-registered, NMU-registered but not Voeq-verified, or both. Two
+independent facts, two independent badges.
+
+Render it on: the public directory card, the marketplace vendor profile, and
+the applicant's status page once registration completes.
+
+### 3.3 Typography in the NMU layer
+
+Unchanged from the shared system — Playfair Display for headings, Inter for
+everything else, JetBrains Mono for references. The NMU identity is carried by
+**colour and the badge**, not by introducing a third typeface. A third family
+would make the portal drift from the marketplace.
+
+The one typographic device the prototype establishes: the landing headline sets
+the final word in Playfair *italic* in `--nmu-tide`, echoing voeq.ng's
+"Find. Connect. **Grow.**" treatment. Use it once, on the landing page.
+
+---
+
+## 4. Surface plan
 
 | Surface | `data-env` | Why |
 | --- | --- | --- |
@@ -115,9 +177,9 @@ One dark mode, one light mode — no per-component theming.
 
 ---
 
-## 4. Component inventory
+## 5. Component inventory
 
-### 4.1 Shared (from voeq.ng — port, don't reinvent)
+### 5.1 Shared (from voeq.ng — port, don't reinvent)
 
 | Component | Notes |
 | --- | --- |
@@ -131,7 +193,7 @@ One dark mode, one light mode — no per-component theming.
 | `Footer` | Forest, multi-column, newsletter-style link groups |
 | `EmptyState` | Illustration + one line + one action |
 
-### 4.2 New — built for this system
+### 5.2 New — built for this system
 
 | Component | Purpose |
 | --- | --- |
@@ -149,9 +211,9 @@ One dark mode, one light mode — no per-component theming.
 
 ---
 
-## 5. The applicant experience
+## 6. The applicant experience
 
-### 5.1 Flow
+### 6.1 Flow
 
 ```
 Landing  →  Start application  →  6 sections (5 steps + review)  →  Submitted
@@ -167,7 +229,7 @@ The applicant **never** creates a vendor account to apply (§5.3). No login
 wall before the form. A draft token is issued on first keystroke so the form
 can be abandoned and resumed.
 
-### 5.2 The form — six sections, five steps
+### 6.2 The form — six sections, six steps
 
 The spec defines six sections. Six long screens is where applications die, so
 they become five steps plus a review step, with a persistent progress rail:
@@ -181,7 +243,7 @@ they become five steps plus a review step, with a persistent progress rail:
 | 5 | Online presence | The Yes/No gate (§4.5); conditional website / social / other / explanation fields |
 | 6 | Declaration & review | The three declaration groups (§4.6), the mandatory checkbox, then a full read-only review of everything before submit |
 
-### 5.3 Mobile-first, because it has to be
+### 6.3 Mobile-first, because it has to be
 
 Applicants are students on phones, often on expensive data. Specific rules:
 
@@ -199,7 +261,7 @@ Applicants are students on phones, often on expensive data. Specific rules:
   advance. Live validation while typing produces error flashes while the
   applicant is still mid-thought.
 
-### 5.4 Validation & error handling
+### 6.4 Validation & error handling
 
 - Zod schemas shared between client and server — the server is authoritative.
 - Inline error under the field, `aria-invalid`, `aria-describedby`.
@@ -208,7 +270,7 @@ Applicants are students on phones, often on expensive data. Specific rules:
 - Errors say what to do: *"Enter a phone number we can reach you on — e.g.
   0803 123 4567"*, never *"Invalid input"*.
 
-### 5.5 The status page
+### 6.5 The status page
 
 The emotional centre of the product. When an applicant is waiting, this is
 what they open.
@@ -223,7 +285,7 @@ what they open.
   approved.
 - **A contact route** if something is wrong.
 
-### 5.6 The public directory
+### 6.6 The public directory
 
 - Cards that match voeq.ng's marketplace cards exactly: image, gold category
   eyebrow, Playfair title, location, **NMU Registered** badge.
@@ -232,9 +294,9 @@ what they open.
 
 ---
 
-## 6. The Media Department dashboard
+## 7. The Media Department dashboard
 
-### 6.1 Overview
+### 7.1 Overview
 
 A row of metric tiles, matching the §12.1 list exactly:
 
@@ -246,7 +308,7 @@ Approved awaiting payment · Payment awaiting confirmation · Registered · Reje
 Tiles are `--role-surface` cards on the `deep` background, with the count in
 Playfair at `--text-h1` and the label in `--role-text-muted` uppercase.
 
-### 6.2 Application table
+### 7.2 Application table
 
 Columns exactly as §12.2 specifies:
 
@@ -262,7 +324,7 @@ Reference · Business · Applicant · Category · Campus · Submitted · Status 
 - Row click opens the application drawer; the full detail page remains
   available.
 
-### 6.3 Application detail
+### 7.3 Application detail
 
 Left column: the application, in the same six sections the applicant saw,
 read-only, with links and files openable. Right column: the review actions,
@@ -283,7 +345,7 @@ Internal notes are a separate field from the applicant-facing reason, and are
 visibly marked **"Not visible to applicant"** — so a reviewer never
 accidentally sends an internal note.
 
-### 6.4 Payment verification
+### 7.4 Payment verification
 
 A distinct queue — not buried in the application table, because payment
 confirmation is a different job with a different permission.
@@ -298,7 +360,7 @@ confirmation is a different job with a different permission.
 
 ---
 
-## 7. Accessibility
+## 8. Accessibility
 
 Non-negotiable, and the standard we hold the marketplace to as well.
 
@@ -319,7 +381,7 @@ Non-negotiable, and the standard we hold the marketplace to as well.
 
 ---
 
-## 8. Content & voice
+## 9. Content & voice
 
 The product writes in plain, Nigerian-English register — direct, warm, never
 bureaucratic. The spec's own suggested copy is the right register; the
@@ -337,7 +399,7 @@ have a one-line plain-language explanation next to the badge.
 
 ---
 
-## 9. Rules of engagement
+## 10. Rules of engagement
 
 1. **Extract, don't eyeball.** Tokens come from production CSS. If a value
    looks wrong, it is probably a deliberate choice in voeq.ng — check before

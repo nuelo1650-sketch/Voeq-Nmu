@@ -17,11 +17,12 @@ than a shared one.
 
 ## Status
 
-**Planning complete. Build not started.**
+**Design prototype built. Application code not started.**
 
 | | |
 | --- | --- |
 | Specification | `docs/spec/Voeq_NMU_Business_Registration_System_Specification.docx` |
+| **Design prototype** | `apps/prototype/` — 7 screens, clickable, no build step |
 | Architecture | `docs/01-ARCHITECTURE.md` |
 | Data model | `docs/02-DATA-MODEL.md` |
 | API & integration contract | `docs/03-API-CONTRACT.md` |
@@ -29,21 +30,48 @@ than a shared one.
 | Roadmap | `docs/05-ROADMAP.md` |
 | Open questions | `docs/06-OPEN-QUESTIONS.md` |
 
-Three decisions are **blocking** — see `docs/06-OPEN-QUESTIONS.md` §A:
+### Decisions taken
 
-1. The institution's legal name (the spec says "Niger Delta University of
-   Marine Studies"; production voeq.ng says "Nigeria Maritime University").
-2. The exact formal title of the reviewing authority.
-3. Whether the marketplace gets a new `institutionalVerifications` field
-   rather than reusing the existing `verified` boolean.
+- **Institution: Nigeria Maritime University** (code `NMU`, campuses Okerenkoko
+  and Kurutie). The spec's "Niger Delta University of Marine Studies" is a
+  conflation with Niger Delta University and has been corrected throughout.
+- **Design direction: warm hybrid.** voeq.ng's paper-and-forest foundation
+  carries the product; a maritime-teal layer gives the NMU surfaces their own
+  identity. Tokens live in `packages/design-system/src/tokens.css` under
+  `--nmu-*`.
+- **Payment model is not hardcoded.** Both separate and combined arrangements
+  are supported by configuration; the default is a discussion item with the
+  Media Department.
+
+### Still open
+
+- The **formal title of the reviewing authority** — the spec says "Media
+  Department"; confirm the exact official name for correspondence and
+  certificates.
+- **Marketplace-repo agreement** on a new `institutionalVerifications` field
+  rather than reusing voeq.ng's existing `verified` boolean (ADR-006).
 
 ---
 
-## Layout
+## Running the design prototype
+
+```bash
+cd <repo root>
+python -m http.server 8899 --bind 127.0.0.1
+```
+
+Then open http://127.0.0.1:8899/apps/prototype/index.html — or any of the
+seven screens listed in `apps/prototype/README.md`. Serve from the repo root
+so the prototype can resolve the shared token stylesheet.
+
+---
+
+## Repository layout
 
 ```
 apps/
-  registry/            Next.js 15 app — the single deployable unit
+  prototype/           Design prototype — 7 screens, no build step
+  registry/            Next.js 15 app (Phase 0 onward)
 packages/
   design-system/       @voeq/design-system — tokens & primitives shared with voeq.ng
   db/                  Prisma schema, migrations, seed
