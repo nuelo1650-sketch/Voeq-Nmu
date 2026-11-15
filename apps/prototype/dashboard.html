@@ -1,243 +1,460 @@
 <!DOCTYPE html>
-<html lang="en" data-env="deep">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Media Department dashboard — NMU · Voeq</title>
-<link rel="stylesheet" href="prototype.css">
+<title>Register desk — NMU Media Unit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
+  <link rel="stylesheet" href="prototype.css">
 </head>
 <body>
 
-<nav class="nav">
-  <div class="wrap row gap-4">
-    <a href="index.html" class="nav-logo">voeq</a>
-    <span class="nav-mark"><span class="nav-mark-dot"></span> Media Unit · NMU</span>
-    <div class="nav-spacer"></div>
-    <div class="nav-links">
-      <a href="dashboard.html">Applications</a>
-      <a href="payments.html">Payments</a>
-      <a href="#">Directory</a>
-      <a href="#">Reports</a>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="masthead-meta">
+      <span>NMU Media Department · Register desk</span>
+      <span>Friday 15 November 2026 · 9:20am</span>
     </div>
-    <span class="badge" style="background:rgba(245,241,232,.12);color:#f5f1e8">A. Igwe · Media Unit</span>
-  </div>
-</nav>
-
-<div class="wrap" style="padding-top:var(--space-xl)">
-
-  <div class="spread wrap-row" style="align-items:flex-end">
-    <div>
-      <span class="eyebrow">Nigeria Maritime University</span>
-      <h1 class="h1 mt-3">Applications</h1>
-    </div>
-    <div class="row gap-2">
-      <button class="btn btn-outline btn-sm">Export</button>
-      <button class="btn btn-nmu btn-sm">+ New institution</button>
+    <div class="masthead-main">
+      <div class="masthead-lockup">
+        <span class="masthead-mark">Nigeria Maritime University</span>
+        <span class="masthead-sub">Media Unit</span>
+      </div>
+      <nav class="masthead-nav" aria-label="Staff">
+        <a href="dashboard.html" aria-current="page">Register</a>
+        <a href="payments.html">Payments</a>
+        <a href="directory.html">Public register</a>
+        <a href="#">Reports</a>
+      </nav>
+      <div class="masthead-actions">
+        <span class="ref">A. IGWE</span>
+      </div>
     </div>
   </div>
+</header>
 
-  <!-- ================= metrics ================= -->
-  <div class="metrics mt-6">
-    <div class="metric"><div class="metric-value">184</div><div class="metric-label">Total applications</div></div>
-    <div class="metric alert"><div class="metric-value">23</div><div class="metric-label">Awaiting review</div></div>
-    <div class="metric"><div class="metric-value">9</div><div class="metric-label">Under review</div></div>
-    <div class="metric alert"><div class="metric-value">7</div><div class="metric-label">Needs correction</div></div>
-    <div class="metric"><div class="metric-value">31</div><div class="metric-label">Approved, awaiting payment</div></div>
-    <div class="metric alert"><div class="metric-value">12</div><div class="metric-label">Payment awaiting confirmation</div></div>
-    <div class="metric"><div class="metric-value">96</div><div class="metric-label">Registered businesses</div></div>
-    <div class="metric"><div class="metric-value">6</div><div class="metric-label">Rejected</div></div>
+<!-- ==================== QUEUE HEADER ==================== -->
+<section class="queue-head">
+  <div class="wrap">
+    <div class="spread wrap-row gap-4" style="align-items:end">
+      <div>
+        <div class="qh-figure">23<em>.</em></div>
+        <div class="qh-label">Entries waiting to be read</div>
+      </div>
+      <p class="small" style="color:rgba(244,239,226,.62);max-width:34ch;text-align:right">
+        The oldest entry has been waiting nine days. The Department commits to a decision within
+        five working days of submission.
+      </p>
+    </div>
+    <div class="qh-strip mt-6">
+      <div class="qh-cell">
+        <span class="n">9</span>
+        <span class="l">Under review</span>
+      </div>
+      <div class="qh-cell is-alert">
+        <span class="n">7</span>
+        <span class="l">Needs correction</span>
+      </div>
+      <div class="qh-cell">
+        <span class="n">31</span>
+        <span class="l">Approved · awaiting fee</span>
+      </div>
+      <div class="qh-cell is-alert">
+        <span class="n">12</span>
+        <span class="l">Fee to confirm</span>
+      </div>
+      <div class="qh-cell">
+        <span class="n">96</span>
+        <span class="l">Registered</span>
+      </div>
+      <div class="qh-cell is-alert">
+        <span class="n">9d</span>
+        <span class="l">Oldest in queue</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap" style="padding-block:var(--space-lg) var(--space-3xl)">
+
+  <!-- ==================== RECEIVABLE ==================== -->
+  <div class="receivable">
+    <div class="row gap-5 wrap-row">
+      <div>
+        <span class="lbl">Receivable from NMU</span>
+        <span class="amt">₦4,600.00</span>
+      </div>
+      <div class="rule-v"></div>
+      <div>
+        <span class="lbl">Basis</span>
+        <span class="small sub">23 registrations · ₦200 platform fee · not yet remitted</span>
+      </div>
+      <div class="rule-v"></div>
+      <div>
+        <span class="lbl">Last reconciled</span>
+        <span class="small sub">13 Nov 2026 · statement CSV</span>
+      </div>
+    </div>
+    <a href="payments.html" class="btn btn--outline btn--sm">Open the fee ledger</a>
   </div>
 
-  <!-- ================= filters ================= -->
-  <div class="filters mt-4">
+  <!-- ==================== FILTERS ==================== -->
+  <div class="filterbar mt-6">
     <input class="input" placeholder="Search reference, business or applicant…">
-    <select class="select"><option>All statuses</option><option>Submitted</option><option>Under Review</option><option>Requires Correction</option><option>Approved — Awaiting Payment</option><option>Rejected</option></select>
+    <select class="select"><option>All statuses</option><option>Submitted</option><option>Under review</option><option>Requires correction</option><option>Approved — awaiting fee</option><option>Registered</option></select>
     <select class="select"><option>All categories</option><option>Food and Drinks</option><option>Fashion and Clothing</option><option>Technology</option><option>Laundry</option></select>
     <select class="select"><option>All campuses</option><option>Okerenkoko</option><option>Kurutie</option></select>
     <select class="select"><option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option><option>All time</option></select>
+    <select class="select"><option>Any age</option><option>Over 3 days</option><option>Over 7 days</option></select>
     <span class="grow"></span>
-    <span class="small sub">184 results</span>
+    <button class="btn btn--outline btn--sm">Export</button>
   </div>
 
-  <!-- ================= table ================= -->
-  <div class="table-wrap mt-4">
-    <table>
+  <!-- ==================== WORK QUEUE ==================== -->
+  <div class="spread wrap-row gap-3 mt-6" style="align-items:baseline">
+    <h2 class="h3">Work queue</h2>
+    <span class="small faint mono">23 shown · 184 total entries</span>
+  </div>
+
+  <div class="bulkbar mt-3" id="bulkbar">
+    <span class="n" id="bulkcount">0 selected</span>
+    <span class="grow"></span>
+    <button class="btn btn--sm">Assign to me</button>
+    <button class="btn btn--sm">Request correction</button>
+    <button class="btn btn--sm">Export selected</button>
+    <button class="btn btn--sm" onclick="clearSelection()">Clear</button>
+  </div>
+
+  <div class="table-scroll mt-3">
+    <table class="ledger">
       <thead>
         <tr>
+          <th class="c-idx"><input type="checkbox" id="check-all" aria-label="Select all"></th>
           <th>Reference</th>
           <th>Business</th>
           <th>Applicant</th>
           <th>Category</th>
           <th>Campus</th>
-          <th>Submitted</th>
+          <th>Age</th>
           <th>Status</th>
-          <th>Payment</th>
-          <th></th>
+          <th class="c-act">Next</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td class="t-ref">NMU-2026-0042</td>
-          <td><div class="t-name">Khim Culinary Institute</div></td>
-          <td>Ada Chukwuemeka</td>
-          <td>Food and Drinks</td>
-          <td>Okerenkoko</td>
-          <td class="t-sub">4 Nov 2026</td>
-          <td><span class="badge badge-gold badge-dot">Approved — awaiting payment</span></td>
-          <td><span class="badge badge-warning badge-dot">Awaiting payment</span></td>
-          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
-        </tr>
-        <tr>
-          <td class="t-ref">NMU-2026-0043</td>
-          <td><div class="t-name">Campus Bakes &amp; Co</div></td>
+      <tbody id="queue">
+        <tr data-status="submitted">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0043"></td>
+          <td class="c-ref">NMU-2026-0043</td>
+          <td class="c-name">Campus Bakes &amp; Co</td>
           <td>Tunde Alabi</td>
-          <td>Food and Drinks</td>
-          <td>Kurutie</td>
-          <td class="t-sub">14 Nov 2026</td>
-          <td><span class="badge badge-accent badge-dot">Submitted</span></td>
-          <td><span class="badge badge-dot">Not required yet</span></td>
-          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+          <td class="c-meta">Food and Drinks</td>
+          <td class="c-meta">Kurutie</td>
+          <td class="c-num">1d</td>
+          <td><span class="mark mark--info">Submitted</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="claim">Claim</button></td>
         </tr>
-        <tr>
-          <td class="t-ref">NMU-2026-0044</td>
-          <td><div class="t-name">PixelThread Studios</div></td>
+        <tr data-status="submitted">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0044"></td>
+          <td class="c-ref">NMU-2026-0044</td>
+          <td class="c-name">PixelThread Studios</td>
           <td>Grace Nwosu</td>
-          <td>Printing and Graphics</td>
-          <td>Okerenkoko</td>
-          <td class="t-sub">14 Nov 2026</td>
-          <td><span class="badge badge-accent badge-dot">Submitted</span></td>
-          <td><span class="badge badge-dot">Not required yet</span></td>
-          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+          <td class="c-meta">Printing and Graphics</td>
+          <td class="c-meta">Okerenkoko</td>
+          <td class="c-num">1d</td>
+          <td><span class="mark mark--info">Submitted</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="claim">Claim</button></td>
         </tr>
-        <tr>
-          <td class="t-ref">NMU-2026-0041</td>
-          <td><div class="t-name">Ade Tailoring House</div></td>
-          <td>Chidi Okoro</td>
-          <td>Fashion and Clothing</td>
-          <td>Kurutie</td>
-          <td class="t-sub">3 Nov 2026</td>
-          <td><span class="badge badge-warning badge-dot">Requires correction</span></td>
-          <td><span class="badge badge-dot">Not required yet</span></td>
-          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
-        </tr>
-        <tr>
-          <td class="t-ref">NMU-2026-0040</td>
-          <td><div class="t-name">Zuri Mobile Repairs</div></td>
+        <tr data-status="review">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0040"></td>
+          <td class="c-ref">NMU-2026-0040</td>
+          <td class="c-name">Zuri Mobile Repairs</td>
           <td>Blessing Eze</td>
-          <td>Technology</td>
-          <td>Okerenkoko</td>
-          <td class="t-sub">2 Nov 2026</td>
-          <td><span class="badge badge-accent badge-dot">Under review</span></td>
-          <td><span class="badge badge-dot">Not required yet</span></td>
-          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+          <td class="c-meta">Technology</td>
+          <td class="c-meta">Okerenkoko</td>
+          <td class="c-num">6d</td>
+          <td><span class="mark mark--foil">Under review</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="decide">Decide</button></td>
         </tr>
-        <tr>
-          <td class="t-ref">NMU-2026-0039</td>
-          <td><div class="t-name">Bayside Foods</div></td>
+        <tr data-status="review">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0045"></td>
+          <td class="c-ref">NMU-2026-0045</td>
+          <td class="c-name">Ada Obi Designs</td>
+          <td>Ada Obi</td>
+          <td class="c-meta">Fashion and Clothing</td>
+          <td class="c-meta">Kurutie</td>
+          <td class="c-num">4d</td>
+          <td><span class="mark mark--foil">Under review</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="decide">Decide</button></td>
+        </tr>
+        <tr data-status="correction">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0041"></td>
+          <td class="c-ref">NMU-2026-0041</td>
+          <td class="c-name">Ade Tailoring House</td>
+          <td>Chidi Okoro</td>
+          <td class="c-meta">Fashion and Clothing</td>
+          <td class="c-meta">Kurutie</td>
+          <td class="c-num">9d</td>
+          <td><span class="mark mark--warn">Needs correction</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="open">Open</button></td>
+        </tr>
+        <tr data-status="correction">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0046"></td>
+          <td class="c-ref">NMU-2026-0046</td>
+          <td class="c-name">Suya Spot</td>
+          <td>Nkem Okeke</td>
+          <td class="c-meta">Food and Drinks</td>
+          <td class="c-meta">Okerenkoko</td>
+          <td class="c-num">8d</td>
+          <td><span class="mark mark--warn">Needs correction</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="open">Open</button></td>
+        </tr>
+        <tr data-status="awaiting-fee">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0042"></td>
+          <td class="c-ref">NMU-2026-0042</td>
+          <td class="c-name">Khim Culinary Institute</td>
+          <td>Ada Chukwuemeka</td>
+          <td class="c-meta">Food and Drinks</td>
+          <td class="c-meta">Okerenkoko</td>
+          <td class="c-num">4d</td>
+          <td><span class="mark mark--foil">Approved — awaiting fee</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="remind">Remind</button></td>
+        </tr>
+        <tr data-status="fee-submitted">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0039"></td>
+          <td class="c-ref">NMU-2026-0039</td>
+          <td class="c-name">Bayside Foods</td>
           <td>Ibrahim Yusuf</td>
-          <td>Food and Drinks</td>
-          <td>Kurutie</td>
-          <td class="t-sub">1 Nov 2026</td>
-          <td><span class="badge badge-success badge-dot">Registered / Verified</span></td>
-          <td><span class="badge badge-success badge-dot">Payment confirmed</span></td>
-          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+          <td class="c-meta">Food and Drinks</td>
+          <td class="c-meta">Kurutie</td>
+          <td class="c-num">2d</td>
+          <td><span class="mark mark--warn">Fee submitted — to confirm</span></td>
+          <td class="c-act"><a class="btn btn--outline btn--sm" href="payments.html">Verify</a></td>
         </tr>
-        <tr>
-          <td class="t-ref">NMU-2026-0038</td>
-          <td><div class="t-name">Larus Graphics Ltd</div></td>
+        <tr data-status="registered">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0038"></td>
+          <td class="c-ref">NMU-2026-0038</td>
+          <td class="c-name">Larus Graphics Ltd</td>
           <td>Sade Ojo</td>
-          <td>Printing and Graphics</td>
-          <td>Kurutie</td>
-          <td class="t-sub">30 Oct 2026</td>
-          <td><span class="badge badge-success badge-dot">Registered / Verified</span></td>
-          <td><span class="badge badge-success badge-dot">Payment confirmed</span></td>
-          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+          <td class="c-meta">Printing and Graphics</td>
+          <td class="c-meta">Kurutie</td>
+          <td class="c-num">3d</td>
+          <td><span class="mark mark--good mark--solid">Registered</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="open">Open</button></td>
         </tr>
-        <tr>
-          <td class="t-ref">NMU-2026-0037</td>
-          <td><div class="t-name">Fresh Fit Laundry</div></td>
+        <tr data-status="registered">
+          <td class="c-idx"><input type="checkbox" class="row-check" aria-label="Select NMU-2026-0037"></td>
+          <td class="c-ref">NMU-2026-0037</td>
+          <td class="c-name">Fresh Fit Laundry</td>
           <td>Michael Udo</td>
-          <td>Laundry</td>
-          <td>Okerenkoko</td>
-          <td class="t-sub">29 Oct 2026</td>
-          <td><span class="badge badge-danger badge-dot">Rejected</span></td>
-          <td><span class="badge badge-dot">Not required yet</span></td>
-          <td><a href="review.html" class="btn btn-outline btn-sm">Open</a></td>
+          <td class="c-meta">Laundry</td>
+          <td class="c-meta">Okerenkoko</td>
+          <td class="c-num">5d</td>
+          <td><span class="mark mark--good mark--solid">Registered</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm" data-next="open">Open</button></td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div class="row spread mt-4">
-    <span class="small sub">Showing 1–8 of 184</span>
+  <div class="spread wrap-row gap-3 mt-4">
+    <span class="small faint mono">Showing 1–10 of 23 in the queue</span>
     <div class="row gap-2">
-      <button class="btn btn-outline btn-sm">Previous</button>
-      <button class="btn btn-outline btn-sm">Next</button>
+      <button class="btn btn--outline btn--sm">Previous</button>
+      <button class="btn btn--outline btn--sm">Next</button>
     </div>
   </div>
 
-  <!-- ================= recent activity ================= -->
-  <div class="kv-split mt-6" style="align-items:start">
-    <div class="card card-pad">
-      <div class="spread">
-        <h2 class="h3">Recent decisions</h2>
-        <a href="#" class="small" style="color:var(--nmu-tide)">View all</a>
+  <!-- ==================== RECENT DECISIONS ==================== -->
+  <div class="split split-side mt-8">
+    <div>
+      <div class="section-head">
+        <h2>Recent decisions</h2>
+        <span class="meta">Today</span>
       </div>
-      <div class="timeline mt-5">
-        <div class="tl-item done" style="padding-bottom:20px">
-          <span class="tl-dot"></span>
-          <div class="tl-title">Approved — Bayside Foods</div>
-          <div class="tl-meta">NMU-2026-0039 · A. Igwe · 1 Nov 2026, 2:14pm</div>
+      <div class="log">
+        <div class="log-item is-done">
+          <span class="log-mark"></span>
+          <div>
+            <div class="log-title">Approved — Bayside Foods</div>
+            <div class="log-meta">NMU-2026-0039 · A. Igwe · 15 Nov 2026, 9:02am</div>
+          </div>
         </div>
-        <div class="tl-item done" style="padding-bottom:20px">
-          <span class="tl-dot"></span>
-          <div class="tl-title">Correction requested — Ade Tailoring House</div>
-          <div class="tl-meta">NMU-2026-0041 · A. Igwe · 31 Oct 2026, 11:52am</div>
-          <div class="tl-body">"Flyer does not show the business name or a contact number."</div>
+        <div class="log-item is-done">
+          <span class="log-mark"></span>
+          <div>
+            <div class="log-title">Correction requested — Ade Tailoring House</div>
+            <div class="log-meta">NMU-2026-0041 · A. Igwe · 14 Nov 2026, 11:52am</div>
+            <div class="log-body">"Flyer does not show the business name or a contact number."</div>
+          </div>
         </div>
-        <div class="tl-item done" style="padding-bottom:20px">
-          <span class="tl-dot"></span>
-          <div class="tl-title">Rejected — Fresh Fit Laundry</div>
-          <div class="tl-meta">NMU-2026-0037 · D. Bello · 29 Oct 2026, 4:07pm</div>
-          <div class="tl-body">"The uploaded flyer belongs to another business."</div>
+        <div class="log-item is-done">
+          <span class="log-mark"></span>
+          <div>
+            <div class="log-title">Rejected — Fresh Fit Laundry</div>
+            <div class="log-meta">NMU-2026-0037 · D. Bello · 13 Nov 2026, 4:07pm</div>
+            <div class="log-body">"The uploaded flyer belongs to another business."</div>
+          </div>
         </div>
-        <div class="tl-item done">
-          <span class="tl-dot"></span>
-          <div class="tl-title">Payment confirmed — Larus Graphics Ltd</div>
-          <div class="tl-meta">NMU-2026-0038 · Finance · 30 Oct 2026, 9:20am</div>
+        <div class="log-item is-done" style="border-bottom:0">
+          <span class="log-mark"></span>
+          <div>
+            <div class="log-title">Fee confirmed — Larus Graphics Ltd</div>
+            <div class="log-meta">NMU-2026-0038 · O. Lawson · 13 Nov 2026, 9:20am</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="card card-pad">
-      <h2 class="h3">Payments awaiting confirmation</h2>
-      <p class="small sub mt-2">12 applications have payment evidence waiting.</p>
-      <div class="stack gap-3 mt-5">
-        <div class="row spread card card-pad card-sunken" style="padding:14px">
-          <div>
-            <div class="t-name">Khim Culinary Institute</div>
-            <div class="t-sub mono">NMU-2026-0042 · ₦5,000.00 · 14 Nov</div>
-          </div>
-          <a href="payments.html" class="btn btn-outline btn-sm">Review</a>
+    <div>
+      <div class="section-head">
+        <h2>Waiting on a fee</h2>
+        <span class="meta">12 entries</span>
+      </div>
+      <div class="folio-list">
+        <div class="folio-row folio-row--pair">
+          <span class="name" style="font-size:1rem">Khim Culinary Institute</span>
+          <span class="code">NMU-2026-0042 · 4d</span>
         </div>
-        <div class="row spread card card-pad card-sunken" style="padding:14px">
-          <div>
-            <div class="t-name">Ada Obi Designs</div>
-            <div class="t-sub mono">NMU-2026-0035 · ₦5,200.00 · 13 Nov</div>
-          </div>
-          <a href="payments.html" class="btn btn-outline btn-sm">Review</a>
+        <div class="folio-row folio-row--pair">
+          <span class="name" style="font-size:1rem">Ada Obi Designs</span>
+          <span class="code">NMU-2026-0035 · 6d</span>
         </div>
-        <div class="row spread card card-pad card-sunken" style="padding:14px">
-          <div>
-            <div class="t-name">Anchor Books</div>
-            <div class="t-sub mono">NMU-2026-0033 · ₦5,000.00 · 12 Nov</div>
-          </div>
-          <a href="payments.html" class="btn btn-outline btn-sm">Review</a>
+        <div class="folio-row folio-row--pair">
+          <span class="name" style="font-size:1rem">Anchor Books</span>
+          <span class="code">NMU-2026-0033 · 5d</span>
+        </div>
+        <div class="folio-row folio-row--pair">
+          <span class="name" style="font-size:1rem">Campus Bakes &amp; Co</span>
+          <span class="code">NMU-2026-0031 · 7d</span>
         </div>
       </div>
+      <a href="payments.html" class="btn btn--outline btn--sm mt-4">Open the fee ledger</a>
     </div>
   </div>
 </div>
+
+<!-- ==================== DOSSIER DRAWER ==================== -->
+<div class="drawer-scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Entry dossier">
+  <div class="drawer-head">
+    <div>
+      <div class="caption">Entry dossier</div>
+      <h2 class="h3 mt-2" id="d-name">Khim Culinary Institute</h2>
+      <div class="row gap-3 mt-3 wrap-row">
+        <span class="ref" id="d-ref">NMU-2026-0042</span>
+        <span class="mark mark--foil" id="d-status">Approved — awaiting fee</span>
+      </div>
+    </div>
+    <button class="drawer-close" id="drawer-close" aria-label="Close dossier">✕</button>
+  </div>
+
+  <div class="drawer-body">
+    <div class="dossier-section">
+      <div class="dh">01 — Applicant</div>
+      <div class="dv">Ada Chukwuemeka</div>
+      <div class="small faint mono mt-1">0803 456 7890 · ada@khimculinary.ng · Owner</div>
+    </div>
+    <div class="dossier-section">
+      <div class="dh">02 — Business</div>
+      <div class="dv">Khim Culinary Institute</div>
+      <div class="small faint mono mt-1">Food and Drinks · Okerenkoko · Beside the Main Gate</div>
+    </div>
+    <div class="dossier-section">
+      <div class="dh">03 — Statement</div>
+      <div class="small sub">Founded in 2024 by Food Science and Technology students. We bake cakes, pastries and snacks and take pre-orders for campus events. Free pastry workshops each semester; eight student interns.</div>
+    </div>
+    <div class="dossier-section">
+      <div class="dh">04 — Materials</div>
+      <div class="row gap-3 mt-2">
+        <div class="file-thumb" style="width:64px;height:48px"></div>
+        <div class="file-thumb" style="width:64px;height:48px"></div>
+        <div class="small faint mono" style="align-self:center">2 files · flyer + shop front</div>
+      </div>
+    </div>
+    <div class="dossier-section">
+      <div class="dh">05 — Online presence</div>
+      <div class="small sub">khimculinary.ng · instagram.com/khimculinary · WhatsApp ordering</div>
+    </div>
+    <div class="dossier-section">
+      <div class="dh">06 — Declaration and consent</div>
+      <div class="row gap-4 wrap-row mt-2">
+        <span class="mark mark--good mark--solid">Accuracy</span>
+        <span class="mark mark--good mark--solid">Terms</span>
+        <span class="mark mark--good mark--solid">Privacy</span>
+        <span class="mark mark--good mark--solid">Listing</span>
+      </div>
+      <div class="small faint mono mt-3">Confirmed 4 Nov 2026, 3:42pm</div>
+    </div>
+  </div>
+
+  <div class="drawer-foot">
+    <div class="stack gap-2">
+      <button class="btn btn--primary btn--block">Approve entry</button>
+      <div class="row gap-2">
+        <button class="btn btn--outline btn--sm grow">Request correction</button>
+        <button class="btn btn--outline btn--sm grow">Reject</button>
+      </div>
+    </div>
+    <a href="review.html" class="small mt-3" style="display:inline-block;text-decoration:underline;text-underline-offset:3px">Open the full record</a>
+  </div>
+</aside>
+
+<script src="site.js"></script>
+<script>
+  /* ---- bulk selection ---- */
+  function clearSelection() {
+    document.querySelectorAll('.row-check').forEach(function (c) { c.checked = false; });
+    document.querySelectorAll('#queue tr').forEach(function (r) { r.classList.remove('is-selected'); });
+    document.getElementById('bulkbar').classList.remove('is-on');
+    document.getElementById('bulkcount').textContent = '0 selected';
+  }
+  function syncSelection() {
+    var n = 0;
+    document.querySelectorAll('.row-check').forEach(function (c) {
+      c.closest('tr').classList.toggle('is-selected', c.checked);
+      if (c.checked) n++;
+    });
+    document.getElementById('bulkbar').classList.toggle('is-on', n > 0);
+    document.getElementById('bulkcount').textContent = n + ' selected';
+  }
+  document.querySelectorAll('.row-check').forEach(function (c) {
+    c.addEventListener('change', syncSelection);
+  });
+  document.getElementById('check-all').addEventListener('change', function (e) {
+    document.querySelectorAll('.row-check').forEach(function (c) { c.checked = e.target.checked; });
+    syncSelection();
+  });
+
+  /* ---- dossier drawer ---- */
+  var drawer = document.getElementById('drawer');
+  var scrim  = document.getElementById('scrim');
+  function openDossier(tr) {
+    var cells = tr.querySelectorAll('td');
+    document.getElementById('d-ref').textContent    = cells[1].textContent.trim();
+    document.getElementById('d-name').textContent   = cells[2].textContent.trim();
+    document.getElementById('d-status').textContent = cells[7].textContent.trim();
+    drawer.classList.add('is-open');
+    scrim.classList.add('is-open');
+  }
+  function closeDossier() {
+    drawer.classList.remove('is-open');
+    scrim.classList.remove('is-open');
+  }
+  document.querySelectorAll('#queue tr').forEach(function (tr) {
+    var btn = tr.querySelector('[data-next]');
+    if (!btn) { return; }
+    btn.addEventListener('click', function () {
+      if (btn.getAttribute('data-next') === 'open') { openDossier(tr); }
+    });
+  });
+  document.getElementById('drawer-close').addEventListener('click', closeDossier);
+  scrim.addEventListener('click', closeDossier);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDossier(); });
+</script>
 
 </body>
 </html>

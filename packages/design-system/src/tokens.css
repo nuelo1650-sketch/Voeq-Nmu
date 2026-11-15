@@ -141,58 +141,82 @@
 }
 
 /* ---------------------------------------------------------------------------
-   NMU INSTITUTIONAL BRAND LAYER
+   NMU REGISTER LAYER  —  "The Register"
    ---------------------------------------------------------------------------
-   A warm hybrid: voeq.ng's paper-and-forest foundation carries the product,
-   and a deep maritime-teal layer gives the NMU surfaces their own identity.
+   Authored for the NMU Business Register. NOT extracted from voeq.ng — this is a
+   deliberate second material. See docs/08-DESIGN-DIRECTION.md.
 
-   Division of labour:
-     cream / forest / gold  →  shared with voeq.ng. The marketplace voice.
-     nmu-deep / nmu-tide    →  NMU only. Institutional voice, NMU badge,
-                               masthead, section markers, form accents.
-   Never use the NMU layer inside a marketplace surface, and never use the
-   voeq.ng palette inside an NMU institutional band without the NMU badge.
+   Relationship to the marketplace tokens above: the register's paper, ink and
+   seal are the marketplace's cream / forest / forest-mid, deepened and
+   re-specified; the foil is a muted version of the marketplace amber; the
+   marine is the NMU's own identity and appears only on the chart field and the
+   queue header. The register must feel native to voeq.ng without looking like
+   a recoloured copy of it.
+
+   The earlier --nmu-* maritime-teal layer is WITHDRAWN. A fourth hue was the
+   "basic" move. The maritime identity is carried by the chart, the seal and the
+   register grammar — not by a swatch.
    --------------------------------------------------------------------------- */
 
-:root,
-:root[data-env="cream"] {
-  /* Deep maritime teal — masthead ground, seals, the NMU badge */
-  --nmu-deep: #0b3543;
-  --nmu-deep-strong: #07252f;
-  --nmu-deep-line: #17495a;
+:root {
+  /* ---- Paper ---- */
+  --reg-paper: #f4efe2;
+  --reg-paper-2: #ede6d4;
+  --reg-paper-3: #e4dcc6;
+  --reg-paper-hi: #fbf8ef;
 
-  /* Tide — NMU interactive accent (links, focused controls) */
-  --nmu-tide: #12586b;
-  --nmu-tide-hover: #0e4757;
-  --nmu-tide-soft: #e6eff1;
-  --nmu-tide-line: #b9d4da;
+  /* ---- Ink ---- */
+  --reg-ink: #1e3a29;
+  --reg-ink-soft: #33493b;
+  --reg-ink-faint: #6b7a6e;
 
-  /* The NMU badge — deliberately distinct from the marketplace "Verified" mark */
-  --nmu-badge-bg: #0b3543;
-  --nmu-badge-ink: #f5f1e8;
-  --nmu-badge-dot: #e8a33d;
+  /* ---- Marine: the NMU identity. Chart field, queue header, seals ---- */
+  --reg-marine: #12333d;
+  --reg-marine-deep: #0b242b;
+  --reg-marine-lift: #1e4e5c;
 
-  /* Panel ground for NMU-owned surfaces */
-  --nmu-panel: #ffffff;
-  --nmu-panel-sunken: #f4f1ea;
+  /* ---- Foil: structural and decorative only. NEVER body copy ---- */
+  --reg-foil: #9c7a2e;
+  --reg-foil-light: #c9a227;
+
+  /* ---- Rules ---- */
+  --reg-rule: #c9be9e;
+  --reg-line: #d8cfb4;
+
+  /* ---- Signal ---- */
+  --reg-signal: #a8492e;
+  --reg-seal: #2d5a3d;
+
+  /* ---- Type ----
+     Fraunces, not Playfair. Playfair on cream is the generated look; Fraunces
+     has optical sizing, so one family sets a 72px masthead and a 20px business
+     name with different proportions. IBM Plex Mono carries every number and
+     label, which is what makes the staff surfaces read as instruments. */
+  --reg-font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --reg-font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --reg-font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* ---- Measure ---- */
+  --reg-measure: 38ch;
+  --reg-measure-wide: 52ch;
+
+  /* ---- Geometry ----
+     Radius 0 on everything except chips. The printed-form language, not the
+     consumer UI. */
+  --reg-radius: 0;
+  --reg-radius-chip: 999px;
+
+  /* ---- Chart field ---- */
+  --reg-chart-opacity: 1;
+  --reg-chart-line: var(--reg-marine-lift);
+  --reg-chart-ground: var(--reg-marine-deep);
+  --reg-chart-plot: var(--reg-foil-light);
 }
 
-[data-env="deep"] {
-  --nmu-deep: #0a2c37;
-  --nmu-deep-strong: #071f28;
-  --nmu-deep-line: #1d4e5e;
-
-  --nmu-tide: #6fc3d8;
-  --nmu-tide-hover: #8fd4e6;
-  --nmu-tide-soft: #10333d;
-  --nmu-tide-line: #24596a;
-
-  --nmu-badge-bg: #0b3543;
-  --nmu-badge-ink: #9fe1cb;
-  --nmu-badge-dot: #e8a33d;
-
-  --nmu-panel: #12333e;
-  --nmu-panel-sunken: #0c2630;
+/* Staff surfaces sit on the ledger ground — a bound book, not a screen. */
+[data-surface="ledger"] {
+  --reg-paper: #ede6d4;
+  --reg-paper-2: #e4dcc6;
 }
 
 /* Body defaults — mirror voeq.ng exactly */

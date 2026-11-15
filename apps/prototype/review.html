@@ -1,76 +1,96 @@
 <!DOCTYPE html>
-<html lang="en" data-env="deep">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NMU-2026-0041 · Ade Tailoring House — Media Unit — NMU</title>
-<link rel="stylesheet" href="prototype.css">
+<title>NMU-2026-0041 · Ade Tailoring House — NMU Media Unit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
+  <link rel="stylesheet" href="prototype.css">
 </head>
 <body>
 
-<nav class="nav">
-  <div class="wrap row gap-4">
-    <a href="index.html" class="nav-logo">voeq</a>
-    <span class="nav-mark"><span class="nav-mark-dot"></span> Media Unit · NMU</span>
-    <div class="nav-spacer"></div>
-    <div class="nav-links">
-      <a href="dashboard.html">Applications</a>
-      <a href="payments.html">Payments</a>
-      <a href="#">Directory</a>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="masthead-meta">
+      <span>NMU Media Department · Entry record</span>
+      <span>Revision 2 of 2 · last edited 3 Nov 2026, 9:12am</span>
     </div>
-    <span class="badge" style="background:rgba(245,241,232,.12);color:#f5f1e8">A. Igwe</span>
-  </div>
-</nav>
-
-<div class="wrap" style="padding-top:var(--space-xl)">
-
-  <!-- ================= header ================= -->
-  <div class="spread wrap-row" style="align-items:flex-start">
-    <div>
-      <div class="row gap-3 wrap-row">
-        <a href="dashboard.html" class="small" style="color:var(--role-text-muted)">← All applications</a>
+    <div class="masthead-main">
+      <div class="masthead-lockup">
+        <span class="masthead-mark">Nigeria Maritime University</span>
+        <span class="masthead-sub">Media Unit</span>
       </div>
-      <h1 class="h1 mt-3">Ade Tailoring House</h1>
-      <div class="row gap-3 mt-3 wrap-row">
+      <nav class="masthead-nav" aria-label="Staff">
+        <a href="dashboard.html" aria-current="page">Register</a>
+        <a href="payments.html">Payments</a>
+        <a href="directory.html">Public register</a>
+      </nav>
+      <div class="masthead-actions">
+        <span class="ref">A. IGWE</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" style="padding-block:var(--space-xl) var(--space-3xl)">
+
+  <!-- ==================== header ==================== -->
+  <a href="dashboard.html" class="small faint" style="display:inline-block">← Back to the register</a>
+
+  <div class="spread wrap-row gap-4 mt-4" style="align-items:flex-end">
+    <div>
+      <span class="eyebrow">Entry record</span>
+      <h1 class="h1 mt-4">Ade Tailoring House</h1>
+      <div class="row gap-3 mt-4 wrap-row">
         <span class="ref">NMU-2026-0041</span>
-        <span class="badge badge-warning badge-dot">Requires correction</span>
-        <span class="badge badge-dot">Revision 2 of 2</span>
+        <span class="mark mark--warn mark--solid">Needs correction</span>
+        <span class="small faint mono">Revision 2 of 2 · submitted 1 Oct 2026</span>
       </div>
     </div>
     <div class="row gap-2">
-      <button class="btn btn-outline btn-sm">Assign to me</button>
-      <button class="btn btn-outline btn-sm">Print</button>
+      <button class="btn btn--outline btn--sm">Assign to me</button>
+      <button class="btn btn--outline btn--sm">Print</button>
     </div>
   </div>
 
-  <div class="split split-wide mt-6">
+  <!-- ==================== correction banner ==================== -->
+  <div class="banner banner--warn mt-6">
+    <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17h.01"/></svg>
+    <div>
+      <div class="banner-title">Corrections requested — waiting on the applicant</div>
+      <div class="banner-body">Requested 31 Oct 2026. The entry stays editable by the applicant until it is resubmitted, and the reference number does not change.</div>
+    </div>
+  </div>
 
-    <!-- ================= application ================= -->
-    <div class="stack gap-4">
+  <div class="split split-wide mt-7" style="gap:var(--space-2xl)">
 
-      <!-- banner -->
-      <div class="banner banner-warn">
-        <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17h.01"/></svg>
-        <div>
-          <div class="banner-title">Corrections requested — waiting on the applicant</div>
-          <div class="banner-body">Requested 31 Oct 2026. The application is editable by the applicant until it is resubmitted.</div>
+    <!-- ==================== the record ==================== -->
+    <div>
+
+      <div class="form-section">
+        <div class="form-section-head">
+          <span class="fs-n">01</span>
+          <h2>Applicant</h2>
         </div>
-      </div>
-
-      <!-- section 1 -->
-      <div class="card card-pad">
-        <div class="spread"><h2 class="h3">Applicant information</h2><span class="caption">Section 1 of 6</span></div>
         <dl class="spec mt-4">
           <dt>Full name</dt><dd>Chidi Okoro</dd>
           <dt>Phone number</dt><dd class="mono">0805 221 4478</dd>
           <dt>Email address</dt><dd>chidi@adetailoring.ng</dd>
-          <dt>Relationship with business</dt><dd>Owner</dd>
+          <dt>Relationship</dt><dd>Owner</dd>
+          <dt>Submitted</dt><dd class="mono">1 Oct 2026, 4:31pm · first submission</dd>
         </dl>
       </div>
 
-      <!-- section 2 -->
-      <div class="card card-pad">
-        <div class="spread"><h2 class="h3">Business information</h2><span class="caption">Section 2 of 6</span></div>
+      <div class="form-section">
+        <div class="form-section-head">
+          <span class="fs-n">02</span>
+          <h2>Business</h2>
+        </div>
         <dl class="spec mt-4">
           <dt>Business name</dt><dd>Ade Tailoring House</dd>
           <dt>Category</dt><dd>Fashion and Clothing</dd>
@@ -80,133 +100,157 @@
         </dl>
       </div>
 
-      <!-- section 3 -->
-      <div class="card card-pad">
-        <div class="spread"><h2 class="h3">Statement of business purpose</h2><span class="caption">Section 3 of 6</span></div>
-        <p class="mt-4 small" style="line-height:1.6">Ade Tailoring House is a student-run tailoring business operating from Market Row on the Kurutie campus. We make and sell ready-made shirts, trousers and simple traditional outfits at student prices, and we offer alteration and fitting services for clothes bought elsewhere. We hold fittings twice a week and take walk-ins the rest of the time. We employ four students on a part-time basis and intend to take on more as the business grows through the semester.</p>
+      <div class="form-section">
+        <div class="form-section-head">
+          <span class="fs-n">03</span>
+          <h2>Statement of business purpose</h2>
+        </div>
+        <p class="sub mt-4" style="max-width:62ch">
+          Ade Tailoring House is a student-run tailoring business operating from Market Row on the
+          Kurutie campus. We make and sell ready-made shirts, trousers and simple traditional
+          outfits at student prices, and we offer alteration and fitting services for clothes
+          bought elsewhere. We hold fittings twice a week and take walk-ins the rest of the time.
+          We employ four students part-time and intend to take on more as the business grows
+          through the semester.
+        </p>
       </div>
 
-      <!-- section 4 -->
-      <div class="card card-pad">
-        <div class="spread"><h2 class="h3">Promotional materials</h2><span class="caption">Section 4 of 6</span></div>
+      <div class="form-section">
+        <div class="form-section-head">
+          <span class="fs-n">04</span>
+          <h2>Promotional materials</h2>
+        </div>
         <div class="row gap-4 mt-4 wrap-row">
           <figure style="margin:0">
-            <div style="width:190px;aspect-ratio:16/10;border-radius:var(--radius-md);background:linear-gradient(140deg,#0b3543,#16687f)"></div>
-            <figcaption class="caption mt-2">ade-flyer.jpg · 1.9 MB</figcaption>
+            <div style="width:200px;aspect-ratio:16/10;background:var(--marine);border:1px solid var(--rule);position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(201,162,39,.16) 0 2px,transparent 2px 7px)"></div>
+            </div>
+            <figcaption class="tiny faint mono mt-2">ade-flyer-v2.jpg · 1.9 MB · uploaded 3 Nov</figcaption>
           </figure>
           <figure style="margin:0">
-            <div style="width:190px;aspect-ratio:16/10;border-radius:var(--radius-md);background:linear-gradient(140deg,#12333e,#2d5a3d)"></div>
-            <figcaption class="caption mt-2">shop-front.jpg · 2.3 MB</figcaption>
+            <div style="width:200px;aspect-ratio:16/10;background:var(--marine);border:1px solid var(--rule);position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(201,162,39,.10) 0 3px,transparent 3px 9px)"></div>
+            </div>
+            <figcaption class="tiny faint mono mt-2">shop-front.jpg · 2.3 MB · uploaded 3 Nov</figcaption>
           </figure>
         </div>
-        <div class="banner banner-warn mt-4">
+        <div class="banner banner--warn mt-5">
           <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17h.01"/></svg>
           <div>
-            <div class="banner-title">This is what was flagged</div>
-            <div class="banner-body">The flyer does not show the business name or a contact number, so a customer cannot identify the business from the listing image.</div>
+            <div class="banner-title">What was flagged on revision 1</div>
+            <div class="banner-body">The original flyer did not show the business name or a contact number, so a customer could not identify the business from the listing image. Revision 2 resolves it.</div>
           </div>
         </div>
       </div>
 
-      <!-- section 5 -->
-      <div class="card card-pad">
-        <div class="spread"><h2 class="h3">Digital presence and supporting evidence</h2><span class="caption">Section 5 of 6</span></div>
+      <div class="form-section">
+        <div class="form-section-head">
+          <span class="fs-n">05</span>
+          <h2>Online presence</h2>
+        </div>
         <dl class="spec mt-4">
           <dt>Has online presence</dt><dd>Yes</dd>
-          <dt>Social media page</dt><dd><a href="#" style="color:var(--nmu-tide)">instagram.com/adetailoringhouse</a></dd>
-          <dt>Explanation of digital services</dt><dd class="small" style="font-weight:400">Orders and fittings are booked through WhatsApp and Instagram. We post the week's fabric arrivals every Saturday.</dd>
+          <dt>Social media page</dt><dd><a href="#" style="text-decoration:underline;text-underline-offset:3px">instagram.com/adetailoringhouse</a></dd>
+          <dt>Digital services</dt><dd class="sub">Orders and fittings are booked through WhatsApp and Instagram. We post the week's fabric arrivals every Saturday.</dd>
         </dl>
       </div>
 
-      <!-- section 6 -->
-      <div class="card card-pad">
-        <div class="spread"><h2 class="h3">Declaration and consent</h2><span class="caption">Section 6 of 6</span></div>
-        <div class="stack gap-2 mt-4 small sub">
-          <div class="row gap-2"><span style="color:var(--role-success-text)">✓</span> Information submitted is accurate and complete</div>
-          <div class="row gap-2"><span style="color:var(--role-success-text)">✓</span> Uploaded materials genuinely represent the business</div>
-          <div class="row gap-2"><span style="color:var(--role-success-text)">✓</span> Applicant is authorised to submit on behalf of the business</div>
-          <div class="row gap-2"><span style="color:var(--role-success-text)">✓</span> Declaration confirmed 3 Nov 2026, 9:12am</div>
+      <div class="form-section">
+        <div class="form-section-head">
+          <span class="fs-n">06</span>
+          <h2>Declaration and consent</h2>
         </div>
+        <div class="row gap-4 wrap-row mt-4">
+          <span class="mark mark--good mark--solid">Accuracy confirmed</span>
+          <span class="mark mark--good mark--solid">Terms agreed</span>
+          <span class="mark mark--good mark--solid">Privacy agreed</span>
+          <span class="mark mark--good mark--solid">Listing agreed</span>
+        </div>
+        <p class="tiny faint mono mt-3">Confirmed by the applicant on 3 Nov 2026, 9:12am · stored with the audit trail</p>
       </div>
 
-      <!-- history -->
-      <div class="card card-pad">
-        <h2 class="h3">Application history</h2>
-        <div class="timeline mt-5">
-          <div class="tl-item done">
-            <span class="tl-dot"></span>
-            <div class="tl-title">Correction requested</div>
-            <div class="tl-meta">A. Igwe · 31 Oct 2026, 11:52am</div>
-            <div class="tl-body">"Flyer does not show the business name or a contact number. Please upload a flyer that shows both, and confirm the shop location."</div>
+      <div class="form-section">
+        <div class="form-section-head">
+          <span class="fs-n">—</span>
+          <h2>History</h2>
+        </div>
+        <div class="log mt-4">
+          <div class="log-item is-done">
+            <span class="log-mark"></span>
+            <div>
+              <div class="log-title">Correction requested</div>
+              <div class="log-meta">A. Igwe · 31 Oct 2026, 11:52am</div>
+              <div class="log-body">"Flyer does not show the business name or a contact number. Please upload a flyer that shows both, and confirm the shop location."</div>
+            </div>
           </div>
-          <div class="tl-item done">
-            <span class="tl-dot"></span>
-            <div class="tl-title">Resubmitted — revision 2</div>
-            <div class="tl-meta">Applicant · 3 Nov 2026, 9:12am</div>
-            <div class="tl-body">New flyer uploaded: <span class="mono">ade-flyer-v2.jpg</span>. Shop location confirmed as Shop 4, Market Row.</div>
+          <div class="log-item is-done">
+            <span class="log-mark"></span>
+            <div>
+              <div class="log-title">Resubmitted — revision 2</div>
+              <div class="log-meta">Applicant · 3 Nov 2026, 9:12am</div>
+              <div class="log-body">New flyer uploaded: <span class="mono">ade-flyer-v2.jpg</span>. Shop location confirmed as Shop 4, Market Row.</div>
+            </div>
           </div>
-          <div class="tl-item done">
-            <span class="tl-dot"></span>
-            <div class="tl-title">Submitted — revision 1</div>
-            <div class="tl-meta">Applicant · 1 Oct 2026, 4:31pm</div>
+          <div class="log-item is-done" style="border-bottom:0">
+            <span class="log-mark"></span>
+            <div>
+              <div class="log-title">Submitted — revision 1</div>
+              <div class="log-meta">Applicant · 1 Oct 2026, 4:31pm</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ================= review panel ================= -->
-    <aside class="stack gap-3" style="position:sticky;top:76px">
-
-      <div class="card card-pad">
-        <h2 class="h3">Review actions</h2>
+    <!-- ==================== decision panel ==================== -->
+    <aside style="position:sticky;top:24px">
+      <div class="block" style="border-top-width:2px;border-top-color:var(--ink);padding-top:var(--space-md)">
+        <h2 class="h3">Decision</h2>
         <p class="small sub mt-2">Your decision is recorded against your name and cannot be edited afterwards.</p>
 
         <div class="stack gap-2 mt-5">
-          <button class="btn btn-nmu btn-block">Approve application</button>
-          <button class="btn btn-outline btn-block" style="border-color:var(--role-warning);color:var(--role-warning)">Request corrections</button>
-          <button class="btn btn-outline btn-block" style="border-color:var(--role-danger);color:var(--role-danger)">Reject application</button>
+          <button class="btn btn--primary btn--block">Approve entry</button>
+          <button class="btn btn--outline btn--block" style="border-color:var(--signal);color:var(--signal)">Request corrections</button>
+          <button class="btn btn--outline btn--block" style="border-color:var(--signal);color:var(--signal)">Reject entry</button>
         </div>
 
-        <hr class="rule mt-5" style="margin-block:var(--space-lg)">
-
-        <div class="field">
+        <div class="field mt-5">
           <label class="label" for="notes">Internal notes</label>
           <textarea class="textarea" id="notes" style="min-height:92px" placeholder="Only visible to staff."></textarea>
           <span class="hint">Not visible to the applicant, and never shown publicly.</span>
         </div>
       </div>
 
-      <div class="card card-pad">
-        <h3 class="h3">Applicant</h3>
-        <dl class="spec spec-stack mt-4">
-          <dt>Chidi Okoro</dt>
-          <dd class="small" style="font-weight:400">0805 221 4478 · chidi@adetailoring.ng</dd>
-        </dl>
-        <div class="row gap-2 mt-4">
-          <button class="btn btn-outline btn-sm">Email applicant</button>
-          <button class="btn btn-outline btn-sm">Call</button>
+      <div class="margin-note">
+        <h3>Applicant</h3>
+        <p class="mt-2" style="font-size:.9375rem;color:var(--ink)">Chidi Okoro</p>
+        <p class="mono" style="font-size:.75rem">0805 221 4478<br>chidi@adetailoring.ng</p>
+        <div class="row gap-2 mt-3">
+          <button class="btn btn--outline btn--sm">Email applicant</button>
+          <button class="btn btn--outline btn--sm">Call</button>
         </div>
       </div>
 
-      <div class="card card-pad">
-        <h3 class="h3">Linked Voeq profile</h3>
-        <div class="row gap-2 mt-3"><span class="badge badge-nmu">Matches existing vendor</span></div>
-        <p class="small sub mt-3">"Ade Tailoring House" already exists on voeq.ng as vendor <span class="mono">v_8f21c4</span> on Kurutie campus. On approval this application will link to it rather than create a duplicate.</p>
+      <div class="margin-note">
+        <h3>Linked voeq.ng profile</h3>
+        <p class="mt-2">"Ade Tailoring House" already exists on voeq.ng as vendor <span class="mono">v_8f21c4</span> on Kurutie campus. On approval this entry links to it rather than creating a duplicate.</p>
+        <span class="mark mark--good mark--solid mt-3">Existing vendor matched</span>
       </div>
     </aside>
+
   </div>
 </div>
 
-<!-- ================= confirm dialog ================= -->
-<div style="position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(7,37,47,.62);z-index:100">
-  <div class="dialog" style="max-width:520px;width:100%;box-shadow:var(--shadow-lg)">
-    <div class="row gap-3" style="align-items:flex-start">
-      <span class="icon-lg" style="color:var(--role-warning);margin-top:2px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17h.01"/></svg>
+<!-- ==================== confirm dialog ==================== -->
+<div style="position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(11,36,43,.62);z-index:100">
+  <div class="dialog">
+    <div class="row gap-4" style="align-items:flex-start">
+      <span style="color:var(--signal);margin-top:2px;flex:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="width:22px;height:22px"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17h.01"/></svg>
       </span>
       <div class="grow">
         <h2 class="h3">Request corrections</h2>
-        <p class="small sub mt-2">The applicant will be emailed and can edit and resubmit this application. The reference number stays <span class="mono">NMU-2026-0041</span> and nothing is submitted for payment.</p>
+        <p class="small sub mt-2">The applicant is emailed and can edit and resubmit this entry. The reference number stays <span class="mono">NMU-2026-0041</span> and nothing is submitted for payment.</p>
       </div>
     </div>
 
@@ -222,15 +266,16 @@
       <span class="hint">The applicant sees this exactly as written. Be specific about what to change and why.</span>
     </div>
 
-    <div class="row spread mt-6 wrap-row">
-      <span class="caption">Requesting corrections cannot be undone.</span>
+    <div class="spread mt-6 wrap-row gap-3">
+      <span class="tiny faint mono">Requesting corrections cannot be undone.</span>
       <div class="row gap-2">
-        <button class="btn btn-ghost">Cancel</button>
-        <button class="btn btn-nmu">Send correction request</button>
+        <button class="btn btn--ghost">Cancel</button>
+        <button class="btn btn--primary">Send correction request</button>
       </div>
     </div>
   </div>
 </div>
 
+<script src="site.js"></script>
 </body>
 </html>

@@ -1,41 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" data-env="cream">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NMU Business Directory — Voeq</title>
-<link rel="stylesheet" href="prototype.css">
+<title>The register — NMU Business Register</title>
+<meta name="description" content="Businesses registered and approved by the Nigeria Maritime University Media Department.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
+  <link rel="stylesheet" href="prototype.css">
 </head>
 <body>
 
-<nav class="nav">
-  <div class="wrap row gap-4">
-    <a href="index.html" class="nav-logo">voeq</a>
-    <span class="nav-mark"><span class="nav-mark-dot"></span> NMU Business Registry</span>
-    <div class="nav-spacer"></div>
-    <div class="nav-links">
-      <a href="apply.html">Apply</a>
-      <a href="status.html">Track application</a>
-      <a href="dashboard.html">Staff sign in</a>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="masthead-meta">
+      <span>Nigeria Maritime University · Business Register</span>
+      <span>96 registered · 2 campuses</span>
+    </div>
+    <div class="masthead-main">
+      <div class="masthead-lockup">
+        <span class="masthead-mark">Nigeria Maritime University</span>
+        <span class="masthead-sub">The register</span>
+      </div>
+      <nav class="masthead-nav" aria-label="Primary">
+        <a href="apply.html">Register</a>
+        <a href="directory.html" aria-current="page">The register</a>
+        <a href="status.html">Track an entry</a>
+        <a href="dashboard.html">Staff</a>
+      </nav>
     </div>
   </div>
-</nav>
+</header>
 
 <section class="section-sm">
   <div class="wrap">
-    <span class="eyebrow">NMU Business Directory</span>
-    <h1 class="display mt-3" style="font-size:var(--text-display-l);max-width:14ch">Businesses registered with the Media Department</h1>
-    <p class="lead mt-4 maxw">Every business here has been reviewed and approved by the NMU Media Department, and its registration payment has been confirmed.</p>
 
-    <div class="filters mt-6">
-      <input class="input" placeholder="Search businesses…" style="min-width:230px">
-      <select class="select"><option>All categories</option><option>Food and Drinks</option><option>Fashion and Clothing</option><option>Technology</option><option>Printing and Graphics</option><option>Laundry</option></select>
-      <select class="select"><option>All campuses</option><option>Okerenkoko</option><option>Kurutie</option></select>
-      <span class="grow"></span>
-      <span class="small sub">21 registered businesses</span>
+    <div class="split split-five" style="align-items:end">
+      <div>
+        <span class="eyebrow">The public register</span>
+        <h1 class="display mt-5" style="font-size:clamp(2.4rem,5.4vw,4.2rem);max-width:12ch">Businesses on the record.</h1>
+      </div>
+      <p class="lead">
+        Every business listed here has been read by a person at the Media Department and approved.
+        The reference number is the University's record of the decision — quote it and we can find
+        the entry.
+      </p>
     </div>
 
-    <div class="row gap-3 mt-4 wrap-row">
+    <!-- filters -->
+    <div class="filterbar mt-8">
+      <input class="input" placeholder="Search by name, category or reference…">
+      <select class="select"><option>All categories</option><option>Food and Drinks</option><option>Fashion and Clothing</option><option>Technology</option><option>Laundry</option><option>Printing and Graphics</option></select>
+      <select class="select"><option>All campuses</option><option>Okerenkoko</option><option>Kurutie</option></select>
+      <span class="grow"></span>
+      <span class="small faint mono">96 registered · showing 10</span>
+    </div>
+
+    <div class="row gap-2 mt-4 wrap-row">
       <button class="chip on">All</button>
       <button class="chip">Food &amp; Drinks</button>
       <button class="chip">Fashion</button>
@@ -43,146 +68,161 @@
       <button class="chip">Beauty &amp; Care</button>
       <button class="chip">Printing</button>
       <button class="chip">Laundry</button>
+      <button class="chip">Education</button>
       <button class="chip">Home Essentials</button>
     </div>
 
-    <div class="row gap-4 mt-6 wrap-row" style="align-items:stretch">
+    <!-- the register -->
+    <div class="folio-list mt-7">
+      <div class="folio-row folio-row--head">
+        <span>No.</span><span>Business</span><span>Category &amp; campus</span><span class="code">Reference</span>
+      </div>
 
-      <article class="card card-hover vcard grow" style="min-width:260px;flex:1 1 260px">
-        <div class="vcard-img"><span class="badge badge-nmu vcard-badge">NMU Registered</span></div>
-        <div class="vcard-body">
-          <div class="vcard-eyebrow">Food and Drinks</div>
-          <div class="vcard-title">Khim Culinary Institute</div>
-          <div class="vcard-meta">Okerenkoko campus · Beside the Main Gate</div>
-          <div class="small sub">Cakes, pastries, cupcakes and event catering for campus events. Student pickup at discounted rates.</div>
-          <div class="vcard-foot">
-            <span class="small mono">NMU-2026-0042</span>
-            <span class="small" style="color:var(--nmu-tide);font-weight:500">View profile →</span>
-          </div>
-        </div>
-      </article>
+      <div class="folio-row">
+        <span class="n">01</span>
+        <span class="name"><a href="#">Khim Culinary Institute</a></span>
+        <span class="cat">Food and Drinks · Okerenkoko</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2026-0042</span></span>
+        <span class="desc">Cakes, pastries, cupcakes and event catering for campus events. Student pickup at discounted rates, delivery within the campus. Beside the Main Gate.</span>
+      </div>
 
-      <article class="card card-hover vcard grow" style="min-width:260px;flex:1 1 260px">
-        <div class="vcard-img alt-1"><span class="badge badge-nmu vcard-badge">NMU Registered</span></div>
-        <div class="vcard-body">
-          <div class="vcard-eyebrow">Printing and Graphics</div>
-          <div class="vcard-title">Larus Graphics Ltd</div>
-          <div class="vcard-meta">Kurutie campus · Engineering Block</div>
-          <div class="small sub">Project printing, banners, stickers, ID cards and custom merchandise for students and departments.</div>
-          <div class="vcard-foot">
-            <span class="small mono">NMU-2026-0038</span>
-            <span class="small" style="color:var(--nmu-tide);font-weight:500">View profile →</span>
-          </div>
-        </div>
-      </article>
+      <div class="folio-row">
+        <span class="n">02</span>
+        <span class="name"><a href="#">Larus Graphics Ltd</a></span>
+        <span class="cat">Printing and Graphics · Kurutie</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2026-0038</span></span>
+        <span class="desc">Project printing, banners, stickers, ID cards and custom merchandise for students and departments. Engineering Block, Kurutie campus.</span>
+      </div>
 
-      <article class="card card-hover vcard grow" style="min-width:260px;flex:1 1 260px">
-        <div class="vcard-img alt-2"><span class="badge badge-nmu vcard-badge">NMU Registered</span></div>
-        <div class="vcard-body">
-          <div class="vcard-eyebrow">Fashion and Clothing</div>
-          <div class="vcard-title">Vwegba Fashion Home</div>
-          <div class="vcard-meta">Okerenkoko campus · Market Row</div>
-          <div class="small sub">Ready-made and tailored clothing, plus fittings and alterations for students.</div>
-          <div class="vcard-foot">
-            <span class="small mono">NMU-2026-0027</span>
-            <span class="small" style="color:var(--nmu-tide);font-weight:500">View profile →</span>
-          </div>
-        </div>
-      </article>
+      <div class="folio-row">
+        <span class="n">03</span>
+        <span class="name"><a href="#">Vwegba Fashion Home</a></span>
+        <span class="cat">Fashion and Clothing · Okerenkoko</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2026-0027</span></span>
+        <span class="desc">Ready-made and tailored clothing, plus fittings and alterations for students. Market Row, Okerenkoko campus.</span>
+      </div>
 
-      <article class="card card-hover vcard grow" style="min-width:260px;flex:1 1 260px">
-        <div class="vcard-img alt-3"><span class="badge badge-nmu vcard-badge">NMU Registered</span></div>
-        <div class="vcard-body">
-          <div class="vcard-eyebrow">Laundry</div>
-          <div class="vcard-title">Sparkle Dry Cleaners</div>
-          <div class="vcard-meta">Kurutie campus · Near the Gate</div>
-          <div class="small sub">Same-day washing, ironing and shoe cleaning, with free pickup on campus.</div>
-          <div class="vcard-foot">
-            <span class="small mono">NMU-2026-0019</span>
-            <span class="small" style="color:var(--nmu-tide);font-weight:500">View profile →</span>
-          </div>
-        </div>
-      </article>
+      <div class="folio-row">
+        <span class="n">04</span>
+        <span class="name"><a href="#">Sparkle Dry Cleaners</a></span>
+        <span class="cat">Laundry · Kurutie</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2026-0019</span></span>
+        <span class="desc">Same-day washing, ironing and shoe cleaning, with free pickup on campus. Near the Gate, Kurutie campus.</span>
+      </div>
 
+      <div class="folio-row">
+        <span class="n">05</span>
+        <span class="name"><a href="#">Calculus Made Simple</a></span>
+        <span class="cat">Education and Tutoring · Okerenkoko</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2026-0011</span></span>
+        <span class="desc">One-to-one and small-group tutorials in mathematics, physics and further mathematics. Online and in person.</span>
+      </div>
+
+      <div class="folio-row">
+        <span class="n">06</span>
+        <span class="name"><a href="#">Halo Studio</a></span>
+        <span class="cat">Beauty and Personal Care · Kurutie</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2026-0004</span></span>
+        <span class="desc">Braids, locs, nails and makeup for campus events, booked by phone or WhatsApp. Kurutie campus.</span>
+      </div>
+
+      <div class="folio-row">
+        <span class="n">07</span>
+        <span class="name"><a href="#">Bytewise Repairs</a></span>
+        <span class="cat">Technology · Okerenkoko</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2025-0198</span></span>
+        <span class="desc">Laptop and phone repair, software installation and data recovery for students. Computer Centre, Okerenkoko campus.</span>
+      </div>
+
+      <div class="folio-row">
+        <span class="n">08</span>
+        <span class="name"><a href="#">Suya Spot</a></span>
+        <span class="cat">Food and Drinks · Okerenkoko</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2025-0187</span></span>
+        <span class="desc">Grilled beef, chicken and plantain, served late into the night near the hostel gates. Night Market, Okerenkoko campus.</span>
+      </div>
+
+      <div class="folio-row">
+        <span class="n">09</span>
+        <span class="name"><a href="#">Anchor Books</a></span>
+        <span class="cat">General Essentials · Kurutie</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2025-0176</span></span>
+        <span class="desc">Course texts, novels, past-question compilations and stationery. Engineering Block, Kurutie campus.</span>
+      </div>
+
+      <div class="folio-row">
+        <span class="n">10</span>
+        <span class="name"><a href="#">Campus Bakes &amp; Co</a></span>
+        <span class="cat">Food and Drinks · Kurutie</span>
+        <span class="sealcell"><span class="stamp">NMU registered</span><span class="code">NMU-2025-0164</span></span>
+        <span class="desc">Bread, meat pies, pastries and drinks, baked daily before 7am. Staff quarters junction, Kurutie campus.</span>
+      </div>
     </div>
 
-    <div class="row gap-4 mt-4 wrap-row" style="align-items:stretch">
-      <article class="card card-hover vcard grow" style="min-width:260px;flex:1 1 260px">
-        <div class="vcard-img alt-2"><span class="badge badge-nmu vcard-badge">NMU Registered</span></div>
-        <div class="vcard-body">
-          <div class="vcard-eyebrow">Education and Tutoring</div>
-          <div class="vcard-title">Calculus Made Simple</div>
-          <div class="vcard-meta">Okerenkoko campus · Online and in-person</div>
-          <div class="small sub">One-to-one and small-group tutorials in mathematics, physics and further mathematics.</div>
-          <div class="vcard-foot">
-            <span class="small mono">NMU-2026-0011</span>
-            <span class="small" style="color:var(--nmu-tide);font-weight:500">View profile →</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="card card-hover vcard grow" style="min-width:260px;flex:1 1 260px">
-        <div class="vcard-img alt-1"><span class="badge badge-nmu vcard-badge">NMU Registered</span></div>
-        <div class="vcard-body">
-          <div class="vcard-eyebrow">Beauty and Personal Care</div>
-          <div class="vcard-title">Halo Studio</div>
-          <div class="vcard-meta">Kurutie campus · Book by phone</div>
-          <div class="small sub">Braids, locs, nails and makeup for campus events, booked by phone or WhatsApp.</div>
-          <div class="vcard-foot">
-            <span class="small mono">NMU-2026-0004</span>
-            <span class="small" style="color:var(--nmu-tide);font-weight:500">View profile →</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="card card-hover vcard grow" style="min-width:260px;flex:1 1 260px">
-        <div class="vcard-img"><span class="badge badge-nmu vcard-badge">NMU Registered</span></div>
-        <div class="vcard-body">
-          <div class="vcard-eyebrow">Technology</div>
-          <div class="vcard-title">Bytewise Repairs</div>
-          <div class="vcard-meta">Okerenkoko campus · Computer Centre</div>
-          <div class="small sub">Laptop and phone repair, software installation, and data recovery for students.</div>
-          <div class="vcard-foot">
-            <span class="small mono">NMU-2025-0198</span>
-            <span class="small" style="color:var(--nmu-tide);font-weight:500">View profile →</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="card card-hover vcard grow" style="min-width:260px;flex:1 1 260px">
-        <div class="vcard-img alt-3"><span class="badge badge-nmu vcard-badge">NMU Registered</span></div>
-        <div class="vcard-body">
-          <div class="vcard-eyebrow">Food and Drinks</div>
-          <div class="vcard-title">Suya Spot</div>
-          <div class="vcard-meta">Okerenkoko campus · Night Market</div>
-          <div class="small sub">Grilled beef, chicken and plantain, served late into the night near the hostel gates.</div>
-          <div class="vcard-foot">
-            <span class="small mono">NMU-2025-0187</span>
-            <span class="small" style="color:var(--nmu-tide);font-weight:500">View profile →</span>
-          </div>
-        </div>
-      </article>
+    <div class="spread wrap-row gap-3 mt-5">
+      <span class="small faint mono">Entries 01–10 of 96</span>
+      <div class="row gap-2">
+        <button class="btn btn--outline btn--sm">Previous</button>
+        <button class="btn btn--outline btn--sm">Next</button>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section-sm" style="background:var(--nmu-deep);color:#f5f1e8">
-  <div class="wrap row spread wrap-row" style="align-items:center">
-    <div>
-      <div class="eyebrow" style="color:#f5c36a">Not listed yet?</div>
-      <h2 class="h2 mt-3" style="color:#f5f1e8">Register your business with the Media Department</h2>
-      <p class="mt-3" style="color:rgba(245,241,232,.72);max-width:52ch">Apply online in about ten minutes. If you're approved and your payment is confirmed, you'll appear here with an NMU Registered badge — and on voeq.ng.</p>
+<!-- ==================== closing band ==================== -->
+<section class="marine-band" style="border-top:2px solid var(--marine-lift)">
+  <div class="wrap" style="padding-block:var(--space-2xl)">
+    <div class="split split-side" style="align-items:end">
+      <div>
+        <span class="eyebrow">Not on the record yet?</span>
+        <h2 class="h2 mt-4" style="max-width:24ch">Put your business in the register.</h2>
+      </div>
+      <div class="stack gap-3">
+        <a href="apply.html" class="btn btn--primary btn--lg">Register your business →</a>
+        <a href="status.html" class="btn btn--ghost">Track an entry</a>
+      </div>
     </div>
-    <a href="apply.html" class="btn btn-gold btn-lg">Start an application →</a>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="wrap spread small" style="color:rgba(245,241,232,.5)">
-    <span>© 2026 Voeq · NMU Media Department</span>
-    <span>Built on voeq.ng</span>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="mark-line">Nigeria Maritime University</div>
+        <p class="small mt-3" style="max-width:36ch;color:rgba(244,239,226,.62)">
+          The Business Register is run by the NMU Media Department with Voeq, the campus
+          marketplace where students already find what they need.
+        </p>
+      </div>
+      <div>
+        <h4>Register</h4>
+        <a href="apply.html">Make an entry</a>
+        <a href="status.html">Track an entry</a>
+        <a href="directory.html">The register</a>
+      </div>
+      <div>
+        <h4>Marketplace</h4>
+        <a href="https://voeq.ng">Explore voeq.ng</a>
+        <a href="https://voeq.ng/become-vendor">Sell on voeq</a>
+        <a href="https://voeq.ng">How voeq works</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="cookies.html">Cookie Policy</a>
+        <a href="mailto:media@nmu.edu.ng">Contact the Department</a>
+      </div>
+    </div>
+    <div class="foot-rule"></div>
+    <div class="spread wrap-row gap-4 foot-colophon">
+      <span>© 2026 Voeq · NMU Media Department</span>
+      <span>Entries are a public record · Personal data is not</span>
+    </div>
   </div>
 </footer>
 
+<script src="site.js"></script>
 </body>
 </html>

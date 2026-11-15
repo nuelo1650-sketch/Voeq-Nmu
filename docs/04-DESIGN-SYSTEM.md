@@ -1,5 +1,23 @@
 # Design System
 
+> ⚠️ **Partly superseded.** The *tokens*, the *portability contract* and the
+> *accessibility rules* below still stand. The **visual direction does not.**
+> The first pass — cream ground, white rounded cards, pill buttons, Playfair
+> Display — read as basic, and `docs/08-DESIGN-DIRECTION.md` replaces it with
+> **"The Register"**: a ruled, radius-0, Fraunces-led material built on the
+> bathymetric chart field.
+>
+> Where the two disagree, **doc 08 wins**. In particular:
+> - the `--nmu-*` maritime-teal layer described in §3 is **withdrawn**; the
+>   replacement is the `--reg-*` layer in `tokens.css`;
+> - cards are replaced by ruled blocks;
+> - radius 0 is the rule, chips excepted;
+> - the display face is Fraunces, not Playfair.
+>
+> §1 (brand read) and §2 (token extraction) are still accurate as the
+> *relationship* to voeq.ng — the register's palette is the marketplace's
+> cream/forest/gold deepened and re-specified.
+
 The registry must feel like **the same product** as voeq.ng — not a
 government form bolted onto a marketplace. This document is the contract for
 that.

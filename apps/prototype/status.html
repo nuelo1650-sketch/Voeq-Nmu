@@ -1,204 +1,226 @@
 <!DOCTYPE html>
-<html lang="en" data-env="cream">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Your application NMU-2026-0042 — NMU · Voeq</title>
-<link rel="stylesheet" href="prototype.css">
+<title>Your application NMU-2026-0042 — NMU Business Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
+  <link rel="stylesheet" href="prototype.css">
 </head>
 <body>
 
-<nav class="nav">
-  <div class="wrap row gap-4">
-    <a href="index.html" class="nav-logo">voeq</a>
-    <span class="nav-mark"><span class="nav-mark-dot"></span> NMU Business Registry</span>
-    <div class="nav-spacer"></div>
-    <a href="apply.html" class="small" style="color:rgba(245,241,232,.82)">Business directory</a>
-  </div>
-</nav>
-
-<div class="wrap-narrow" style="padding-top:var(--space-xl)">
-
-  <!-- ================= header ================= -->
-  <div class="row spread wrap-row" style="align-items:flex-start">
-    <div>
-      <span class="eyebrow">Your application</span>
-      <h1 class="h1 mt-3">Khim Culinary Institute</h1>
-      <div class="row gap-3 mt-3 wrap-row">
-        <span class="ref">NMU-2026-0042
-          <button class="ref-copy" title="Copy reference" aria-label="Copy reference">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>
-          </button>
-        </span>
-        <span class="badge badge-gold badge-dot">Approved — awaiting payment</span>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="masthead-meta">
+      <span>Nigeria Maritime University · Business Register</span>
+      <span>Your application</span>
+    </div>
+    <div class="masthead-main">
+      <div class="masthead-lockup">
+        <span class="masthead-mark">Nigeria Maritime University</span>
+        <span class="masthead-sub">Entry NMU-2026-0042</span>
+      </div>
+      <div class="masthead-actions">
+        <a href="directory.html" class="btn btn--ghost btn--sm">The register</a>
+        <a href="apply.html" class="btn btn--outline btn--sm">Make another entry</a>
       </div>
     </div>
   </div>
+</header>
 
-  <!-- ================= approved banner ================= -->
-  <div class="banner banner-good mt-6">
+<div class="wrap-narrow" style="padding-block:var(--space-xl) var(--space-3xl)">
+
+  <!-- ==================== header ==================== -->
+  <span class="eyebrow">Your application</span>
+  <h1 class="h1 mt-4">Khim Culinary Institute</h1>
+  <div class="row wrap-row gap-3 mt-4">
+    <span class="ref">NMU-2026-0042
+      <button class="ref-copy" title="Copy reference" aria-label="Copy reference">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:14px;height:14px"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>
+      </button>
+    </span>
+    <span class="mark mark--warn mark--solid">Approved — payment due</span>
+  </div>
+
+  <!-- ==================== approved banner ==================== -->
+  <div class="banner banner--good mt-6">
     <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="m8 12.2 2.6 2.6L16 9.5"/></svg>
     <div>
       <div class="banner-title">Your application has been approved</div>
-      <div class="banner-body">The NMU Media Department approved your application on 12 November 2026. To complete your registration, please make the payments below and upload your receipt.</div>
+      <div class="banner-body">The NMU Media Department approved your application on 12 November 2026. To complete your registration, make the payment below and upload your receipt. The instructions are on this page — nobody else can see them.</div>
     </div>
   </div>
 
-  <!-- ================= timeline ================= -->
-  <div class="card card-pad-lg mt-4">
-    <h2 class="h3">Where your application is</h2>
-    <div class="timeline mt-6">
-      <div class="tl-item done">
-        <span class="tl-dot"></span>
-        <div class="tl-title">Application submitted</div>
-        <div class="tl-meta">4 November 2026, 3:42pm</div>
-      </div>
-      <div class="tl-item done">
-        <span class="tl-dot"></span>
-        <div class="tl-title">Reviewed by the Media Department</div>
-        <div class="tl-meta">Reviewed by Mrs. A. Igwe, Media Unit · 9 November 2026</div>
-      </div>
-      <div class="tl-item done">
-        <span class="tl-dot"></span>
-        <div class="tl-title">Approved</div>
-        <div class="tl-meta">12 November 2026, 11:08am</div>
-        <div class="tl-body">Your business meets the Department's requirements. Payment is the only step remaining.</div>
-      </div>
-      <div class="tl-item current">
-        <span class="tl-dot"></span>
-        <div class="tl-title">Payment — action needed</div>
-        <div class="tl-meta">Due within 14 days of approval (by 26 November 2026)</div>
-      </div>
-      <div class="tl-item upcoming">
-        <span class="tl-dot"></span>
-        <div class="tl-title">Payment confirmed</div>
-        <div class="tl-meta">An authorised officer confirms your payment</div>
-      </div>
-      <div class="tl-item upcoming">
-        <span class="tl-dot"></span>
-        <div class="tl-title">Registered and listed</div>
-        <div class="tl-meta">You appear in the NMU business directory with an NMU Registered badge</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= payment instructions ================= -->
-  <div class="card card-pad-lg mt-4">
-    <div class="spread wrap-row">
-      <div>
-        <h2 class="h3">Payment instructions</h2>
-        <p class="sub small mt-2">Make each payment separately, then upload the receipt below.</p>
-      </div>
-      <span class="badge badge-warning badge-dot">Due by 26 Nov 2026</span>
+  <!-- ==================== the log ==================== -->
+  <section class="mt-8">
+    <div class="section-head">
+      <h2>Where your entry is</h2>
+      <span class="meta">A record of every step</span>
     </div>
 
-    <!-- component 1 -->
-    <div class="card card-pad mt-5" style="background:var(--role-surface-sunken);box-shadow:none">
-      <div class="spread wrap-row">
+    <div class="log">
+      <div class="log-item is-done">
+        <span class="log-mark"></span>
         <div>
-          <div class="vcard-eyebrow">Payment 1 of 2</div>
-          <div class="serif" style="font-size:20px;margin-top:4px">University registration fee</div>
+          <div class="log-title">Application submitted</div>
+          <div class="log-meta">4 November 2026, 3:42pm · submitted from this device</div>
         </div>
-        <div class="money" style="font-size:22px">₦5,000.00</div>
       </div>
-      <dl class="spec mt-4">
-        <dt>Pay to</dt><dd>Nigeria Maritime University</dd>
-        <dt>Bank</dt><dd>Zenith Bank</dd>
-        <dt>Account number</dt><dd class="mono">1234 5678 9012</dd>
-        <dt>Account name</dt><dd>Nigeria Maritime University</dd>
-        <dt>Reference</dt><dd class="mono">NMU-2026-0042</dd>
-      </dl>
-    </div>
-
-    <!-- component 2 -->
-    <div class="card card-pad mt-3" style="background:var(--role-surface-sunken);box-shadow:none">
-      <div class="spread wrap-row">
+      <div class="log-item is-done">
+        <span class="log-mark"></span>
         <div>
-          <div class="vcard-eyebrow">Payment 2 of 2</div>
-          <div class="serif" style="font-size:20px;margin-top:4px">Voeq platform fee</div>
+          <div class="log-title">Reviewed by the Media Department</div>
+          <div class="log-meta">9 November 2026 · Mrs. A. Igwe, Media Unit</div>
         </div>
-        <div class="money" style="font-size:22px">₦200.00</div>
       </div>
-      <dl class="spec mt-4">
-        <dt>Pay to</dt><dd>Voeq</dd>
-        <dt>Bank</dt><dd>Providus Bank</dd>
-        <dt>Account number</dt><dd class="mono">1304 5522 9081</dd>
-        <dt>Account name</dt><dd>Voeq</dd>
-        <dt>Reference</dt><dd class="mono">NMU-2026-0042</dd>
-      </dl>
+      <div class="log-item is-done">
+        <span class="log-mark"></span>
+        <div>
+          <div class="log-title">Approved</div>
+          <div class="log-meta">12 November 2026, 11:08am</div>
+          <div class="log-body">Your business meets the Department's requirements. Payment is the only step remaining.</div>
+        </div>
+      </div>
+      <div class="log-item is-current">
+        <span class="log-mark"></span>
+        <div>
+          <div class="log-title">Payment — action needed</div>
+          <div class="log-meta">Due within 14 days of approval, by 26 November 2026</div>
+        </div>
+      </div>
+      <div class="log-item is-upcoming">
+        <span class="log-mark"></span>
+        <div>
+          <div class="log-title">Payment confirmed</div>
+          <div class="log-meta">A finance officer matches your transfer against the University's bank record</div>
+        </div>
+      </div>
+      <div class="log-item is-upcoming" style="border-bottom:0">
+        <span class="log-mark"></span>
+        <div>
+          <div class="log-title">Registered and listed</div>
+          <div class="log-meta">You appear in the NMU business register with an NMU Registered mark</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== payment ==================== -->
+  <section class="mt-8">
+    <div class="section-head">
+      <h2>Settle the registration fee</h2>
+      <span class="meta mark mark--warn mark--solid">Due 26 Nov 2026</span>
     </div>
 
-    <div class="banner banner-warn mt-4">
+    <div class="banner banner--warn">
       <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17h.01"/></svg>
       <div>
-        <div class="banner-title">Use the reference number exactly</div>
-        <div class="banner-body">Put <span class="mono">NMU-2026-0042</span> in the payment reference so your receipt can be matched to your application without delay.</div>
+        <div class="banner-title">One transfer, one reference</div>
+        <div class="banner-body">Put <span class="mono">NMU-2026-0042</span> in the transfer reference. Without it your payment cannot be matched to this entry and the confirmation is delayed.</div>
       </div>
     </div>
 
-    <hr class="rule mt-6" style="margin-block:var(--space-lg)">
-
-    <!-- ================= receipt upload ================= -->
-    <h3 class="h3">Upload your receipt</h3>
-    <p class="sub small mt-2">Upload the receipt for each payment separately.</p>
-
-    <div class="stack gap-4 mt-5">
-      <div class="field">
-        <span class="label">University registration fee — ₦5,000.00 <span class="req">*</span></span>
-        <div class="dropzone mt-2">
-          <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 20h16"/></svg>
-          <div class="dz-title">Drop your receipt here, or tap to choose</div>
-          <div class="dz-sub">JPG, PNG or PDF · up to 10MB</div>
+    <div class="mt-5">
+      <div class="block" style="border-top-width:2px;border-top-color:var(--ink);padding-top:var(--space-md)">
+        <div class="spread wrap-row" style="align-items:flex-start;gap:var(--space-md)">
+          <div>
+            <div class="caption">Amount due</div>
+            <div class="mono mt-2" style="font-size:2.25rem;line-height:1;color:var(--ink)">₦5,200.00</div>
+          </div>
+          <div class="grow" style="min-width:220px">
+            <dl class="spec" style="grid-template-columns:150px minmax(0,1fr)">
+              <dt>Registration fee</dt><dd>₦5,000.00 — paid to the University</dd>
+              <dt>Platform fee</dt><dd>₦200.00 — collected on behalf of Voeq</dd>
+              <dt>Pay in</dt><dd class="mono">One transfer</dd>
+            </dl>
+          </div>
         </div>
       </div>
+    </div>
 
-      <div class="kv-split" style="gap:var(--space-md)">
+    <div class="mt-5">
+      <div class="block">
+        <div class="caption">Pay to</div>
+        <dl class="spec mt-3">
+          <dt>Account name</dt><dd>Nigeria Maritime University</dd>
+          <dt>Bank</dt><dd>Zenith Bank</dd>
+          <dt>Account number</dt><dd class="mono">1234 5678 9012</dd>
+          <dt>Transfer reference</dt><dd class="mono">NMU-2026-0042</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- upload -->
+    <div class="mt-6">
+      <div class="form-section-head">
+        <span class="fs-n">—</span>
+        <h2 style="font-size:1.125rem">Upload your receipt</h2>
+      </div>
+
+      <div class="stack gap-5 mt-4">
         <div class="field">
-          <label class="label" for="paid">Amount paid <span class="req">*</span></label>
-          <input class="input" id="paid" value="5,000.00" inputmode="decimal">
+          <span class="label">Bank receipt or transfer confirmation <span class="req">*</span></span>
+          <div class="upload mt-2">
+            <div>
+              <div class="up-title">Drop your receipt here, or tap to choose</div>
+              <div class="up-sub">JPG · PNG · PDF — up to 10MB</div>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:22px;height:22px;color:var(--ink-faint)"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 20h16"/></svg>
+          </div>
+          <span class="hint">A screenshot of the transfer confirmation from your banking app is fine. It must show the amount, the date and the reference.</span>
         </div>
+
+        <div class="split split-even" style="gap:var(--space-md)">
+          <div class="field">
+            <label class="label" for="paid">Amount paid <span class="req">*</span></label>
+            <input class="input" id="paid" value="5,200.00" inputmode="decimal">
+          </div>
+          <div class="field">
+            <label class="label" for="paydate">Payment date <span class="req">*</span></label>
+            <input class="input" id="paydate" type="date" value="2026-11-14">
+          </div>
+        </div>
+
         <div class="field">
-          <label class="label" for="paydate">Payment date <span class="req">*</span></label>
-          <input class="input" id="paydate" type="date" value="2026-11-14">
+          <label class="label" for="payref">Bank reference or transfer reference <span class="req">*</span></label>
+          <input class="input" id="payref" value="ZM2026111408392" placeholder="The reference from your bank">
+        </div>
+
+        <div class="field">
+          <label class="label" for="paymethod">Payment method <span class="req">*</span></label>
+          <select class="select" id="paymethod"><option>Bank transfer</option><option>Other approved method</option></select>
         </div>
       </div>
 
-      <div class="field">
-        <label class="label" for="payref">Payment reference <span class="req">*</span></label>
-        <input class="input" id="payref" value="ZM2026111408392" placeholder="The reference from your bank">
-      </div>
-
-      <div class="field">
-        <label class="label" for="paymethod">Payment method <span class="req">*</span></label>
-        <select class="select" id="paymethod"><option>Bank transfer</option><option>Other approved method</option></select>
+      <div class="row gap-3 mt-6 wrap-row">
+        <button class="btn btn--primary btn--lg">Submit receipt</button>
+        <span class="small faint" style="align-self:center">You will get a confirmation as soon as we receive it.</span>
       </div>
     </div>
+  </section>
 
-    <div class="row gap-3 mt-6 wrap-row">
-      <button class="btn btn-nmu btn-lg">Submit receipt</button>
-      <span class="small sub" style="align-self:center">You'll get a confirmation as soon as we receive it.</span>
-    </div>
-  </div>
-
-  <!-- ================= help ================= -->
-  <div class="card card-pad mt-4 card-sunken">
-    <div class="row gap-3" style="align-items:flex-start">
-      <span class="icon-lg" style="color:var(--nmu-tide);margin-top:2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
-      <div>
-        <div class="t-name">Something wrong?</div>
-        <p class="small sub mt-2">If a receipt was rejected or a detail is wrong, you can resubmit here — you will not need a new application, and your reference stays the same.</p>
-        <p class="small sub mt-2">Call the NMU Media Department on <span class="mono">0803 000 0000</span> if you need to talk to someone.</p>
-      </div>
+  <!-- ==================== help ==================== -->
+  <div class="banner banner--sunken mt-7">
+    <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+    <div>
+      <div class="banner-title">Something wrong?</div>
+      <div class="banner-body">If a receipt was rejected or a detail is wrong, you can resubmit here — you will not need a new application, and your reference stays the same. If you need to talk to someone, the NMU Media Department is on <span class="mono">0803 000 0000</span>.</div>
     </div>
   </div>
 </div>
 
-<footer class="footer">
-  <div class="wrap spread small" style="color:rgba(245,241,232,.5)">
+<footer class="foot">
+  <div class="wrap spread wrap-row gap-4 foot-colophon">
     <span>© 2026 Voeq · NMU Media Department</span>
     <span>Application reference NMU-2026-0042</span>
   </div>
 </footer>
 
+<script src="site.js"></script>
 </body>
 </html>

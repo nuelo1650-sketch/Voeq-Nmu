@@ -1,201 +1,363 @@
 <!DOCTYPE html>
-<html lang="en" data-env="cream">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NMU Business Registration — powered by Voeq</title>
-<link rel="stylesheet" href="prototype.css">
+<title>NMU Business Register — Nigeria Maritime University</title>
+<meta name="description" content="Register your business with the Nigeria Maritime University Media Department. One application, a person reads every entry, and approved businesses are listed in the campus register.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
+  <link rel="stylesheet" href="prototype.css">
 </head>
 <body>
 
-<nav class="nav">
-  <div class="wrap row gap-4">
-    <a href="index.html" class="nav-logo">voeq</a>
-    <span class="nav-mark"><span class="nav-mark-dot"></span> NMU Business Registry</span>
-    <div class="nav-spacer"></div>
-    <div class="nav-links">
-      <a href="directory.html">Directory</a>
-      <a href="status.html">Track application</a>
-      <a href="dashboard.html">Staff sign in</a>
+<!-- ==================== MASTHEAD ==================== -->
+<header class="masthead masthead--marine">
+  <div class="wrap masthead-inner">
+    <div class="masthead-meta">
+      <span>Nigeria Maritime University · Okerenkoko &amp; Kurutie Campuses</span>
+      <span class="live">Register open</span>
     </div>
-  </div>
-</nav>
-
-<!-- ================= hero ================= -->
-<header class="section" style="padding-top:var(--space-3xl)">
-  <div class="wrap">
-    <div class="kv-split" style="align-items:center">
-      <div>
-        <span class="eyebrow">Nigeria Maritime University</span>
-        <h1 class="display mt-3" style="max-width:11ch">Register your business. <span class="italic" style="color:var(--nmu-tide)">Properly.</span></h1>
-        <p class="lead mt-4 maxw">One application replaces the old paper-and-letter process at the Media Department. Apply in a few minutes, track every step, and get listed on the NMU business directory.</p>
-        <div class="row wrap-row gap-3 mt-6">
-          <a href="apply.html" class="btn btn-nmu btn-lg">Start an application →</a>
-          <a href="status.html" class="btn btn-outline btn-lg">Track an application</a>
-        </div>
-        <div class="row wrap-row gap-4 mt-6 small sub">
-          <span>✓ No vendor account needed</span>
-          <span>✓ Save and finish later</span>
-          <span>✓ Works on a phone</span>
-        </div>
+    <div class="masthead-main">
+      <div class="masthead-lockup">
+        <span class="masthead-mark">Nigeria Maritime University</span>
+        <span class="masthead-sub">Business Register</span>
       </div>
-
-      <!-- card stack -->
-      <div class="stack gap-3" style="max-width:420px">
-        <div class="card card-pad card-hover">
-          <div class="row spread">
-            <div>
-              <div class="vcard-eyebrow">Food and Drinks</div>
-              <div class="serif" style="font-size:20px;margin-top:4px">Khim Culinary Institute</div>
-              <div class="small sub mt-2">Okerenkoko campus · Registered Mar 2026</div>
-            </div>
-            <span class="badge badge-nmu">NMU Registered</span>
-          </div>
-        </div>
-        <div class="card card-pad card-hover">
-          <div class="row spread">
-            <div>
-              <div class="vcard-eyebrow">Printing and Graphics</div>
-              <div class="serif" style="font-size:20px;margin-top:4px">Larus Graphics Ltd</div>
-              <div class="small sub mt-2">Kurutie campus · Registered Apr 2026</div>
-            </div>
-            <span class="badge badge-nmu">NMU Registered</span>
-          </div>
-        </div>
-        <div class="card card-pad card-hover">
-          <div class="row spread">
-            <div>
-              <div class="vcard-eyebrow">Fashion and Clothing</div>
-              <div class="serif" style="font-size:20px;margin-top:4px">Vwegba Fashion Home</div>
-              <div class="small sub mt-2">Okerenkoko campus · Registered Feb 2026</div>
-            </div>
-            <span class="badge badge-nmu">NMU Registered</span>
-          </div>
-        </div>
-      </div>
+      <nav class="masthead-nav" aria-label="Primary">
+        <a href="apply.html" aria-current="page">Register</a>
+        <a href="directory.html">The register</a>
+        <a href="status.html">Track an entry</a>
+        <a href="dashboard.html">Staff</a>
+      </nav>
     </div>
   </div>
 </header>
 
-<!-- ================= how it works ================= -->
-<section class="section-sm" style="background:var(--role-surface-sunken)">
-  <div class="wrap">
-    <span class="eyebrow">How it works</span>
-    <h2 class="h2 mt-3">Four steps, and you always know where you stand.</h2>
-    <div class="row gap-4 mt-6" style="align-items:stretch">
-      <div class="card card-pad grow">
-        <div class="step-dot">1</div>
-        <div class="serif" style="font-size:19px;margin-top:13px">Apply</div>
-        <p class="small sub mt-2">Six short sections about you and your business. Save and come back any time.</p>
-      </div>
-      <div class="card card-pad grow">
-        <div class="step-dot">2</div>
-        <div class="serif" style="font-size:19px;margin-top:13px">The Department reviews</div>
-        <p class="small sub mt-2">The Media Department assesses your application and approves, or asks for a correction.</p>
-      </div>
-      <div class="card card-pad grow">
-        <div class="step-dot">3</div>
-        <div class="serif" style="font-size:19px;margin-top:13px">Pay</div>
-        <p class="small sub mt-2">If approved, you get the payment instructions and upload your receipt here.</p>
-      </div>
-      <div class="card card-pad grow">
-        <div class="step-dot">4</div>
-        <div class="serif" style="font-size:19px;margin-top:13px">You're listed</div>
-        <p class="small sub mt-2">Once payment is confirmed, you appear in the NMU directory with an NMU Registered badge.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ==================== HERO — chart field ==================== -->
+<section class="marine-band">
+  <div class="wrap" style="padding-block:var(--space-3xl) var(--space-2xl)">
+    <div class="split split-side" style="align-items:end">
 
-<!-- ================= what you need ================= -->
-<section class="section">
-  <div class="wrap">
-    <div class="kv-split">
       <div>
-        <span class="eyebrow">Before you start</span>
-        <h2 class="h2 mt-3">What you'll need</h2>
-        <p class="sub mt-3 maxw">Gather these and the whole thing takes about ten minutes.</p>
-        <div class="mt-6">
-          <a href="apply.html" class="btn btn-nmu btn-lg">Start an application →</a>
+        <span class="eyebrow">NMU Media Department · Business Register · 2026</span>
+        <h1 class="display mt-5" style="max-width:14ch">Put your business on the record.</h1>
+        <p class="lead mt-6">
+          Register your business with the Media Department in one sitting. A person reads every
+          entry, and an approved business is listed in the campus register — and on voeq.ng,
+          where students are already looking.
+        </p>
+        <div class="row wrap-row gap-3 mt-7">
+          <a href="apply.html" class="btn btn--primary btn--lg">Register your business →</a>
+          <a href="directory.html" class="btn btn--lg">Look up an entry</a>
         </div>
       </div>
-      <ul class="stack gap-3" style="list-style:none;padding:0;margin:0">
-        <li class="card card-pad row gap-3">
-          <span class="icon-lg" style="color:var(--nmu-tide)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span>
-          <div><div class="t-name">Your details</div><div class="small sub">Full name, phone number, and how you relate to the business.</div></div>
-        </li>
-        <li class="card card-pad row gap-3">
-          <span class="icon-lg" style="color:var(--nmu-tide)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9.5 12 4l9 5.5V20H3z"/><path d="M9 20v-6h6v6"/></svg></span>
-          <div><div class="t-name">Your business</div><div class="small sub">Name, category, what you do, and where you operate.</div></div>
-        </li>
-        <li class="card card-pad row gap-3">
-          <span class="icon-lg" style="color:var(--nmu-tide)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></svg></span>
-          <div><div class="t-name">A flyer or photos</div><div class="small sub">Anything that represents the business. JPG, PNG or PDF.</div></div>
-        </li>
-        <li class="card card-pad row gap-3">
-          <span class="icon-lg" style="color:var(--nmu-tide)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.4 3.8 5.3 3.8 8.5S14.5 18.1 12 20.5c-2.5-2.4-3.8-5.3-3.8-8.5S9.5 5.9 12 3.5Z"/></svg></span>
-          <div><div class="t-name">Links, if you have them</div><div class="small sub">A website, Instagram page or portfolio. Optional for most businesses.</div></div>
-        </li>
-      </ul>
+
+      <!-- live register, set as a ledger -->
+      <div class="block" style="border-top-color:rgba(244,239,226,.22)">
+        <div class="caption" style="color:rgba(244,239,226,.5)">The register today</div>
+        <div style="display:grid;gap:0;margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid rgba(244,239,226,.16)">
+            <span class="small" style="color:rgba(244,239,226,.72)">Entries received</span>
+            <span class="mono" style="font-size:1.5rem;color:var(--foil-light)">184</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid rgba(244,239,226,.16)">
+            <span class="small" style="color:rgba(244,239,226,.72)">In the review queue</span>
+            <span class="mono" style="font-size:1.5rem;color:var(--foil-light)">23</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid rgba(244,239,226,.16)">
+            <span class="small" style="color:rgba(244,239,226,.72)">Registered and on campus</span>
+            <span class="mono" style="font-size:1.5rem;color:var(--foil-light)">96</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0">
+            <span class="small" style="color:rgba(244,239,226,.72)">Listed on voeq.ng</span>
+            <span class="mono" style="font-size:1.5rem;color:var(--foil-light)">96</span>
+          </div>
+        </div>
+        <p class="tiny mt-4" style="color:rgba(244,239,226,.5)">Counted from the Media Department's own record, updated as decisions are made.</p>
+      </div>
+
+    </div>
+
+    <div class="live-strip mt-8">
+      <span><b>184</b> entered</span>
+      <span class="divider-dot">·</span>
+      <span><b>23</b> in review</span>
+      <span class="divider-dot">·</span>
+      <span><b>96</b> registered</span>
+      <span class="divider-dot">·</span>
+      <span>Two campuses · Okerenkoko, Kurutie</span>
     </div>
   </div>
 </section>
 
-<!-- ================= fees ================= -->
-<section class="section-sm" style="background:var(--nmu-deep);color:#f5f1e8">
+<!-- ==================== HOW AN ENTRY IS MADE ==================== -->
+<section class="section">
   <div class="wrap">
-    <div class="kv-split" style="align-items:center">
+    <div class="section-head">
+      <h2>How an entry is made</h2>
+      <span class="meta">Four steps · about twelve minutes</span>
+    </div>
+
+    <div class="split split-lead">
       <div>
-        <span class="eyebrow" style="color:#f5c36a">Fees</span>
-        <h2 class="h2 mt-3" style="color:#f5f1e8">One registration fee, one platform fee.</h2>
-        <p class="mt-3" style="color:rgba(245,241,232,.72);max-width:52ch">You only pay after the Media Department approves your application. Nothing is charged to apply, and you will see the exact breakdown and where to send it before you pay anything.</p>
+        <p class="measure-wide">
+          The old process was a letter, a stamped form and a wait. This is the same decision,
+          made by the same office, with a record you can see.
+        </p>
+        <p class="measure-wide mt-4 sub">
+          You will know where your entry is at every stage, and you will get an email when
+          something changes.
+        </p>
+      </div>
+
+      <div class="folio-list">
+        <div class="folio-row folio-row--head">
+          <span>No.</span><span>Step</span><span></span><span class="code">Time</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">01</span>
+          <span class="name">Make the entry</span>
+          <span class="time">~12 min</span>
+          <span class="desc">Six short sections about you and your business. Save and come back.</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">02</span>
+          <span class="name">The Department reads it</span>
+          <span class="time">5 days</span>
+          <span class="desc">A named officer at the Media Unit assesses the entry against the University's requirements.</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">03</span>
+          <span class="name">A decision, in writing</span>
+          <span class="time">same day</span>
+          <span class="desc">Approved, or a correction is requested. Either way you are told what to change and why.</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">04</span>
+          <span class="name">Settle the fee</span>
+          <span class="time">1–3 days</span>
+          <span class="desc">Transfer to the University's account and upload the receipt. A finance officer confirms it against the bank record.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WHAT AN ENTRY NEEDS ==================== -->
+<section class="section section-sm" style="background:var(--paper-2);border-block:1px solid var(--rule)">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What an entry needs</h2>
+      <span class="meta">Gather these first</span>
+    </div>
+
+    <div class="split split-even">
+      <div>
+        <p class="measure-wide">
+          Everything below can be gathered from a phone in one sitting. Nothing here needs a
+          company registration certificate — the Media Department registers student and staff
+          businesses, not companies.
+        </p>
+        <div class="mt-6">
+          <a href="apply.html" class="btn btn--primary btn--lg">Register your business →</a>
+        </div>
+        <p class="tiny faint mt-4">You can stop at any point and finish later on the same device.</p>
+      </div>
+
+      <div class="ruled-list">
+        <div class="ruled-item">
+          <span class="n">01</span>
+          <div>
+            <h3>Your details</h3>
+            <p>Full name, a phone number the Department can reach you on, and how you are connected to the business.</p>
+          </div>
+        </div>
+        <div class="ruled-item">
+          <span class="n">02</span>
+          <div>
+            <h3>Your business</h3>
+            <p>The name you trade under, the category that fits it best, what it does, and where it operates on campus.</p>
+          </div>
+        </div>
+        <div class="ruled-item">
+          <span class="n">03</span>
+          <div>
+            <h3>A statement of business purpose</h3>
+            <p>What the business is for, what it sells or does, and what it gives back to the university community.</p>
+          </div>
+        </div>
+        <div class="ruled-item">
+          <span class="n">04</span>
+          <div>
+            <h3>Something to represent it</h3>
+            <p>A flyer, a photograph of the shop, or a menu. This becomes your listing image — it has to show the business name.</p>
+          </div>
+        </div>
+        <div class="ruled-item">
+          <span class="n">05</span>
+          <div>
+            <h3>Links, if you have them</h3>
+            <p>A website, an Instagram page, a WhatsApp business number. Optional, but it helps the Department judge a trading business.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== THE REGISTER ==================== -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>The register</h2>
+      <span class="meta">96 registered · showing 6</span>
+    </div>
+
+    <div class="split split-five">
+      <div>
+        <p class="measure-wide">
+          Every business in the register has been read by a person at the Media Department and
+          approved. The reference number is permanent — quote it to the Department, and it is
+          what appears in the audit trail.
+        </p>
+        <div class="mt-6">
+          <a href="directory.html" class="btn btn--outline">Open the full register →</a>
+        </div>
+      </div>
+
+      <div class="folio-list">
+        <div class="folio-row folio-row--head">
+          <span>No.</span><span>Business</span><span>Category</span><span class="code">Reference</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">01</span>
+          <span class="name"><a href="directory.html">Khim Culinary Institute</a></span>
+          <span class="cat">Food and Drinks · Okerenkoko</span>
+          <span class="code">NMU-2026-0042</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">02</span>
+          <span class="name"><a href="directory.html">Larus Graphics Ltd</a></span>
+          <span class="cat">Printing and Graphics · Kurutie</span>
+          <span class="code">NMU-2026-0038</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">03</span>
+          <span class="name"><a href="directory.html">Vwegba Fashion Home</a></span>
+          <span class="cat">Fashion and Clothing · Okerenkoko</span>
+          <span class="code">NMU-2026-0027</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">04</span>
+          <span class="name"><a href="directory.html">Sparkle Dry Cleaners</a></span>
+          <span class="cat">Laundry · Kurutie</span>
+          <span class="code">NMU-2026-0019</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">05</span>
+          <span class="name"><a href="directory.html">Calculus Made Simple</a></span>
+          <span class="cat">Education and Tutoring · Okerenkoko</span>
+          <span class="code">NMU-2026-0011</span>
+        </div>
+        <div class="folio-row">
+          <span class="n">06</span>
+          <span class="name"><a href="directory.html">Bytewise Repairs</a></span>
+          <span class="cat">Technology · Okerenkoko</span>
+          <span class="code">NMU-2025-0198</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FEES — one honest sentence ==================== -->
+<section class="section section-sm" style="border-top:1px solid var(--rule)">
+  <div class="wrap">
+    <div class="split split-main" style="align-items:start">
+      <div>
+        <span class="eyebrow">Fees</span>
+        <p class="display mt-5" style="font-size:clamp(1.8rem,3.4vw,2.9rem);max-width:22ch">
+          Applying is free. If your entry is approved, a registration fee applies — the exact
+          amount and where to pay it appear on your own status page.
+        </p>
+      </div>
+      <div class="block" style="border-top-width:2px;border-top-color:var(--ink);padding-top:var(--space-md)">
+        <div class="caption">What this means</div>
+        <p class="small mt-3 sub">
+          Nothing is charged to apply, and nothing is charged to have your entry assessed. A fee
+          arises only if the Department approves you, and the instructions you need — account
+          details, amount, and reference — are given to you on your own status page.
+        </p>
+        <p class="small mt-3 sub">
+          If your entry is not approved, there is nothing to pay.
+        </p>
+        <a href="terms.html" class="small mt-4" style="display:inline-block;text-decoration:underline;text-underline-offset:3px">Terms of Service, clause 7</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CLOSING BAND ==================== -->
+<section class="marine-band" style="border-top:2px solid var(--marine-lift)">
+  <div class="wrap" style="padding-block:var(--space-3xl)">
+    <div class="split split-side" style="align-items:end">
+      <div>
+        <span class="eyebrow">The register is open</span>
+        <h2 class="display mt-5" style="font-size:clamp(2.2rem,5vw,3.6rem);max-width:16ch">
+          There is room for your business on it.
+        </h2>
       </div>
       <div class="stack gap-3">
-        <div class="row spread" style="padding:16px 18px;border:1px solid rgba(245,241,232,.16);border-radius:var(--radius-md);background:rgba(245,241,232,.06)">
-          <div><div class="small" style="color:rgba(245,241,232,.62)">University registration fee</div><div class="money mt-2" style="font-size:22px;color:#f5f1e8">₦5,000.00</div></div>
-          <span class="badge" style="background:rgba(245,241,232,.12);color:#f5f1e8">To the university</span>
-        </div>
-        <div class="row spread" style="padding:16px 18px;border:1px solid rgba(245,241,232,.16);border-radius:var(--radius-md);background:rgba(245,241,232,.06)">
-          <div><div class="small" style="color:rgba(245,241,232,.62)">Voeq platform fee</div><div class="money mt-2" style="font-size:22px;color:#f5f1e8">₦200.00</div></div>
-          <span class="badge" style="background:rgba(245,241,232,.12);color:#f5f1e8">To Voeq</span>
-        </div>
-        <p class="caption" style="color:rgba(245,241,232,.55)">Final amounts and remittance instructions are confirmed by the Media Department and shown on your payment page.</p>
+        <a href="apply.html" class="btn btn--primary btn--lg">Register your business →</a>
+        <a href="directory.html" class="btn btn--ghost">See who is already registered</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= CTA ================= -->
-<section class="section">
-  <div class="wrap center">
-    <span class="eyebrow" style="justify-content:center">Ready when you are</span>
-    <h2 class="display mt-3" style="font-size:var(--text-display-l)">Start your application</h2>
-    <p class="lead mt-3" style="margin-inline:auto;max-width:46ch">It takes about ten minutes, and you can stop and come back at any point.</p>
-    <div class="row gap-3 mt-6" style="justify-content:center">
-      <a href="apply.html" class="btn btn-nmu btn-lg">Start an application →</a>
-      <a href="directory.html" class="btn btn-outline btn-lg">See the directory</a>
-    </div>
-  </div>
-</section>
-
-<footer class="footer">
+<!-- ==================== FOOTER ==================== -->
+<footer class="foot">
   <div class="wrap">
-    <div class="footer-grid">
+    <div class="foot-grid">
       <div>
-        <div class="nav-logo" style="color:#f5f1e8">voeq</div>
-        <p class="small mt-3" style="max-width:34ch;color:rgba(245,241,232,.62)">The campus marketplace for Nigerian students. Business registration for Nigeria Maritime University is operated with the NMU Media Department.</p>
+        <div class="mark-line">Nigeria Maritime University</div>
+        <p class="small mt-3" style="max-width:36ch;color:rgba(244,239,226,.62)">
+          The Business Register is run by the NMU Media Department with Voeq, the campus
+          marketplace where students already find what they need.
+        </p>
       </div>
-      <div><h4>Register</h4><div class="stack gap-2"><a href="apply.html">Apply</a><a href="status.html">Track application</a><a href="directory.html">Business directory</a></div></div>
-      <div><h4>Marketplace</h4><div class="stack gap-2"><a href="#">Explore vendors</a><a href="#">Sell on voeq</a><a href="#">How it works</a></div></div>
-      <div><h4>Help</h4><div class="stack gap-2"><a href="#">Contact the Media Department</a><a href="#">Application guide</a><a href="#">Privacy notice</a></div></div>
+      <div>
+        <h4>Register</h4>
+        <a href="apply.html">Make an entry</a>
+        <a href="status.html">Track an entry</a>
+        <a href="directory.html">The register</a>
+      </div>
+      <div>
+        <h4>Marketplace</h4>
+        <a href="https://voeq.ng">Explore voeq.ng</a>
+        <a href="https://voeq.ng/become-vendor">Sell on voeq</a>
+        <a href="https://voeq.ng">How voeq works</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="cookies.html">Cookie Policy</a>
+        <a href="mailto:media@nmu.edu.ng">Contact the Department</a>
+      </div>
     </div>
-    <div class="footer-rule"></div>
-    <div class="spread small" style="color:rgba(245,241,232,.5)">
+    <div class="foot-rule"></div>
+    <div class="spread wrap-row gap-4 foot-colophon">
       <span>© 2026 Voeq · NMU Media Department</span>
-      <span>Built on voeq.ng</span>
+      <span>Entries are a public record · Personal data is not</span>
     </div>
   </div>
 </footer>
 
+<script src="site.js"></script>
 </body>
 </html>
