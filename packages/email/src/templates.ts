@@ -1,8 +1,13 @@
 // ---------------------------------------------------------------------------
 // Email design system — Phase 0 set.
 //
-// Principles (Kai, 2026-11-15: "professional, beautiful, well thought of —
-// not default"):
+// Direction decided (Kai, 2026-11-16): **Direction B, the fuller letter** —
+// reviewed at /dev/emails against Direction A (compact) and chosen as-is.
+// Same skin for all seven; the body is a proper letter: an opening that
+// talks to the applicant, a numbered walk-through, a "good to know" section,
+// and a signature.
+//
+// Principles:
 //   1. One skin, seven letters. Every email a person ever receives from the
 //      register is unmistakably the same sender: forest header, cream page,
 //      serif voice, one amber reference chip, one footer. Consistency IS the
@@ -17,8 +22,13 @@
 //   5. Never more than one button, and only when a real next step exists.
 //   6. Dynamic text (business names, reasons, concerns) is escaped —
 //      applicant-typed data must never inject HTML into a letter.
-//   7. Footer carries the full chain: university, operator, credit — and the
+//   7. Money deserves slow sentences: amounts, narrations and timelines are
+//      spelled out, never rounded, never abbreviated.
+//   8. Footer carries the full chain: university, operator, credit — and the
 //      promise that a person reads replies.
+//
+// The catalogue of gates (which transition fires which letter) lives in
+// docs/05-ROADMAP.md, "The email catalogue".
 // ---------------------------------------------------------------------------
 
 export interface EmailTemplate {
@@ -102,6 +112,42 @@ function para(innerHTML: string): string {
   return `<p style="font-family:${SANS};font-size:15px;line-height:1.65;color:${C.body};margin:14px 0;">${innerHTML}</p>`;
 }
 
+// --- letter-structure blocks --------------------------------------------------
+function sectionHeading(label: string): string {
+  return `<div style="font-family:${SANS};font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:${C.amberInk};margin:26px 0 10px;border-top:1px solid ${C.line};padding-top:22px;">${esc(label)}</div>`;
+}
+
+function stepsBlock(items: readonly string[]): string {
+  const rows = items
+    .map(
+      (item, i) => `<tr>
+        <td style="width:34px;vertical-align:top;padding:0 0 14px;">
+          <div style="width:24px;height:24px;line-height:24px;text-align:center;border-radius:999px;background:${C.forest};color:${C.white};font-family:${SANS};font-size:12px;font-weight:bold;">${i + 1}</div>
+        </td>
+        <td style="vertical-align:top;padding:0 0 14px;font-family:${SANS};font-size:15px;line-height:1.65;color:${C.body};">${item}</td>
+      </tr>`,
+    )
+    .join("");
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>`;
+}
+
+function bulletsBlock(items: readonly string[]): string {
+  const rows = items
+    .map(
+      (item) => `<tr>
+        <td style="width:34px;vertical-align:top;padding:0 0 10px;font-family:${SANS};font-size:15px;color:${C.amber};">•</td>
+        <td style="vertical-align:top;padding:0 0 10px;font-family:${SANS};font-size:15px;line-height:1.65;color:${C.body};">${item}</td>
+      </tr>`,
+    )
+    .join("");
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>`;
+}
+
+function signoff(name = "The Media Unit"): string {
+  return `<p style="font-family:${SERIF};font-size:15px;color:${C.forestInk};margin:24px 0 4px;">— ${esc(name)},</p>
+  <p style="font-family:${SANS};font-size:13px;color:${C.muted};margin:0;">Nigeria Maritime University Business Register</p>`;
+}
+
 // --- the skin ---------------------------------------------------------------
 export interface EmailSkin {
   preheader: string;
@@ -163,180 +209,7 @@ ${preheader}
 // the catalogue of gates lives in docs/05-ROADMAP.md, "The email catalogue".
 // ---------------------------------------------------------------------------
 
-export function applicationReceived(reference: string, businessName: string): EmailTemplate {
-  return {
-    subject: `We have your application — ${reference}`,
-    html: shell({
-      preheader: `${businessName} is in. A person reads every application — decision within five working days.`,
-      status: { label: "Received", tone: "forest" },
-      title: "We have your application.",
-      body: [
-        para(`<b>${esc(businessName)}</b> is in. The Media Unit reads every application itself — a person, not a machine.`),
-        refChip(reference),
-        para(`Keep it. You can track progress any time with it. We commit to a decision within <b>five working days</b>, and we will email you here the moment there is one.`),
-        para(`<b>Nothing is charged until your entry is approved.</b>`),
-      ].join(""),
-    }),
-  };
-}
-
-export function correctionsRequested(
-  reference: string,
-  items: readonly { field: string; instruction: string }[],
-): EmailTemplate {
-  const list = `<ol style="margin:8px 0;padding-left:22px;font-family:${SANS};font-size:15px;line-height:1.65;color:${C.forestInk};">` +
-    items
-      .map((i) => `<li style="margin-bottom:10px;"><b>${esc(i.field)}</b> — ${esc(i.instruction)}</li>`)
-      .join("") +
-    `</ol>`;
-  return {
-    subject: `A few things need fixing — ${reference}`,
-    html: shell({
-      preheader: `${items.length} item${items.length === 1 ? "" : "s"} need your attention before we can continue with ${reference}.`,
-      status: { label: "Needs your attention", tone: "amber" },
-      title: "A few things need fixing.",
-      body: [
-        para(`Your application needs the following before we can continue:`),
-        detailCard("Exactly what to fix", list),
-        refChip(reference, "Same reference — nothing is lost"),
-        para(`You continue the <b>same application</b> with the same reference. Fix these, resubmit, and we read it again straight away.`),
-      ].join(""),
-    }),
-  };
-}
-
-export function applicationApproved(
-  reference: string,
-  businessName: string,
-  paymentStepUrl: string,
-): EmailTemplate {
-  return {
-    subject: `Approved — one step left — ${reference}`,
-    html: shell({
-      preheader: `${businessName} is approved. One transfer of ₦5,200 with ${reference} as narration puts you on the record.`,
-      status: { label: "Approved", tone: "forest" },
-      title: "Your business is approved.",
-      body: [
-        para(`<b>${esc(businessName)}</b> has been approved for the NMU business register.`),
-        para(`One step remains: a single transfer of <b>₦5,200</b> into the University's account, using <b>${esc(reference)}</b> as the transfer narration. When the University's bank record reaches us, we confirm and your entry goes live.`),
-        refChip(reference, "Use this as your transfer narration"),
-        para(`Your payment page shows the exact account details, copied for you.`),
-      ].join(""),
-      cta: { href: paymentStepUrl, label: "View the payment step" },
-    }),
-  };
-}
-
-export function applicationRejected(reference: string, reason: string): EmailTemplate {
-  return {
-    subject: `A decision on your application — ${reference}`,
-    html: shell({
-      preheader: "A decision has been made. The exact reason is written inside — no guessing.",
-      status: { label: "A decision", tone: "grey" },
-      title: "A decision on your application.",
-      body: [
-        para(`We are not able to list <b>${esc(reference)}</b> at this time, for this reason:`),
-        detailCard("The exact reason", `<p style="margin:0;">${esc(reason)}</p>`),
-        para(`If you believe this was a mistake, reply to this email — a person reads it.`),
-      ].join(""),
-    }),
-  };
-}
-
-export function feeAwaitingEvidence(reference: string): EmailTemplate {
-  return {
-    subject: `We have your payment claim — ${reference}`,
-    html: shell({
-      preheader: "No action needed. The University's bank record reaches us daily; we confirm the next working day.",
-      status: { label: "Payment pending", tone: "amber" },
-      title: "We have your payment claim.",
-      body: [
-        para(`You have told us you have paid against ${esc(reference)}. The University's bank record reaches us once a day at 23:00; we confirm your entry on the <b>next working day</b> after it lands.`),
-        refChip(reference),
-        para(`<b>No action is needed from you.</b> If your payment does not appear within two working days, reply to this email with your transfer details.`),
-      ].join(""),
-    }),
-  };
-}
-
-export function feeConfirmed(reference: string, businessName: string, publicUrl: string): EmailTemplate {
-  return {
-    subject: `You are on the record — ${reference}`,
-    html: shell({
-      preheader: `Payment confirmed. ${businessName} is now registered in the official NMU business directory.`,
-      status: { label: "Confirmed — on the record", tone: "solid" },
-      title: "Your business is on the record.",
-      body: [
-        para(`Payment confirmed. <b>${esc(businessName)}</b> is now registered in the official NMU business directory.`),
-        refChip(reference, "Your official reference"),
-        para(`Your entry is public with this reference. Welcome to the record.`),
-        para(`<b>P.S.</b> — Do you also want to <a href="https://voeq.ng/for-vendors" style="color:${C.forest};font-weight:bold;">sell on Voeq</a>? The campus marketplace thousands of students already use. You are approved here; getting started there takes minutes.`),
-      ].join(""),
-      cta: { href: publicUrl, label: "See your public entry" },
-    }),
-  };
-}
-
-export function paymentException(reference: string, concern: string): EmailTemplate {
-  return {
-    subject: `A problem with your payment — ${reference}`,
-    html: shell({
-      preheader: "We received a payment we cannot yet attach to your application. The exact problem is written inside.",
-      status: { label: "Action needed", tone: "amber" },
-      title: "A problem with your payment.",
-      body: [
-        para(`We received a payment we cannot yet attach to your application ${esc(reference)}. Here is exactly what is wrong:`),
-        detailCard("What the bank record shows", `<p style="margin:0;">${esc(concern)}</p>`),
-        para(`This email does not guess — what is written above is what the bank record shows. Reply to this email or visit the Media Unit with your transfer receipt and we will resolve it.`),
-      ].join(""),
-    }),
-  };
-}
-
-// ---------------------------------------------------------------------------
-// DIRECTION B — the fuller letter (Kai, 2026-11-16: "lets try a lengtheir
-// direction"). Same skin, same rules — but each letter becomes a proper
-// letter: an opening that talks to the applicant, a "what happens next"
-// walk-through, a "good to know" section, and a signature. Kai reviews both
-// directions at /dev/emails and picks one. Same gates, same fire-once rules.
-// ---------------------------------------------------------------------------
-
-function sectionHeading(label: string): string {
-  return `<div style="font-family:${SANS};font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:${C.amberInk};margin:26px 0 10px;border-top:1px solid ${C.line};padding-top:22px;">${esc(label)}</div>`;
-}
-
-function stepsBlock(items: readonly string[]): string {
-  const rows = items
-    .map(
-      (item, i) => `<tr>
-        <td style="width:34px;vertical-align:top;padding:0 0 14px;">
-          <div style="width:24px;height:24px;line-height:24px;text-align:center;border-radius:999px;background:${C.forest};color:${C.white};font-family:${SANS};font-size:12px;font-weight:bold;">${i + 1}</div>
-        </td>
-        <td style="vertical-align:top;padding:0 0 14px;font-family:${SANS};font-size:15px;line-height:1.65;color:${C.body};">${item}</td>
-      </tr>`,
-    )
-    .join("");
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>`;
-}
-
-function bulletsBlock(items: readonly string[]): string {
-  const rows = items
-    .map(
-      (item) => `<tr>
-        <td style="width:34px;vertical-align:top;padding:0 0 10px;font-family:${SANS};font-size:15px;color:${C.amber};">•</td>
-        <td style="vertical-align:top;padding:0 0 10px;font-family:${SANS};font-size:15px;line-height:1.65;color:${C.body};">${item}</td>
-      </tr>`,
-    )
-    .join("");
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>`;
-}
-
-function signoff(name = "The Media Unit"): string {
-  return `<p style="font-family:${SERIF};font-size:15px;color:${C.forestInk};margin:24px 0 4px;">— ${esc(name)},</p>
-  <p style="font-family:${SANS};font-size:13px;color:${C.muted};margin:0;">Nigeria Maritime University Business Register</p>`;
-}
-
-export function applicationReceivedFull(
+export function applicationReceived(
   reference: string,
   businessName: string,
   trackUrl?: string,
@@ -371,7 +244,7 @@ export function applicationReceivedFull(
   };
 }
 
-export function correctionsRequestedFull(
+export function correctionsRequested(
   reference: string,
   items: readonly { field: string; instruction: string }[],
 ): EmailTemplate {
@@ -404,7 +277,7 @@ export function correctionsRequestedFull(
   };
 }
 
-export function applicationApprovedFull(
+export function applicationApproved(
   reference: string,
   businessName: string,
   paymentStepUrl: string,
@@ -443,7 +316,7 @@ export function applicationApprovedFull(
   };
 }
 
-export function applicationRejectedFull(reference: string, reason: string): EmailTemplate {
+export function applicationRejected(reference: string, reason: string): EmailTemplate {
   return {
     subject: `A decision on ${reference} — the reason, written plainly`,
     html: shell({
@@ -471,7 +344,7 @@ export function applicationRejectedFull(reference: string, reason: string): Emai
   };
 }
 
-export function feeAwaitingEvidenceFull(reference: string): EmailTemplate {
+export function feeAwaitingEvidence(reference: string): EmailTemplate {
   return {
     subject: `We have your payment claim — ${reference} — and here is the timeline`,
     html: shell({
@@ -500,11 +373,7 @@ export function feeAwaitingEvidenceFull(reference: string): EmailTemplate {
   };
 }
 
-export function feeConfirmedFull(
-  reference: string,
-  businessName: string,
-  publicUrl: string,
-): EmailTemplate {
+export function feeConfirmed(reference: string, businessName: string, publicUrl: string): EmailTemplate {
   return {
     subject: `${businessName} is on the record — what that means for you`,
     html: shell({
@@ -532,7 +401,7 @@ export function feeConfirmedFull(
   };
 }
 
-export function paymentExceptionFull(reference: string, concern: string): EmailTemplate {
+export function paymentException(reference: string, concern: string): EmailTemplate {
   return {
     subject: `About your payment — ${reference} — what the bank record shows, and the fix`,
     html: shell({

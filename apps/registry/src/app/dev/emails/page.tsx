@@ -7,21 +7,12 @@ import {
   feeAwaitingEvidence,
   feeConfirmed,
   paymentException,
-  applicationReceivedFull,
-  correctionsRequestedFull,
-  applicationApprovedFull,
-  applicationRejectedFull,
-  feeAwaitingEvidenceFull,
-  feeConfirmedFull,
-  paymentExceptionFull,
 } from "@voeq/email";
 import { EmailPreviews } from "./preview-client";
 
 // ---------------------------------------------------------------------------
 // DEV-ONLY email preview. Every letter the system can send, rendered in the
-// real skin — in BOTH directions Kai is choosing between:
-//   A · compact  — the short, tight letter
-//   B · fuller   — the proper letter: opening, walk-through, good-to-know, signature
+// real skin. Direction decided: B, the fuller letter (Kai, 2026-11-16).
 // Names below are labelled preview fixtures — never shipped, never sent, and
 // this page does not exist in production builds.
 // ---------------------------------------------------------------------------
@@ -42,50 +33,43 @@ const PREVIEWS = [
     id: "application-received",
     name: "1 · Application received",
     gate: "Fires once, after the SUBMITTED transition is committed in its DB transaction.",
-    a: applicationReceived(REF, NAME),
-    b: applicationReceivedFull(REF, NAME, `http://localhost:3000/track/${REF}`),
+    letter: applicationReceived(REF, NAME, `http://localhost:3000/track/${REF}`),
   },
   {
     id: "corrections",
     name: "2 · Corrections requested",
     gate: "Fires only after a register-family staff member records a corrections decision with at least one concrete item. Never automatic.",
-    a: correctionsRequested(REF, FIX_ITEMS),
-    b: correctionsRequestedFull(REF, FIX_ITEMS),
+    letter: correctionsRequested(REF, FIX_ITEMS),
   },
   {
     id: "approved",
     name: "3 · Approved — payment step",
     gate: "Fires on the APPROVED decision. Maker-checker applies: the approving account must differ from the reviewing account.",
-    a: applicationApproved(REF, NAME, `http://localhost:3000/apply/${REF}/payment`),
-    b: applicationApprovedFull(REF, NAME, `http://localhost:3000/apply/${REF}/payment`),
+    letter: applicationApproved(REF, NAME, `http://localhost:3000/apply/${REF}/payment`),
   },
   {
     id: "rejected",
     name: "4 · Rejected",
     gate: "Fires on the REJECTED decision with the written reason included verbatim. The reason is not edited or softened.",
-    a: applicationRejected(REF, FIX_REASON),
-    b: applicationRejectedFull(REF, FIX_REASON),
+    letter: applicationRejected(REF, FIX_REASON),
   },
   {
     id: "fee-claimed",
     name: "5 · Payment claim received",
     gate: "Fires once when the applicant claims payment (fee intent → CLAIMED). No repeat sends for the same intent.",
-    a: feeAwaitingEvidence(REF),
-    b: feeAwaitingEvidenceFull(REF),
+    letter: feeAwaitingEvidence(REF),
   },
   {
     id: "fee-confirmed",
     name: "6 · Fee confirmed — on the record",
     gate: "Fires only after the three-signal match (reference + exact amount + date window) passes on the bank statement CSV AND a staff member confirms. Never auto-confirmed.",
-    a: feeConfirmed(REF, NAME, "http://localhost:3000/directory/nmu-okerenkoko"),
-    b: feeConfirmedFull(REF, NAME, "http://localhost:3000/directory/nmu-okerenkoko"),
+    letter: feeConfirmed(REF, NAME, "http://localhost:3000/directory/nmu-okerenkoko"),
   },
   {
     id: "payment-exception",
     name: "7 · Payment exception",
     gate: "Fires when a bank CSV credit fails the three-signal match against every expectation, or matches with a wrong amount/date. Sent within two working days of detection.",
-    a: paymentException(REF, FIX_CONCERN),
-    b: paymentExceptionFull(REF, FIX_CONCERN),
+    letter: paymentException(REF, FIX_CONCERN),
   },
 ];
 
@@ -97,12 +81,12 @@ export default function DevEmailsPage() {
       <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
         Dev-only preview
       </p>
-      <h1 className="font-display text-3xl text-vq-forest-dark">The seven letters — two directions</h1>
+      <h1 className="font-display text-3xl text-vq-forest-dark">The seven letters</h1>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-600">
-        Every email the system can send, in the real skin, in both directions
-        Kai is choosing between. Nothing here is a real application — the names
-        are labelled preview fixtures. Toggle the direction, then the width —
-        every letter must survive the 390px phone pass like every screen.
+        Every email the system can send, in the real skin. Direction decided:
+        B, the fuller letter. Nothing here is a real application — the names
+        are labelled preview fixtures. Toggle the width — every letter must
+        survive the 390px phone pass like every screen.
       </p>
       <EmailPreviews previews={PREVIEWS} />
     </main>
