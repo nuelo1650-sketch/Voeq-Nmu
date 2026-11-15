@@ -6,8 +6,8 @@
 // in Phase 2 (doc 05 deliverable 0.5).
 // ---------------------------------------------------------------------------
 
-import { prisma } from "./index.js";
-import { processOutbox } from "./outbox.js";
+import { prisma } from "./index";
+import { processOutbox } from "./outbox";
 import { emailAdapter } from "@voeq/email";
 
 const INTERVAL_MS = 15_000;

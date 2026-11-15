@@ -5,7 +5,7 @@ import {
   canTransitionFeeIntent,
   isExactMatch,
   canConfirm,
-} from "./state-machines.js";
+} from "./state-machines";
 
 describe("application state machine", () => {
   it("allows the happy path draft → submitted → under_review → approved → registered", () => {

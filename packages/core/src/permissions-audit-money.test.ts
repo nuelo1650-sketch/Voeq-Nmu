@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { canHold, validateGrants, type PermissionKey } from "./permissions.js";
-import { hashEntry, canonicalJson, verifyChain } from "./audit.js";
-import { formatNaira, parseNairaToMinor, FEE_TOTAL_KOBO, FEE_SCHOOL_KOBO, FEE_VOEQ_KOBO } from "./money.js";
-import { formatReference, parseReference, extractReferenceFromNarration } from "./reference.js";
+import { canHold, validateGrants, type PermissionKey } from "./permissions";
+import { hashEntry, canonicalJson, verifyChain } from "./audit";
+import { formatNaira, parseNairaToMinor, FEE_TOTAL_KOBO, FEE_SCHOOL_KOBO, FEE_VOEQ_KOBO } from "./money";
+import { formatReference, parseReference, extractReferenceFromNarration } from "./reference";
 
 describe("permission matrix — two families that cannot mix", () => {
   it("register accounts cannot hold platform permissions", () => {

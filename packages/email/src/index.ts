@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------
 
 import { Resend } from "resend";
-import type { EmailTemplate } from "./templates.js";
+import type { EmailTemplate } from "./templates";
 
 export interface SendResult {
   ok: boolean;
@@ -48,4 +48,4 @@ export class ResendAdapter implements EmailAdapter {
 }
 
 export const emailAdapter: EmailAdapter = new ResendAdapter();
-export * from "./templates.js";
+export * from "./templates";
