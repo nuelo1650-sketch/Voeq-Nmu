@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fee ledger — NMU Media Unit</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
-  <link rel="stylesheet" href="prototype.css">
+<link rel="stylesheet" href="prototype.css">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
   <div class="wrap masthead-inner">
     <div class="masthead-meta">
       <span>NMU Media Department · Fee ledger</span>
-      <span>Statement feed · last run 13 Nov 2026, 23:00</span>
+      <span>Dedicated account · statement imported 15 Nov 2026, 07:14</span>
     </div>
     <div class="masthead-main">
       <div class="masthead-lockup">
@@ -44,37 +44,37 @@
     <div class="spread wrap-row gap-4" style="align-items:end">
       <div>
         <div class="qh-figure" style="font-size:clamp(3rem,8vw,5rem)">12<em>.</em></div>
-        <div class="qh-label">Fees submitted, awaiting confirmation</div>
+        <div class="qh-label">Credits awaiting confirmation</div>
       </div>
-      <p class="small" style="color:rgba(244,239,226,.62);max-width:36ch;text-align:right">
-        Four have been waiting longer than three days. Confirming a fee is what completes a
-        registration — nothing is listed until it is done.
+      <p class="small" style="color:rgba(244,239,226,.62);max-width:38ch;text-align:right">
+        One dedicated account. Every credit into it is divided — ₦5,000 to the University,
+        ₦200 to Voeq — and every division is logged here.
       </p>
     </div>
     <div class="qh-strip mt-6">
       <div class="qh-cell">
-        <span class="n">₦4,600.00</span>
-        <span class="l">Receivable from NMU</span>
+        <span class="n">₦499,200</span>
+        <span class="l">Credits to date · 96 · memo</span>
       </div>
       <div class="qh-cell">
-        <span class="n">23</span>
-        <span class="l">Registrations · not yet remitted</span>
+        <span class="n">₦23,000</span>
+        <span class="l">School share awaiting sweep · memo</span>
       </div>
       <div class="qh-cell is-alert">
-        <span class="n">₦12,400</span>
-        <span class="l">Fees submitted, unconfirmed</span>
+        <span class="n">₦4,600</span>
+        <span class="l">Voeq share · receivable</span>
+      </div>
+      <div class="qh-cell">
+        <span class="n">₦14,600</span>
+        <span class="l">Remitted to Voeq to date</span>
       </div>
       <div class="qh-cell">
         <span class="n">96</span>
-        <span class="l">Registered and listed</span>
-      </div>
-      <div class="qh-cell">
-        <span class="n">0</span>
-        <span class="l">Unmatched bank credits</span>
+        <span class="l">Registered entries</span>
       </div>
       <div class="qh-cell is-alert">
-        <span class="n">2d</span>
-        <span class="l">Since last reconciliation</span>
+        <span class="n">0</span>
+        <span class="l">Unmatched credits</span>
       </div>
     </div>
   </div>
@@ -82,156 +82,257 @@
 
 <div class="wrap" style="padding-block:var(--space-lg) var(--space-3xl)">
 
+  <!-- ==================== THE ACCOUNT ==================== -->
+  <div class="block" style="border-top-width:2px;border-top-color:var(--ink);padding-top:var(--space-md)">
+    <div class="spread wrap-row gap-4" style="align-items:flex-start">
+      <div>
+        <div class="caption">The dedicated account</div>
+        <h2 class="h2 mt-3">NMU Business Registration Account</h2>
+        <p class="small sub mt-2" style="max-width:52ch">
+          Students transfer the full registration amount into this one account, quoting their
+          reference. Every credit is divided the same way, and every division is recorded.
+        </p>
+      </div>
+      <div class="grow" style="min-width:280px;max-width:440px">
+        <dl class="spec" style="grid-template-columns:150px minmax(0,1fr)">
+          <dt>Bank</dt><dd>Zenith Bank</dd>
+          <dt>Account number</dt><dd class="mono">1234 5678 9012</dd>
+          <dt>Account owner</dt><dd>Nigeria Maritime University — central finance</dd>
+          <dt>Operated by</dt><dd>Media Unit, finance officer</dd>
+          <dt>Division</dt><dd><span class="mono">₦5,000</span> University <span class="divider-dot">·</span> <span class="mono">₦200</span> Voeq</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== FILTERS ==================== -->
-  <div class="filterbar">
-    <select class="select"><option>All fee components</option><option>Registration fee</option><option>Platform fee</option></select>
+  <div class="filterbar mt-6">
+    <input class="input" placeholder="Search reference, business or payer…">
+    <select class="select"><option>All credits</option><option>Awaiting confirmation</option><option>Confirmed</option><option>Unmatched</option></select>
     <select class="select"><option>All campuses</option><option>Okerenkoko</option><option>Kurutie</option></select>
-    <select class="select"><option>All</option><option>Submitted today</option><option>Over 3 days old</option></select>
+    <select class="select"><option>Last 30 days</option><option>Last 7 days</option><option>All time</option></select>
     <span class="grow"></span>
     <button class="btn btn--outline btn--sm">Export ledger</button>
+    <button class="btn btn--outline btn--sm">Import statement</button>
     <button class="btn btn--outline btn--sm">Run reconciliation</button>
   </div>
 
-  <div class="split split-lead mt-6" style="gap:var(--space-xl)">
+  <!-- ==================== THE ACCOUNT LEDGER ==================== -->
+  <div class="spread wrap-row gap-3 mt-6" style="align-items:baseline">
+    <h2 class="h3">Every credit and its division</h2>
+    <span class="small faint mono">96 credits · ₦499,200.00 · showing 10</span>
+  </div>
 
-    <!-- ==================== QUEUE ==================== -->
+  <div class="table-scroll mt-3">
+    <table class="ledger">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Reference</th>
+          <th>Business</th>
+          <th class="c-act">Credited</th>
+          <th class="c-act">School ₦5,000</th>
+          <th class="c-act">Voeq ₦200</th>
+          <th>Status</th>
+          <th class="c-act">Next</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="c-meta">14 Nov</td>
+          <td class="c-ref">NMU-2026-0042</td>
+          <td class="c-name">Khim Culinary Institute</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--warn mark--solid">To confirm</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm">Confirm</button></td>
+        </tr>
+        <tr>
+          <td class="c-meta">13 Nov</td>
+          <td class="c-ref">NMU-2026-0035</td>
+          <td class="c-name">Ada Obi Designs</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--warn mark--solid">To confirm</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm">Confirm</button></td>
+        </tr>
+        <tr>
+          <td class="c-meta">12 Nov</td>
+          <td class="c-ref">NMU-2026-0033</td>
+          <td class="c-name">Anchor Books</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--warn mark--solid">To confirm</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm">Confirm</button></td>
+        </tr>
+        <tr>
+          <td class="c-meta">11 Nov</td>
+          <td class="c-ref">NMU-2026-0031</td>
+          <td class="c-name">Campus Bakes &amp; Co</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--warn mark--solid">To confirm</span></td>
+          <td class="c-act"><button class="btn btn--outline btn--sm">Confirm</button></td>
+        </tr>
+        <tr>
+          <td class="c-meta">10 Nov</td>
+          <td class="c-ref">NMU-2025-0198</td>
+          <td class="c-name">Bytewise Repairs</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--good mark--solid">Confirmed</span></td>
+          <td class="c-act"><span class="tiny faint mono">14 Nov</span></td>
+        </tr>
+        <tr>
+          <td class="c-meta">10 Nov</td>
+          <td class="c-ref">NMU-2026-0004</td>
+          <td class="c-name">Halo Studio</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--good mark--solid">Confirmed</span></td>
+          <td class="c-act"><span class="tiny faint mono">13 Nov</span></td>
+        </tr>
+        <tr>
+          <td class="c-meta">8 Nov</td>
+          <td class="c-ref">NMU-2026-0038</td>
+          <td class="c-name">Larus Graphics Ltd</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--good mark--solid">Confirmed</span></td>
+          <td class="c-act"><span class="tiny faint mono">13 Nov</span></td>
+        </tr>
+        <tr>
+          <td class="c-meta">7 Nov</td>
+          <td class="c-ref">NMU-2026-0027</td>
+          <td class="c-name">Vwegba Fashion Home</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--good mark--solid">Confirmed</span></td>
+          <td class="c-act"><span class="tiny faint mono">12 Nov</span></td>
+        </tr>
+        <tr>
+          <td class="c-meta">6 Nov</td>
+          <td class="c-ref">NMU-2026-0019</td>
+          <td class="c-name">Sparkle Dry Cleaners</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--good mark--solid">Confirmed</span></td>
+          <td class="c-act"><span class="tiny faint mono">12 Nov</span></td>
+        </tr>
+        <tr>
+          <td class="c-meta">5 Nov</td>
+          <td class="c-ref">NMU-2026-0011</td>
+          <td class="c-name">Calculus Made Simple</td>
+          <td class="c-num c-act">₦5,200.00</td>
+          <td class="c-num c-act">₦5,000.00</td>
+          <td class="c-num c-act">₦200.00</td>
+          <td><span class="mark mark--good mark--solid">Confirmed</span></td>
+          <td class="c-act"><span class="tiny faint mono">11 Nov</span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="caption" style="padding:14px 12px;border-bottom:0">96 credits · totalling</td>
+          <td class="c-num c-act" style="padding:14px 12px;border-bottom:0;border-top:1px solid var(--ink)">₦499,200.00</td>
+          <td class="c-num c-act" style="padding:14px 12px;border-bottom:0;border-top:1px solid var(--ink);color:var(--ink-faint)">₦480,000.00</td>
+          <td class="c-num c-act" style="padding:14px 12px;border-bottom:0;border-top:1px solid var(--ink);color:var(--foil)">₦19,200.00</td>
+          <td style="border-bottom:0"></td>
+          <td class="c-act" style="border-bottom:0"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <p class="tiny faint mono mt-2">School share is memorandum only — it is the University's money and is not Voeq revenue. Voeq's share is the receivable until NMU remits it.</p>
+
+  <!-- ==================== SELECTED CREDIT ==================== -->
+  <div class="split split-wide mt-8" style="gap:var(--space-2xl)">
+
+    <!-- evidence -->
     <div>
       <div class="section-head">
-        <h2>Awaiting confirmation</h2>
-        <span class="meta">12 entries</span>
-      </div>
-      <div class="folio-list">
-        <div class="folio-row folio-row--pair">
-          <span class="name" style="font-size:1rem">Khim Culinary Institute</span>
-          <span class="code">NMU-2026-0042</span>
-          <span class="desc">₦5,200.00 · submitted 14 Nov, 8:39am</span>
-        </div>
-        <div class="folio-row folio-row--pair">
-          <span class="name" style="font-size:1rem">Ada Obi Designs</span>
-          <span class="code">NMU-2026-0035</span>
-          <span class="desc">₦5,200.00 · submitted 13 Nov, 2:18pm</span>
-        </div>
-        <div class="folio-row folio-row--pair">
-          <span class="name" style="font-size:1rem">Anchor Books</span>
-          <span class="code">NMU-2026-0033</span>
-          <span class="desc">₦5,200.00 · submitted 12 Nov, 10:02am</span>
-        </div>
-        <div class="folio-row folio-row--pair">
-          <span class="name" style="font-size:1rem">Campus Bakes &amp; Co</span>
-          <span class="code">NMU-2026-0031</span>
-          <span class="desc">₦5,200.00 · submitted 11 Nov, 4:55pm</span>
-        </div>
-        <div class="folio-row folio-row--pair">
-          <span class="name" style="font-size:1rem">Bytewise Repairs</span>
-          <span class="code">NMU-2025-0198</span>
-          <span class="desc">₦5,200.00 · submitted 10 Nov, 11:20am</span>
-        </div>
-        <div class="folio-row folio-row--pair">
-          <span class="name" style="font-size:1rem">Halo Studio</span>
-          <span class="code">NMU-2026-0004</span>
-          <span class="desc">₦5,200.00 · submitted 10 Nov, 9:03am</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== EVIDENCE ==================== -->
-    <div>
-      <div class="block" style="border-top-width:2px;border-top-color:var(--ink);padding-top:var(--space-md)">
-        <div class="spread wrap-row gap-3" style="align-items:flex-start">
-          <div>
-            <span class="ref">NMU-2026-0042</span>
-            <h2 class="h2 mt-3">Khim Culinary Institute</h2>
-            <p class="small faint mono mt-2">Submitted 14 Nov 2026, 8:39am · by the applicant</p>
-          </div>
-          <span class="mark mark--warn mark--solid">Fee submitted — to confirm</span>
-        </div>
+        <h2>Evidence — NMU-2026-0042</h2>
+        <span class="meta">Submitted 14 Nov 2026, 8:39am</span>
       </div>
 
-      <div class="split split-even mt-6" style="gap:var(--space-xl)">
-        <dl class="spec" style="grid-template-columns:150px minmax(0,1fr)">
-          <dt>Applicant</dt><dd>Ada Chukwuemeka</dd>
-          <dt>Business</dt><dd>Khim Culinary Institute</dd>
-          <dt>Campus</dt><dd>Okerenkoko</dd>
-          <dt>Method</dt><dd>Bank transfer</dd>
-        </dl>
-        <dl class="spec" style="grid-template-columns:150px minmax(0,1fr)">
-          <dt>Amount paid</dt><dd class="mono">₦5,200.00</dd>
-          <dt>Payment date</dt><dd>14 November 2026</dd>
-          <dt>Bank reference</dt><dd class="mono">ZM2026111408392</dd>
-          <dt>Transfer reference</dt><dd class="mono">NMU-2026-0042</dd>
-        </dl>
+      <div class="spread wrap-row gap-3" style="align-items:flex-start">
+        <div>
+          <h3 class="h4">Khim Culinary Institute</h3>
+          <p class="small faint mono mt-2">Ada Chukwuemeka · Okerenkoko · Bank transfer</p>
+        </div>
+        <span class="mark mark--warn mark--solid">To confirm</span>
       </div>
 
       <!-- receipt document -->
-      <div class="mt-6">
-        <div class="spread">
-          <h3 class="h4">Receipt</h3>
-          <div class="row gap-2">
-            <button class="btn btn--outline btn--sm">Open full size</button>
-            <button class="btn btn--outline btn--sm">Download</button>
-          </div>
-        </div>
-
-        <div class="mt-3" style="border:1px solid var(--rule);background:#fffdf8">
-          <div style="padding:24px 28px;color:#111">
-            <div class="spread" style="padding-bottom:14px;border-bottom:1px solid #e6dfd0">
-              <div>
-                <div style="font-family:var(--font-display),Georgia,serif;font-size:17px">Zenith Bank</div>
-                <div style="font-size:11px;color:#666;letter-spacing:.08em;text-transform:uppercase">Payment receipt</div>
-              </div>
-              <div style="text-align:right;font-size:11px;color:#666">
-                <div>14 NOV 2026, 08:39</div>
-                <div class="mono">ZM2026111408392</div>
-              </div>
+      <div class="mt-4" style="border:1px solid var(--rule);background:#fffdf8">
+        <div style="padding:24px 28px;color:#111">
+          <div class="spread" style="padding-bottom:14px;border-bottom:1px solid #e6dfd0">
+            <div>
+              <div style="font-family:var(--font-display),Georgia,serif;font-size:17px">Zenith Bank</div>
+              <div style="font-size:11px;color:#666;letter-spacing:.08em;text-transform:uppercase">Credit advice</div>
             </div>
-            <div class="spread mt-4" style="align-items:flex-end">
-              <div>
-                <div style="font-size:11px;color:#666">Amount debited</div>
-                <div style="font-family:var(--font-mono),monospace;font-size:26px;font-weight:500">₦5,200.00</div>
-              </div>
-              <div style="text-align:right;font-size:12px;color:#333">
-                <div>Nigeria Maritime University</div>
-                <div class="mono">1234 5678 9012 · Zenith Bank</div>
-              </div>
-            </div>
-            <div class="mono mt-4" style="font-size:11px;color:#666;border-top:1px solid #e6dfd0;padding-top:12px">
-              NARR: NMU-2026-0042 &nbsp;·&nbsp; ADA CHUKWUEMEKA &nbsp;·&nbsp; SUCCESS
+            <div style="text-align:right;font-size:11px;color:#666">
+              <div>14 NOV 2026, 08:39</div>
+              <div class="mono">ZM2026111408392</div>
             </div>
           </div>
-        </div>
-
-        <div class="row gap-4 wrap-row mt-4">
-          <span class="mark mark--good mark--solid">Reference matches the entry</span>
-          <span class="mark mark--good mark--solid">Amount matches the invoice</span>
-          <span class="mark mark--good mark--solid">Payee name matches</span>
-          <span class="mark mark--good mark--solid">Credit found in the 14 Nov statement</span>
+          <div class="spread mt-4" style="align-items:flex-end">
+            <div>
+              <div style="font-size:11px;color:#666">Amount credited</div>
+              <div style="font-family:var(--font-mono),monospace;font-size:26px;font-weight:500">₦5,200.00</div>
+            </div>
+            <div style="text-align:right;font-size:12px;color:#333">
+              <div>NMU Business Registration Account</div>
+              <div class="mono">1234 5678 9012 · Zenith Bank</div>
+            </div>
+          </div>
+          <div class="mono mt-4" style="font-size:11px;color:#666;border-top:1px solid #e6dfd0;padding-top:12px">
+            NARR: NMU-2026-0042 &nbsp;·&nbsp; ADA CHUKWUEMEKA &nbsp;·&nbsp; SUCCESS
+          </div>
         </div>
       </div>
 
-      <!-- reconciliation -->
+      <div class="row gap-4 wrap-row mt-4">
+        <span class="mark mark--good mark--solid">Reference matches the entry</span>
+        <span class="mark mark--good mark--solid">Amount matches the invoice</span>
+        <span class="mark mark--good mark--solid">Payee name matches</span>
+        <span class="mark mark--good mark--solid">Found in the 14 Nov statement</span>
+      </div>
+
       <div class="block mt-6">
-        <div class="caption">Reconciliation</div>
+        <div class="caption">How this credit divides</div>
         <dl class="spec mt-3">
-          <dt>Bank evidence</dt><dd>Statement CSV · Zenith Bank · 14 Nov 2026 · credit 08:39</dd>
-          <dt>Matched on</dt><dd class="mono">Transfer reference NMU-2026-0042</dd>
-          <dt>Ledger entry</dt><dd class="mono">FEE-RECV-2026-0042-01 · Dr receivable / Cr revenue</dd>
-          <dt>Reconciled by</dt><dd class="mono">O. Lawson · 14 Nov 2026, 09:14</dd>
+          <dt>Credited</dt><dd class="mono">₦5,200.00</dd>
+          <dt>To the University</dt><dd class="mono">₦5,000.00 <span class="tiny faint">· memorandum, swept weekly</span></dd>
+          <dt>To Voeq</dt><dd class="mono">₦200.00 <span class="tiny faint">· revenue on confirmation, remitted weekly</span></dd>
+          <dt>Ledger entry</dt><dd class="mono">FEE-ALLOC-2026-0042-01 · Dr receivable / Cr revenue</dd>
         </dl>
       </div>
+    </div>
 
-      <!-- decision -->
-      <div class="block mt-6" style="border-top-width:2px;border-top-color:var(--ink);padding-top:var(--space-md)">
-        <h3 class="h4">Decision</h3>
-        <p class="small sub mt-2" style="max-width:56ch">
-          Confirming this fee completes the registration of <strong>Khim Culinary Institute</strong>
-          and lists it in the NMU business register with an NMU Registered mark. The decision is
-          recorded against your name and cannot be edited afterwards.
+    <!-- decision -->
+    <aside>
+      <div class="block" style="border-top-width:2px;border-top-color:var(--ink);padding-top:var(--space-md)">
+        <h2 class="h3">Decision</h2>
+        <p class="small sub mt-2">
+          Confirming this credit completes the registration of
+          <strong>Khim Culinary Institute</strong>, lists it in the NMU business register, and
+          recognises ₦200 of Voeq revenue. Recorded against your name; cannot be edited.
         </p>
 
-        <div class="row gap-3 mt-5 wrap-row">
-          <button class="btn btn--primary">Confirm fee</button>
-          <button class="btn btn--signal">Reject receipt</button>
-          <button class="btn btn--outline">Request a new receipt</button>
+        <div class="stack gap-2 mt-5">
+          <button class="btn btn--primary btn--block">Confirm credit</button>
+          <button class="btn btn--signal btn--block">Reject receipt</button>
+          <button class="btn btn--outline btn--block">Request a new receipt</button>
         </div>
 
         <div class="field mt-5">
@@ -241,34 +342,46 @@
         </div>
       </div>
 
-      <!-- history -->
-      <div class="block mt-6">
-        <div class="caption">History</div>
+      <div class="margin-note">
+        <h3>Reconciliation</h3>
+        <p class="mt-2">Last run 13 Nov 2026, 23:00 · statement CSV · Zenith Bank</p>
+        <dl class="spec mt-3" style="grid-template-columns:120px minmax(0,1fr)">
+          <dt>Credits</dt><dd class="mono">96</dd>
+          <dt>Matched</dt><dd class="mono">96</dd>
+          <dt>Unmatched</dt><dd class="mono">0</dd>
+          <dt>Suspended</dt><dd class="mono">₦0.00</dd>
+        </dl>
+        <span class="mark mark--good mark--solid mt-3">Reconciled and signed</span>
+      </div>
+
+      <div class="margin-note">
+        <h3>History</h3>
         <div class="log mt-3">
-          <div class="log-item is-done" style="padding:14px 0">
+          <div class="log-item is-done" style="padding:12px 0">
             <span class="log-mark"></span>
             <div>
-              <div class="log-title">Fee evidence submitted</div>
-              <div class="log-meta">Applicant · 14 Nov 2026, 8:39am · receipt 1 of 1</div>
+              <div class="log-title">Credit imported from the statement</div>
+              <div class="log-meta">15 Nov 2026, 07:14 · 14 Nov statement</div>
             </div>
           </div>
-          <div class="log-item is-done" style="padding:14px 0">
+          <div class="log-item is-done" style="padding:12px 0">
+            <span class="log-mark"></span>
+            <div>
+              <div class="log-title">Match staged</div>
+              <div class="log-meta">O. Lawson · 15 Nov 2026, 08:02 · reference NMU-2026-0042</div>
+            </div>
+          </div>
+          <div class="log-item is-done" style="padding:12px 0;border-bottom:0">
             <span class="log-mark"></span>
             <div>
               <div class="log-title">Entry approved</div>
               <div class="log-meta">A. Igwe · 12 Nov 2026, 11:08am</div>
             </div>
           </div>
-          <div class="log-item is-done" style="padding:14px 0;border-bottom:0">
-            <span class="log-mark"></span>
-            <div>
-              <div class="log-title">Application submitted</div>
-              <div class="log-meta">Applicant · 4 Nov 2026, 3:42pm</div>
-            </div>
-          </div>
         </div>
       </div>
-    </div>
+    </aside>
+
   </div>
 </div>
 
