@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business Register — Nigeria Maritime University</title>
+<meta name="description" content="The official business register of the Nigeria Maritime University. One application, reviewed by a person, listed for the whole campus when approved. A Voeq service for NMU.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
+<!-- The real voeq.ng token layer — same file the marketplace ships. -->
+<link rel="stylesheet" href="../../packages/design-system/src/tokens.css">
+<script src="site.js" defer></script>
+<style>
+/* ============================================================
+   landing-v3 — final mock.
+   Mobile-first (authored at 390px, expanded at 760px+).
+   voeq.ng grammar + the real Logo.png (CSS-mask recolour, the
+   same technique BrandLogo.tsx uses in production).
+   ============================================================ */
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--color-glass-white);
+  color: var(--color-ink);
+  font-family: var(--role-font-ui);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { margin: 0; font-family: var(--role-font-display); color: var(--color-forest-dark); font-weight: 500; }
+a { color: inherit; }
+.mono {
+  font-family: var(--role-font-mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+/* ---------- the real Voeq logo (BrandLogo.tsx technique) ---------- */
+.brand-logo {
+  display: inline-block;
+  width: 78px; height: 52px;
+  background-color: var(--color-forest);
+  -webkit-mask-image: url('logo.png');
+  mask-image: url('logo.png');
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-position: center; mask-position: center;
+}
+.brand-logo--cream { background-color: #f6f1e6; }
+
+/* ---------- nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(250, 246, 236, .92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--role-border);
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 16px;
+  height: 60px; display: flex; align-items: center; gap: 16px;
+}
+.wordmark { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-right: auto; }
+.wordmark .brand-logo { width: 62px; height: 42px; }
+.wordmark-tag {
+  font-family: var(--role-font-mono);
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--color-ink-muted);
+  padding-left: 12px; border-left: 1px solid var(--role-border);
+  line-height: 1.5;
+}
+.nav-links { display: none; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--role-font-ui); font-size: 14px; font-weight: 600;
+  padding: 11px 20px; border-radius: 999px; text-decoration: none;
+  transition: background .15s, border-color .15s, transform .15s, box-shadow .15s;
+  cursor: pointer; white-space: nowrap;
+}
+.btn--forest { background: var(--color-forest); color: var(--color-glass-white); box-shadow: var(--shadow-md); }
+.btn--forest:hover { background: var(--color-forest-mid); transform: translateY(-1px); }
+.btn--ghost { background: rgba(255,255,255,.5); color: var(--color-forest); border: 1.5px solid rgba(15,42,29,.22); }
+.btn--ghost:hover { background: rgba(255,255,255,.85); border-color: rgba(15,42,29,.4); transform: translateY(-1px); }
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(560px 420px at 12% -8%, rgba(232,163,61,.14), transparent 60%),
+    radial-gradient(480px 420px at 104% 108%, rgba(15,42,29,.10), transparent 62%);
+  border-bottom: 1px solid var(--role-border);
+}
+.hero-chart { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.hero-inner { position: relative; max-width: 1200px; margin: 0 auto; padding: 56px 20px 48px; }
+.eyebrow {
+  font-family: var(--role-font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--color-amber-dark);
+  margin: 0 0 16px;
+}
+.hero h1 {
+  font-size: clamp(2.4rem, 9vw, 5.25rem);
+  line-height: 1.06; letter-spacing: -.022em; font-weight: 500;
+  margin-bottom: 18px;
+}
+.hero h1 em { font-style: italic; color: var(--color-forest-mid); }
+.hero-sub { font-size: 17px; color: var(--color-ink-muted); max-width: 46ch; margin: 0 0 28px; }
+.hero-ctas { display: flex; flex-direction: column; gap: 12px; }
+.hero-ctas .btn { width: 100%; padding: 15px 24px; font-size: 15px; }
+.hero-note { margin-top: 14px; font-size: 13.5px; color: var(--color-ink-subtle); }
+.hero-points { position: relative; max-width: 1200px; margin: 0 auto; padding: 0 20px 56px; display: grid; gap: 10px; }
+.point { display: flex; gap: 10px; align-items: center; font-size: 14.5px; color: var(--color-ink-muted); }
+.point i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--color-amber); }
+.point b { color: var(--color-forest); font-weight: 600; }
+
+/* ---------- sections ---------- */
+.section { max-width: 1200px; margin: 0 auto; padding: 64px 20px; }
+.section-head { max-width: 560px; margin-bottom: 32px; }
+.section-head .mono { color: var(--color-amber-dark); margin-bottom: 12px; display: block; }
+.section-head h2 { font-size: clamp(1.7rem, 5.6vw, 2.75rem); line-height: 1.15; letter-spacing: -.015em; }
+
+/* steps */
+.steps { display: grid; gap: 14px; }
+.step {
+  background: var(--color-white); border: 1px solid rgba(15,42,29,.08);
+  border-radius: 16px; padding: 24px 22px 22px; box-shadow: var(--shadow-sm);
+}
+.step-num {
+  font-family: var(--role-font-mono); font-size: 12px; font-weight: 500;
+  color: var(--color-amber-dark); letter-spacing: .12em; display: block; margin-bottom: 10px;
+}
+.step h3 { font-size: 20px; margin-bottom: 6px; }
+.step p { margin: 0 0 14px; font-size: 14.5px; color: var(--color-ink-muted); }
+.step-meta {
+  display: inline-block; font-family: var(--role-font-mono); font-size: 10px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--color-forest-mid);
+  background: var(--role-accent-subtle, #e8f0ea); border-radius: 999px; padding: 4px 11px;
+}
+
+/* documents */
+.docs {
+  background: var(--color-white); border: 1px solid rgba(15,42,29,.08);
+  border-radius: 16px; box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.docs-list { padding: 10px 22px; margin: 0; list-style: none; }
+.docs-list li {
+  display: flex; gap: 12px; align-items: flex-start; padding: 14px 0;
+  border-bottom: 1px solid rgba(15,42,29,.07); font-size: 15px; color: var(--color-ink-muted);
+}
+.docs-list li:last-child { border-bottom: 0; }
+.docs-list li i {
+  flex: none; width: 20px; height: 20px; border-radius: 50%; margin-top: 1px;
+  background: var(--role-accent-subtle, #e8f0ea); color: var(--color-forest-mid);
+  font-style: normal; font-size: 11px; font-weight: 700; line-height: 20px; text-align: center;
+}
+.docs-list li b { color: var(--color-forest); font-weight: 600; }
+.docs-aside { background: var(--color-cream); border-top: 1px solid rgba(15,42,29,.08); padding: 24px 22px; }
+.docs-aside p { margin: 0 0 10px; font-size: 14px; color: var(--color-ink-muted); }
+.docs-aside p:last-child { margin-bottom: 0; }
+.docs-aside b { color: var(--color-forest); font-weight: 600; }
+.docs-aside a { color: var(--color-forest-mid); font-weight: 600; font-size: 14px; }
+
+/* water band (directory) */
+.water { position: relative; overflow: hidden; background: var(--color-forest-dark, #0b211a); color: #eef3ec; }
+.water-chart { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.water-inner { position: relative; max-width: 1200px; margin: 0 auto; padding: 72px 20px; }
+.water .mono { color: var(--color-amber-light, #f5c36a); opacity: .85; }
+.water h2 {
+  color: #eef3ec; font-size: clamp(1.9rem, 7vw, 3.25rem);
+  letter-spacing: -.018em; line-height: 1.12; margin: 16px 0 12px;
+}
+.water-sub { max-width: 48ch; margin: 0 0 32px; color: #9fb3a4; font-size: 16px; }
+.empty {
+  background: rgba(245,241,232,.06); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px; backdrop-filter: blur(8px); padding: 28px 24px; max-width: 640px;
+}
+.empty-count {
+  font-family: var(--role-font-mono); font-size: 36px; font-weight: 500;
+  color: var(--color-amber-light); letter-spacing: -.02em; line-height: 1;
+  display: block; margin-bottom: 14px;
+}
+.empty p { margin: 0; color: rgba(238,243,236,.85); font-size: 15px; max-width: 46ch; }
+.empty small {
+  display: block; margin-top: 12px;
+  font-family: var(--role-font-mono); font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(159,179,164,.85);
+}
+
+/* fees */
+.fee-card {
+  background: var(--color-white); border: 1px solid rgba(15,42,29,.08);
+  border-radius: 16px; box-shadow: var(--shadow-sm); padding: 28px 24px;
+}
+.fee-card h3 { font-size: 21px; margin-bottom: 10px; }
+.fee-card .fee-line { margin: 0 0 20px; font-size: 15px; color: var(--color-ink-muted); max-width: 50ch; }
+.fee-facts { display: grid; gap: 10px; }
+.fee-fact {
+  display: flex; gap: 12px; align-items: baseline; padding: 13px 16px;
+  border-radius: 12px; background: var(--color-cream); border: 1px solid rgba(15,42,29,.08);
+  font-size: 14px; color: var(--color-ink-muted);
+}
+.fee-fact b { color: var(--color-forest); font-weight: 600; white-space: nowrap; }
+
+/* footer — mirrors voeq.ng's LandingFooter (forest surface, amber titles) */
+.footer { background: var(--color-forest); color: #cfd9d2; padding: 56px 20px 28px; }
+.footer-content { max-width: 1080px; margin: 0 auto; }
+.footer-grid {
+  display: grid; grid-template-columns: 1fr; gap: 36px;
+  padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.footer-col { display: flex; flex-direction: column; gap: 11px; }
+.footer-col-title {
+  font-size: 12px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--color-amber); margin-bottom: 6px;
+}
+.footer-link { font-size: 14px; color: #a9b8b0; text-decoration: none; transition: color .15s; width: fit-content; }
+.footer-link:hover { color: #fff; }
+.footer-brand-logo { display: inline-block; width: 94px; height: 62px; margin-bottom: 14px; }
+.footer-brand-tagline { font-size: 14px; line-height: 1.6; color: #93a39b; max-width: 280px; margin: 0 0 18px; }
+.footer-socials { display: flex; gap: 10px; }
+.footer-social {
+  width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,.07);
+  display: flex; align-items: center; justify-content: center; color: #cfd9d2; transition: all .18s;
+}
+.footer-social:hover { background: var(--color-amber); color: var(--color-forest); transform: translateY(-2px); }
+.footer-support { font-size: 14px; color: #a9b8b0; }
+.footer-support b { color: #cfd9d2; font-weight: 600; }
+.footer-bottom {
+  display: flex; flex-direction: column; gap: 12px; align-items: flex-start;
+  max-width: 1080px; margin: 24px auto 0; font-size: 13px; color: #8ba096;
+}
+.footer-bottom-right { display: flex; gap: 20px; flex-wrap: wrap; }
+.footer-legal-link { color: #8ba096; text-decoration: none; }
+.footer-legal-link:hover { color: #fff; }
+.footer-credit {
+  text-align: center; margin-top: 20px; padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  font-size: 12.5px; color: #7d8d85;
+}
+
+/* cookie banner (Voeq styling; site.js injects the markup) */
+.cookie {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  background: var(--color-white); border-top: 1px solid var(--role-border);
+  box-shadow: 0 -8px 24px rgba(15,42,29,.12);
+  transform: translateY(100%); transition: transform .3s cubic-bezier(.2,.6,.2,1);
+}
+.cookie.is-open { transform: translateY(0); }
+.cookie .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.cookie-inner { display: grid; grid-template-columns: 1fr; gap: 14px; padding: 18px 0; }
+.cookie h4 { font-family: var(--role-font-display); font-size: 16px; font-weight: 600; color: var(--color-forest-dark); margin: 0 0 6px; }
+.cookie p { margin: 0; font-size: 13px; color: var(--color-ink-muted); max-width: 68ch; }
+.cookie a { color: var(--color-forest-mid); font-weight: 600; }
+.cookie-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.cookie-actions .btn { padding: 10px 18px; font-size: 13px; }
+.cookie .btn--primary { background: var(--color-forest); color: var(--color-glass-white); border: 0; border-radius: 999px; }
+.cookie .btn--primary:hover { background: var(--color-forest-mid); }
+.cookie .btn--outline, .cookie .btn--ghost {
+  background: rgba(255,255,255,.5); color: var(--color-forest);
+  border: 1.5px solid rgba(15,42,29,.22); border-radius: 999px;
+}
+.cookie .btn--outline:hover, .cookie .btn--ghost:hover { border-color: rgba(15,42,29,.4); }
+.cookie-detail { display: none; margin-top: 12px; overflow-x: auto; max-height: 220px; overflow-y: auto; }
+.cookie-detail.is-open { display: block; }
+.cookie-detail table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.cookie-detail th, .cookie-detail td {
+  text-align: left; padding: 8px 14px 8px 0; border-bottom: 1px solid rgba(15,42,29,.08);
+  vertical-align: top; color: var(--color-ink-muted); font-weight: 400;
+}
+.cookie-detail th {
+  font-family: var(--role-font-mono); font-size: 10px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--color-ink-subtle);
+}
+.cookie-detail td.mono { font-family: var(--role-font-mono); font-size: 11.5px; color: var(--color-forest); }
+
+/* ============ EXPANSION: ≥760px (desktop) ============ */
+@media (min-width: 760px) {
+  .nav-inner { padding: 0 24px; height: 64px; gap: 32px; }
+  .wordmark .brand-logo { width: 78px; height: 52px; }
+  .wordmark-tag { font-size: 11px; }
+  .nav-links { display: flex; gap: 4px; align-items: center; }
+  .nav-links a {
+    font-size: 14px; font-weight: 500; color: var(--color-ink-muted);
+    text-decoration: none; padding: 8px 14px; border-radius: 9px;
+    position: relative; transition: color .15s, background .15s;
+  }
+  .nav-links a::after {
+    content: ""; position: absolute; left: 14px; right: 14px; bottom: 4px;
+    height: 2px; border-radius: 2px; background: var(--color-amber);
+    transform: scaleX(0); transform-origin: left; transition: transform .22s ease;
+  }
+  .nav-links a:hover { color: var(--color-forest); background: rgba(30,59,47,.05); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .hero-inner { padding: 104px 24px 48px; }
+  .hero h1 { margin-bottom: 24px; }
+  .hero-sub { font-size: 19px; margin-bottom: 36px; }
+  .hero-ctas { flex-direction: row; align-items: center; }
+  .hero-ctas .btn { width: auto; padding: 13px 26px; font-size: 15px; }
+  .hero-points { grid-template-columns: repeat(3, 1fr); padding: 0 24px 64px; }
+  .section { padding: 88px 24px; }
+  .section-head { margin-bottom: 40px; }
+  .steps { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .docs { display: grid; grid-template-columns: 1.2fr .8fr; }
+  .docs-list { padding: 14px 32px; }
+  .docs-list li { font-size: 15px; }
+  .docs-aside { border-top: 0; border-left: 1px solid rgba(15,42,29,.08); padding: 32px; }
+  .water-inner { padding: 96px 24px; }
+  .empty { padding: 40px 36px; }
+  .empty-count { font-size: 40px; }
+  .fee-card { padding: 40px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 44px; align-items: center; }
+  .fee-card .fee-line { margin-bottom: 0; }
+  .footer { padding: 64px 24px 28px; }
+  .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1.1fr; gap: 44px; }
+  .footer-bottom { flex-direction: row; justify-content: space-between; align-items: center; }
+  .cookie .wrap { padding: 0 24px; }
+  .cookie-inner { grid-template-columns: 1fr auto; gap: 32px; padding: 22px 0; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== NAV — real logo, no staff entry ==================== -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="landing-v3.html" aria-label="Voeq — NMU Business Register">
+      <span class="brand-logo" role="img" aria-label="Voeq"></span>
+      <span class="wordmark-tag">NMU Business<br>Register</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#directory">Directory</a>
+      <a href="#fees">Fees</a>
+    </nav>
+    <a class="btn btn--forest" href="apply.html">Start an application</a>
+  </div>
+</header>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <svg class="hero-chart" viewBox="0 0 1440 780" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#0F2A1D" stroke-width="1">
+      <path d="M 1180,180 C 1240,150 1330,170 1370,220 C 1410,270 1400,340 1340,380 C 1270,430 1150,420 1100,370 C 1055,325 1070,255 1110,215 C 1130,195 1150,190 1180,180 Z" stroke-opacity=".10"/>
+      <path d="M 1150,150 C 1230,105 1360,130 1420,200 C 1470,260 1470,360 1395,420 C 1305,490 1120,470 1050,400 C 990,340 995,230 1060,180 C 1090,155 1120,165 1150,150 Z" stroke-opacity=".07"/>
+      <path d="M 1110,120 C 1220,60 1390,90 1470,180 C 1540,260 1540,390 1450,465 C 1340,555 1090,530 1000,430 C 925,350 925,205 1010,140 C 1040,120 1080,135 1110,120 Z" stroke-opacity=".05"/>
+      <path d="M 220,470 C 290,430 400,445 450,500 C 500,555 485,640 420,675 C 345,715 230,695 190,635 C 155,580 170,505 220,470 Z" stroke-opacity=".09"/>
+      <path d="M 180,430 C 270,375 430,395 505,465 C 575,530 560,660 465,715 C 360,775 185,750 125,665 C 75,595 90,485 180,430 Z" stroke-opacity=".06"/>
+      <path d="M -60,600 C 240,540 430,680 710,635 C 980,592 1170,710 1500,640" stroke-opacity=".14"/>
+      <path d="M -60,640 C 250,585 445,715 725,672 C 995,630 1180,745 1500,680" stroke-opacity=".10" stroke-dasharray="2 6"/>
+    </g>
+    <g font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" fill="#0F2A1D" fill-opacity=".35">
+      <text x="1064" y="556">OKERENKOKO CHANNEL · 4.2 m</text>
+    </g>
+    <g>
+      <circle cx="1211" cy="268" r="10" fill="#E8A33D" fill-opacity=".16"/>
+      <circle cx="1211" cy="268" r="4" fill="#E8A33D"/>
+      <circle cx="336" cy="564" r="10" fill="#E8A33D" fill-opacity=".16"/>
+      <circle cx="336" cy="564" r="4" fill="#E8A33D"/>
+    </g>
+  </svg>
+
+  <div class="hero-inner">
+    <p class="eyebrow">Official business register</p>
+    <h1>Your business, on the university&rsquo;s <em>record</em>.</h1>
+    <p class="hero-sub">One application. A person reviews it. Approved businesses join the official NMU directory.</p>
+    <div class="hero-ctas">
+      <a class="btn btn--forest" href="apply.html">Start an application</a>
+      <a class="btn btn--ghost" href="directory.html">Browse the directory</a>
+    </div>
+    <p class="hero-note">Applying is free — nothing is charged until your entry is approved.</p>
+  </div>
+
+  <div class="hero-points">
+    <div class="point"><i></i><p><b>Read by a person</b> — never auto-accepted</p></div>
+    <div class="point"><i></i><p><b>Decision in five working days</b></p></div>
+    <div class="point"><i></i><p><b>Listed campus-wide</b> when approved</p></div>
+  </div>
+</section>
+
+<!-- ==================== HOW IT WORKS ==================== -->
+<section class="section" id="how">
+  <div class="section-head">
+    <span class="mono">How it works</span>
+    <h2>Three steps to the record.</h2>
+  </div>
+  <div class="steps">
+    <article class="step">
+      <span class="step-num">01</span>
+      <h3>Apply</h3>
+      <p>Fill the form, upload your documents, agree to the terms. Saves as you go.</p>
+      <span class="step-meta">About 10 minutes</span>
+    </article>
+    <article class="step">
+      <span class="step-num">02</span>
+      <h3>Review</h3>
+      <p>The Media Unit reads every application and emails you the decision.</p>
+      <span class="step-meta">Five working days</span>
+    </article>
+    <article class="step">
+      <span class="step-num">03</span>
+      <h3>Listed</h3>
+      <p>One transfer after approval completes the registration. Your entry goes live.</p>
+      <span class="step-meta">Public directory</span>
+    </article>
+  </div>
+</section>
+
+<!-- ==================== WHAT YOU NEED ==================== -->
+<section class="section" style="padding-top:0">
+  <div class="section-head">
+    <span class="mono">Before you start</span>
+    <h2>Have these ready.</h2>
+  </div>
+  <div class="docs">
+    <ul class="docs-list">
+      <li><i>A</i><span><b>CAC certificate</b> — or business name reservation if still in progress</span></li>
+      <li><i>B</i><span><b>Passport photo of the owner</b> — phone camera is fine</span></li>
+      <li><i>C</i><span><b>A photo of the business</b> — shop, stall or workspace</span></li>
+      <li><i>D</i><span><b>A phone number and email</b> — for the decision letter</span></li>
+    </ul>
+    <aside class="docs-aside">
+      <p><b>On a phone?</b> The whole application works on one, and photos are compressed before upload to save your data.</p>
+      <p>You can leave halfway — progress is saved against a reference you keep. <a href="apply.html">Start now &rarr;</a></p>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== THE DIRECTORY ==================== -->
+<section class="water" id="directory">
+  <svg class="water-chart" viewBox="0 0 1440 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#EEF3EC" stroke-width="1">
+      <path d="M 900,80 C 1010,40 1180,70 1260,150 C 1330,225 1320,340 1230,395 C 1120,460 930,430 860,340 C 800,265 810,125 900,80 Z" stroke-opacity=".08"/>
+      <path d="M 850,50 C 990,-10 1220,25 1320,120 C 1405,205 1400,365 1290,440 C 1160,525 910,490 820,385 C 745,295 750,105 850,50 Z" stroke-opacity=".05"/>
+      <path d="M -60,180 C 260,130 480,240 760,205 C 1040,170 1240,260 1500,215" stroke-opacity=".10"/>
+      <path d="M -60,230 C 270,180 495,285 775,255 C 1055,225 1250,310 1500,268" stroke-opacity=".07" stroke-dasharray="2 6"/>
+    </g>
+    <g>
+      <circle cx="1120" cy="230" r="12" fill="#F5C36A" fill-opacity=".14"/>
+      <circle cx="1120" cy="230" r="4" fill="#F5C36A" fill-opacity=".8"/>
+    </g>
+  </svg>
+
+  <div class="water-inner">
+    <span class="mono">The directory</span>
+    <h2>Businesses on the record.</h2>
+    <p class="water-sub">Every approved business is listed here — searchable by name, campus and category.</p>
+
+    <div class="empty">
+      <span class="empty-count">0</span>
+      <p>The register opens with the first approvals. Entries appear here as they are approved.</p>
+      <small>Register open · Be the first on the record</small>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FEES ==================== -->
+<section class="section" id="fees">
+  <div class="section-head">
+    <span class="mono">Fees</span>
+    <h2>One payment, after approval.</h2>
+  </div>
+  <div class="fee-card">
+    <div>
+      <h3>Nothing is charged today.</h3>
+      <p class="fee-line">Applying is free. If approved, a single transfer of <b style="color:var(--color-forest)">&#8358;5,200</b> into the University&rsquo;s account completes the registration. No other fees, ever.</p>
+    </div>
+    <div class="fee-facts">
+      <div class="fee-fact"><b>Apply — free</b><span>The application costs nothing.</span></div>
+      <div class="fee-fact"><b>Pay once</b><span>After approval, direct to the University — not to a person.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER — mirrors voeq.ng's LandingFooter ==================== -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <span class="brand-logo brand-logo--cream" role="img" aria-label="Voeq"></span>
+        <p class="footer-brand-tagline">The official business register of the Nigeria Maritime University, operated by the Media Unit.</p>
+        <div class="footer-socials">
+          <a class="footer-social" href="https://www.whatsapp.com/channel/0029Vb8u4Md6mYPON8gMpi3i" target="_blank" rel="noopener noreferrer" aria-label="Voeq on WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91A9.86 9.86 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.16 8.16 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.25 8.24zm4.52-6.16c-.25-.13-1.47-.72-1.7-.8-.23-.09-.39-.13-.56.12-.17.25-.64.8-.78.97-.14.17-.29.19-.54.06a6.78 6.78 0 0 1-2-1.23 7.5 7.5 0 0 1-1.38-1.72c-.15-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.17-.47-.3z"/></svg>
+          </a>
+          <a class="footer-social" href="https://tiktok.com/@voeq.ng" target="_blank" rel="noopener noreferrer" aria-label="Voeq on TikTok">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .6.05.88.13V9.4a6.33 6.33 0 0 0-5.39 10.69 6.33 6.33 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+          </a>
+          <a class="footer-social" href="https://instagram.com/voeq.ng" target="_blank" rel="noopener noreferrer" aria-label="Voeq on Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">The register</h4>
+        <a class="footer-link" href="apply.html">Start an application</a>
+        <a class="footer-link" href="directory.html">Directory</a>
+        <a class="footer-link" href="status.html">Track an application</a>
+        <a class="footer-link" href="#how">How it works</a>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Legal</h4>
+        <a class="footer-link" href="terms.html">Terms of Service</a>
+        <a class="footer-link" href="privacy.html">Privacy Policy</a>
+        <a class="footer-link" href="cookies.html">Cookies</a>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Support</h4>
+        <p class="footer-support">Questions about the register go to <b>support@voeq.ng</b>.</p>
+        <p class="footer-support">Okerenkoko &amp; Kurutie campuses, Delta State.</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 Nigeria Maritime University · A Voeq service</div>
+      <div class="footer-bottom-right">
+        <a class="footer-legal-link" href="terms.html">Terms</a>
+        <a class="footer-legal-link" href="privacy.html">Privacy</a>
+        <a class="footer-legal-link" href="cookies.html">Cookies</a>
+      </div>
+    </div>
+
+    <div class="footer-credit">Powered by Legacy LM</div>
+  </div>
+</footer>
+
+</body>
+</html>
