@@ -28,26 +28,38 @@ These are not deliverables; they are constraints every deliverable must satisfy.
 
 ---
 
-## The image pipeline — end to end
-
 The spec names uploads (§4.4) and storage (§17) but doesn't join them into one
 path. Here is the whole pipeline, every stage owned by a named deliverable.
 
+**Storage decision (Kai, 2026-11-15): Cloudinary is the entire pipeline — one
+provider for private originals, admin viewing, and public display. No R2, no
+second storage system.** The mechanism that makes this safe:
+
+- Originals are uploaded **server-side** as `type: "authenticated"` assets in
+  folder `nmu/applications/`. An authenticated asset has **no public URL** —
+  the only way to fetch it is a signed delivery URL the server mints per
+  request with a short expiry. The browser never receives upload credentials.
+- On approval the server flips the asset to `type: "upload"` (public) and
+  moves it to `voeq/nmu/` — the display derivative enters the public CDN.
+
 ```
- applicant's phone                registry server               storage
-┌───────────────────┐   ┌───────────────────────────┐   ┌──────────────────┐
-│ 1 SELECT          │   │ 4 VALIDATE                │   │ 6 R2 PRIVATE     │
-│ camera / gallery  │──►│ magic bytes, dimensions,  │──►│ bucket (private, │
-│ 2 COMPRESS        │   │ count per field, size cap │   │ no public URL)   │
-│ canvas re-encode  │   │ 5 RECORD                  │   │ originals kept   │
-│ ≤200KB JPEG, EXIF │   │ DB row + outbox event +   │   │ forever          │
-│ stripped, dim cap │   │ audit row, one txn        │   └────────┬─────────┘
+ applicant's phone                registry server               Cloudinary (dtgcppxd3)
+┌───────────────────┐   ┌───────────────────────────┐   ┌──────────────────────┐
+│ 1 SELECT          │   │ 4 VALIDATE                │   │ 6 PRIVATE ORIGINAL   │
+│ camera / gallery  │──►│ magic bytes, dimensions,  │──►│ type:"authenticated" │
+│ 2 COMPRESS        │   │ count per field, size cap │   │ nmu/applications/    │
+│ canvas re-encode  │   │ 5 RECORD                  │   │ no public URL exists │
+│ ≤200KB JPEG, EXIF │   │ DB row + outbox event +   │   │ kept for audit trail │
+│ stripped, dim cap │   │ audit row, one txn        │   └────────┬─────────────┘
 │ 3 UPLOAD          │   └───────────────────────────┘            │
-│ presigned URL,    │                                            ▼
-│ progress + retry  │                              ┌──────────────────────────┐
+│ POST to our API   │                                            ▼
+│ (not to CDN!)     │                              ┌──────────────────────────┐
 └───────────────────┘                              │ 7 ADMIN VIEW             │
-                                                   │ short-lived signed URL,  │
-                                                   │ full-size + zoom, inline │
+                                                   │ signed delivery URL,     │
+                                                   │ ~10 min expiry, minted   │
+                                                   │ per request for logged-  │
+                                                   │ in register staff only;  │
+                                                   │ full-size + zoom inline  │
                                                    │ in the review screen     │
                                                    └────────────┬─────────────┘
                                                                 │ on approval only
@@ -55,12 +67,11 @@ path. Here is the whole pipeline, every stage owned by a named deliverable.
                                                    ┌──────────────────────────┐
                                                    │ 8 PROMOTE                │
                                                    │ derivative (≤1200px,     │
-                                                   │ compressed) → public     │
-                                                   │ Cloudinary voeq/ folder  │
-                                                   │ (account jq9gwigz) so it │
-                                                   │ enters the marketplace   │
-                                                   │ pipeline; original never │
-                                                   │ leaves R2                │
+                                                   │ compressed, stripped) →  │
+                                                   │ type:"upload", public,   │
+                                                   │ folder voeq/nmu/ on the  │
+                                                   │ same account; original   │
+                                                   │ stays private forever    │
                                                    └──────────────────────────┘
 ```
 
@@ -71,29 +82,63 @@ Stage-by-stage commitments:
    JPEG via canvas: longest edge capped at 1600px, quality stepped down from
    0.85 until ≤ 200KB, EXIF orientation applied and then stripped (no GPS
    metadata ever uploaded). Target: a 3MB phone photo becomes ≤ 200KB.
-3. **Upload** — presigned R2 PUT; progress bar; automatic retry on network
-   failure; the draft keeps its state if the upload fails mid-way.
+3. **Upload** — POST to our own API route over HTTPS with progress + automatic
+   retry. Bytes go to *our server first*, never directly to Cloudinary — no
+   upload secrets in the browser, no unsigned-upload endpoint to abuse.
+   The draft keeps its state if the upload fails mid-way.
 4. **Validate (server, before anything is stored)** — magic-byte sniff (no
    `Content-Type` trust), dimension check, per-field count limit, 10MB hard
    cap on the *original* upload payload.
 5. **Record** — image row + outbox notification + audit event in the same DB
    transaction as the application state change (§19 outbox invariant).
-6. **Store** — private R2 bucket, object key per application reference, no
-   public URL ever constructed; originals retained per the retention policy.
-7. **Admin view** — short-lived signed URLs (minutes, not days), full-size
-   inline viewer with zoom in the review screen; reviewers always see the
-   original, never a re-compressed copy.
+6. **Store (private)** — Cloudinary authenticated asset, `public_id` recorded
+   in the DB row; no public URL exists to leak; originals retained per the
+   retention policy.
+7. **Admin view** — the server mints a signed delivery URL (SDK signature +
+   ~10-minute expiry) per request, only for logged-in register-family staff;
+   full-size inline viewer with zoom in the review screen; reviewers always
+   see the original, never a re-compressed copy. Signed URLs are never stored,
+   never logged, never embedded in emails.
 8. **Promote (only on approval)** — the public directory needs a *display*
    image, not the applicant's original. A derivative is generated (≤1200px,
-   compressed, stripped) and pushed to the existing public Cloudinary folder
-   `voeq/` on account `jq9gwigz`, so marketplace components consume it with
-   zero new plumbing. If the entry is later suspended, the public image is
-   removed but the R2 original is kept for the audit trail.
+   compressed, stripped) and promoted to `type: "upload"` (public) under
+   folder `voeq/nmu/` on the same Cloudinary account, so marketplace
+   components consume it with zero new plumbing. If the entry is later
+   suspended, the public asset is destroyed but the private original is kept
+   for the audit trail.
 
 Failure handling: every stage is idempotent and re-runnable. A failed promote
 retries from the worker; a failed upload never corrupts the draft.
 
 ---
+
+## The email catalogue — every letter and its gate
+
+Exactly **seven transactional emails** exist. No marketing, no newsletters, no
+"we miss you". Every letter is fired by exactly one state transition, through
+the outbox worker — never inline in a request handler, never sent twice for
+the same event. Dev-only rendered previews of all seven live at
+`/dev/emails` (blocked in production); Kai approves each letter before
+deployment.
+
+| # | Letter | Fires when (the gate) | Repeat policy |
+|---|--------|----------------------|---------------|
+| 1 | Application received | The application's SUBMITTED transition is committed in its DB transaction (validation passed server-side) | Once per submission |
+| 2 | Corrections requested | A register-family staff member records a corrections decision **with at least one concrete item** — never automatic | Once per revision request |
+| 3 | Approved — payment step | The APPROVED decision; maker-checker applies (approver ≠ reviewer) | Once per approval |
+| 4 | Rejected | The REJECTED decision, with the written reason included verbatim — never softened, never auto-generated | Once per rejection |
+| 5 | Payment claim received | The applicant claims payment (fee intent → CLAIMED) | Once per intent |
+| 6 | Fee confirmed | The three-signal match (reference + exact amount + date window) passed on the bank statement CSV **and** a staff member confirms — never auto-confirmed | Once per registration |
+| 7 | Payment exception | A bank CSV credit fails the three-signal match against every expectation, or matches with a wrong amount/date; sent within two working days of detection | Once per exception, re-sent only if the concern changes |
+
+Guaranteed minimum per successful applicant: **3 letters** (1 → 3 or 4 → 6).
+Maximum in a normal lifecycle: **5** (adds one or two exceptions/corrections).
+Exceptions (7) always state the exact concern in the applicant's own record's
+words — the email never guesses (Q-P6 decision).
+
+Deliverability prerequisite: `register@voeq.ng` must be verified in Resend
+(SPF + DKIM DNS records on voeq.ng) before any real send — sandbox keys only
+deliver to the account owner's own address.
 
 ## Phase 0 — Foundation (before Phase 1)
 
@@ -107,7 +152,7 @@ exists.
 | 0.3 | Prisma schema + migrations for all 15 core tables | §18 |
 | 0.4 | Auth foundation: **Google OAuth as the only admin sign-in** (identity = verified Google email, per-institution allowlist, no staff passwords — doc 07 §4.7); magic-link + OTP for applicants; RBAC + permission matrix with the two mutually exclusive admin families | §3, §13.3, doc 07 §4.6–4.7 |
 | 0.5 | Outbox + `pg-boss` worker + Resend adapter | §15, §19 |
-| 0.6 | R2 private bucket, upload validation pipeline, signed-URL service | §17 |
+| 0.6 | Cloudinary service (single storage): authenticated-asset upload helper, signed-URL minting, validation pipeline | §17 |
 | 0.7 | `packages/core`: state machines, guards, Zod schemas | §14, §19 |
 | 0.8 | Audit log writer with append-only DB grants | §16 |
 | 0.9 | Seed: NMU institution, 2 campuses, category list + mapping, fee config | §4.2, §7.3 |
@@ -199,7 +244,7 @@ bank's format, so Phase 2 starts only after §8.1 lands.*
 | 2.10 | Fee ledger screen — every credit, its ₦5,000/₦200 division, totals, per-entity audit chain | doc 07 §4 |
 | 2.11 | Registration completion → `registered` status, guarded on confirmed credit | §10.1 |
 | 2.12 | Confirmation email + downloadable confirmation document | §10.2 |
-| 2.13 | Image pipeline stage 8: promote display derivative to public Cloudinary on approval | doc 07, §17 |
+| 2.13 | Image pipeline stage 8: promote display derivative to public Cloudinary (`voeq/nmu/`, same account) on approval | doc 07, §17 |
 
 **Gate:** a real statement CSV reconciles — every credit matched, the two
 balances correct to the naira, the maker-checker separation proven (a checker
