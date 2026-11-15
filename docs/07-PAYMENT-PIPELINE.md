@@ -376,6 +376,41 @@ Rules, all enforced in code:
    light: **a logged check, not a signature ceremony** — the record is in the
    audit chain, not in a scanned signature.
 
+
+### 4.7 Admin identity — Google OAuth only (Kai, 15 Nov)
+
+**The only way anyone signs into the admin is Google OAuth.** No staff
+passwords exist. Consequences, all deliberate:
+
+- **Identity is a real Google account.** Passwords get shared and reused;
+  Gmail accounts do not change hands casually. The person in the audit log is
+  the person who owns that Google account.
+- **The log carries the email.** Every audit row and every session is keyed to
+  the verified Google email — "who did this" always has an answer that
+  resolves to a real, recoverable identity.
+- **Access is an allowlist.** A staff member can sign in only if their Google
+  email is on the institution's allowlist. Revoking access = removing the
+  email. Compromised password resets disappear as a problem class.
+- **Applicants are unaffected** — they keep magic links and OTP, no Google
+  account required.
+- Portals whose credentials belong to the school (the bank portal) are
+  explicitly out of scope: Voeq never holds them, per §8.1 item 11.
+
+### 4.8 Statement routine and bank code — what they are and why
+
+Kai asked why the onboarding list (§8.1) includes them:
+
+- **Statement routine (item 7)** — the daily habit that feeds the whole
+  pipeline: *who* exports the CSV, *to which inbox*, *at what time*. Needed
+  because the statement is the source of truth: if it does not arrive, we are
+  blind, and the applicant's SLA copy ("the bank record reaches us once a day
+  at 23:00") is only honest if the routine actually exists. It also defines
+  the alert cross-check window (§5.1) and who to ask when a credit is missing.
+- **Bank code (item 5)** — the bank's NIBSS/sort code. Needed on the remittance
+  advice (a transfer to Voeq must name the sending bank), for reading the
+  `source bank` column of statement rows, and for any future refund (a refund
+  transfer must specify the destination bank). One code, three jobs.
+
 ---
 
 ## 5. Gaps in the supplied architecture
@@ -393,8 +428,31 @@ same-day accelerator. Read-only access as a later optimisation.**
 | Feed | Verdict |
 | --- | --- |
 | **Daily statement CSV** | **Primary.** Manual, but complete, auditable and hashable. The finance officer exports one in under a minute. It gives us a file we can store and hash as evidence — exactly what an audit needs. No bank relationship, no API contract, no security review at the bank. |
-| **Bank alerts** | **Accelerator only, never the source of truth.** Alerts are a push notification, not a statement — they get missed, muted, and in several Nigerian bank formats the counterparty name is truncated or absent. Use them to surface "a credit landed an hour ago" so the operator can pre-stage the match. Do not let them create a `bank_credit_event` on their own. |
+| **Bank alerts** | **Cross-check signal, never the source of truth.** Alerts (SMS / email credit notifications) forwarded to a dedicated register inbox are a **second, independent signal**: if a credit appears in an alert but never appears in a statement within 2 working days, the system raises a flag — *the bank's own records disagree with what the school sent us*. That is genuine independent verification without custody or an API. Alerts still never create a `bank_credit_event` on their own. |
 | **Read-only statement access** | **Best, slowest.** If NMU has API or open-banking access to its account, that is the ideal feed. It will take months to arrange and adds a third party to the critical path. Build for it, do not wait for it. |
+
+**The honest boundary, stated once:** without a bank API, the statement *is*
+the bank's word — we cannot be more independent than the bank's own documents.
+What we can do, and what the design does, is hold **three signals that must
+agree**: the statement CSV, the forwarded alerts, and our own fee-intent
+ledger. Every fraud edge is a disagreement between signals, and every
+disagreement has an owner:
+
+| Fraud / error edge | How the signals catch it |
+| --- | --- |
+| Fake "I have paid" screenshot | Never creates state — the intent simply stays `awaiting_bank_evidence` until a real statement row arrives. Nothing to fake. |
+| Invented/mistyped reference by the student | The credit lands with a narration that matches no intent → exception queue, emailed to the applicant with the exact reason. |
+| Double payment (student pays twice) | Same reference + amount twice → second credit warns and waits; cannot post a second allocation. |
+| Someone edits the CSV before handing it over | The file is hashed on import; the hash is stored; a re-import of a different file for the same day fails loudly. |
+| A credit that exists at the bank but is missing from the school's export | The alert cross-check (above) flags it within 2 working days. |
+| Insider: operator confirms a fee that was never matched | The confirm gate requires a matched credit behind it in the schema — not a policy. The gate battery rejects it; the attempt is logged. |
+| Insider: maker confirms their own match | Maker-checker is enforced by account identity — the checker's Google account must differ from the maker's. |
+
+**Pending payments** are a designed state, not a hole: from the moment the
+applicant submits "I have paid", the status page shows
+`awaiting_bank_evidence` with its SLA copy ("the University's bank record
+reaches us once a day at 23:00; we confirm on the next working day"). The
+money cannot be confirmed early, and the applicant is never left guessing.
 
 The requirement that follows: **the ingestion source must be pluggable from day
 one.** Model the feed as an interface — `BankFeed.fetch(day) → normalised
@@ -640,12 +698,12 @@ double-payment risks from the applicant's experience entirely.
 2. **Account name** — exact, as it appears on the statement.
 3. **Account number** of the dedicated registration account.
 4. **Account type** — must be **current**, not savings, for a collection account.
-5. **Bank code** (NIBSS/sort) — needed on the remittance advice.
+5. **Bank code** (NIBSS/sort) — needed on the remittance advice (why: §4.8).
 6. **Proof the account is NMU's** — a bank letter or statement header showing
    the account name is the University, not an individual (this is the custody
    proof, not a formality).
 7. **Statement routine** — who exports the daily CSV, to which email address,
-   and at what time (proposed: nightly by 23:00).
+   and at what time (proposed: nightly by 23:00) (why: §4.8).
 8. **Formal title of the reviewing authority** — the exact official name for
    the Terms, certificates and correspondence (also fixes the spec's title
    page, which still says the wrong university).

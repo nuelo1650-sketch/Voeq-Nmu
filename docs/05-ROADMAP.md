@@ -105,7 +105,7 @@ exists.
 | 0.1 | Repo skeleton: `apps/registry`, `packages/{design-system,db,core,email}` | — |
 | 0.2 | `@voeq/design-system` tokens + primitives, ported from voeq.ng | Visual continuity with the marketplace |
 | 0.3 | Prisma schema + migrations for all 15 core tables | §18 |
-| 0.4 | Auth foundation: argon2id, sessions, TOTP, RBAC + permission matrix | §3, §13.3 |
+| 0.4 | Auth foundation: **Google OAuth as the only admin sign-in** (identity = verified Google email, per-institution allowlist, no staff passwords — doc 07 §4.7); magic-link + OTP for applicants; RBAC + permission matrix with the two mutually exclusive admin families | §3, §13.3, doc 07 §4.6–4.7 |
 | 0.5 | Outbox + `pg-boss` worker + Resend adapter | §15, §19 |
 | 0.6 | R2 private bucket, upload validation pipeline, signed-URL service | §17 |
 | 0.7 | `packages/core`: state machines, guards, Zod schemas | §14, §19 |
@@ -187,9 +187,9 @@ bank's format, so Phase 2 starts only after §8.1 lands.*
 
 | # | Deliverable | Spec / doc |
 | --- | --- | --- |
-| 2.1 | Fee intent issued on approval; payment instruction with the public sentence | §7.2, doc 07 §2 |
+| 2.1 | Fee intent issued on approval; **payment instruction card** — account, exact amount and the issued reference (`NMU-2026-XXXX`) each with a copy button, and the explicit instruction *"use NMU-2026-XXXX as the transfer narration"* — the code that makes every credit traceable to exactly one applicant | §7.2, doc 07 §2 |
 | 2.2 | Applicant payment submission (amount, date, reference, method) — no receipt image required at submit | §8.1, doc 07 §5.5 |
-| 2.3 | Bank statement CSV import (primary feed); alerts as accelerator only | doc 07 §5.1 |
+| 2.3 | Bank statement CSV import (primary feed, hashed on arrival) + **bank-alert cross-check**: credits seen in forwarded alerts but absent from the statement after 2 working days raise a flag — the three signals (statement, alerts, fee-intent ledger) must agree | doc 07 §5.1 |
 | 2.4 | Matching engine — credit ↔ fee intent, ambiguity queue for the unmatched | doc 07 §5.5 |
 | 2.5 | **Allocation, not payment**: each confirmed credit posts Dr receivable / Cr revenue ₦200 + school memorandum ₦5000 | doc 07 §6.2 |
 | 2.6 | The two balances, always visible: Voeq receivable + school share awaiting sweep | doc 07 §4 |
