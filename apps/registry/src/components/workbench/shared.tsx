@@ -22,6 +22,7 @@ export const STATUS_META: Record<
 export const QUEUE_FILTERS: { key: string; label: string }[] = [
   { key: "submitted", label: "New" },
   { key: "under_review", label: "In review" },
+  { key: "resubmitted", label: "Resubmitted" },
   { key: "needs_correction", label: "Awaiting fixes" },
   { key: "approved", label: "Approved" },
   { key: "rejected", label: "Rejected" },

@@ -262,6 +262,7 @@ model Application {
   consents    ConsentRecord[]
   decisions   Decision[]
   feeIntent   FeeIntent?
+  staffNotes  StaffNote[]
 
   @@index([institutionId, status])
   @@index([status, submittedAt])
@@ -283,6 +284,21 @@ model ApplicationRevision {
   consents    ConsentRecord[]
 
   @@unique([applicationId, revisionNo])
+}
+
+// Internal staff notes — the desk's marginalia. Never emailed, never shown
+// to the applicant; the applicant-facing page and the letters never read
+// from this table. Every note is attributed to the account that wrote it.
+model StaffNote {
+  id            String   @id @default(cuid())
+  applicationId String
+  authorEmail   String
+  body          String   @db.Text
+  createdAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id])
+
+  @@index([applicationId, createdAt])
 }
 
 model ApplicationImage {

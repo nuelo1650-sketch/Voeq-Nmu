@@ -6,6 +6,7 @@ import { prisma } from "@voeq/db";
 import { signedAuthenticatedUrl } from "@/lib/cloudinary";
 import Link from "next/link";
 import { StatusChip } from "./shared";
+import { NotesPanel } from "./NotesPanel";
 import { DecisionPanel } from "./DecisionPanel";
 
 const FIELD_LABELS: Record<string, string> = {
@@ -38,6 +39,7 @@ export async function ReviewView({
       campus: { select: { name: true } },
       revisions: { orderBy: { revisionNo: "desc" }, take: 2, include: { images: true, consents: true } },
       decisions: { orderBy: { decidedAt: "desc" } },
+      staffNotes: { orderBy: { createdAt: "desc" }, take: 50 },
     },
   });
 
@@ -125,6 +127,12 @@ export async function ReviewView({
       {/* side-by-side revisions — what changed, before the full dossier */}
       {hasDiff && (
         <div className="mt-5 border-l-4 border-vq-forest bg-vq-forest/5 p-4">
+          {a.status === "under_review" && revision!.revisionNo > 1 && (
+            <p className="mb-2 text-sm font-semibold text-vq-forest-dark">
+              This came back as a resubmission — read what changed below before deciding. The corrections request
+              it answers is in the decision history.
+            </p>
+          )}
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-vq-forest">
             Revision {revision!.revisionNo} — what changed since revision {previous!.revisionNo}
           </p>
@@ -243,6 +251,18 @@ export async function ReviewView({
           </ul>
         </>
       )}
+
+      {/* the desk's marginalia — internal only */}
+      <NotesPanel
+        applicationId={a.id}
+        devMode={devMode}
+        notes={a.staffNotes.map((n) => ({
+          id: n.id,
+          authorEmail: n.authorEmail,
+          body: n.body,
+          createdAt: n.createdAt.toISOString(),
+        }))}
+      />
 
       {/* the decision itself */}
       <DecisionPanel applicationId={a.id} status={a.status} devMode={devMode} />
