@@ -11,6 +11,7 @@
 
 import { prisma } from "@voeq/db";
 import Link from "next/link";
+import { SiteFooter, SiteHeader } from "@/components/brand";
 import { verifyAccessToken } from "@/lib/access";
 import { CopyText } from "./copy-text";
 
@@ -86,16 +87,9 @@ export default async function ApplicationStatusPage({
 
   return (
     <div className="min-h-dvh">
-      <header className="border-b border-vq-forest/10 bg-white/60 backdrop-blur">
-        <div className="mx-auto flex max-w-xl items-center justify-between px-5 py-4">
-          <span className="font-display text-xl text-vq-forest-dark">Voeq</span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-vq-amber-dark">
-            NMU Business&nbsp;Register
-          </span>
-        </div>
-      </header>
+      <SiteHeader />
 
-      <main className="mx-auto max-w-xl px-5 pb-24 pt-10">
+      <main className="mx-auto max-w-xl px-5 pb-20 pt-10">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
             {a.reference} · {statusLine}
@@ -156,11 +150,7 @@ export default async function ApplicationStatusPage({
         )}
       </main>
 
-      <footer className="border-t border-vq-forest/10 py-8 text-center">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
-          Nigeria Maritime University · Okerenkoko &amp; Kurutie · A Voeq service · Powered by Legacylm
-        </p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
@@ -330,14 +320,7 @@ function PayRow({
 function LockedScreen({ reference, reason }: { reference: string; reason: string }) {
   return (
     <div className="min-h-dvh">
-      <header className="border-b border-vq-forest/10 bg-white/60 backdrop-blur">
-        <div className="mx-auto flex max-w-xl items-center justify-between px-5 py-4">
-          <span className="font-display text-xl text-vq-forest-dark">Voeq</span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-vq-amber-dark">
-            NMU Business&nbsp;Register
-          </span>
-        </div>
-      </header>
+      <SiteHeader />
       <main className="mx-auto max-w-xl px-5 pb-24 pt-14 text-center">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
           {reason === "expired-or-invalid" ? "Link expired" : "No match"}

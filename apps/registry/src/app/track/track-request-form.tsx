@@ -72,6 +72,10 @@ export function TrackRequestForm() {
         placeholder="NMU-2026-0001"
         className="w-full border border-vq-forest/20 bg-white px-4 py-3 font-mono text-[15px] tracking-wide text-vq-ink placeholder:text-vq-ink-subtle focus:border-vq-forest focus:outline-none"
       />
+      <p className="mt-1 text-xs text-vq-ink-subtle">
+        Format <span className="font-mono">NMU-2026-0001</span> — exactly as it
+        appears in the dashed box of every email we sent you.
+      </p>
       <label className="mb-1.5 mt-4 block text-sm font-semibold text-vq-forest-dark">
         The email you applied with
       </label>

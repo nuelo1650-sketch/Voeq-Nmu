@@ -1,10 +1,13 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import { SiteHeader } from "@/components/brand";
 
 export default function StaffSignInPage() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6">
+    <div className="min-h-dvh">
+      <SiteHeader />
+      <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6">
       <div className="rounded-2xl border border-vq-forest/10 bg-white p-8 shadow-sm">
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-vq-amber-dark">
           Staff access
@@ -27,6 +30,7 @@ export default function StaffSignInPage() {
           account email. The log cannot be deleted.
         </p>
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

@@ -5,19 +5,13 @@
 // ships without passing 390px.
 // ---------------------------------------------------------------------------
 
+import { SiteFooter, SiteHeader } from "@/components/brand";
 import { ApplyForm } from "./apply/ApplyForm";
 
 export default function Home() {
   return (
     <div className="min-h-dvh">
-      <header className="border-b border-vq-forest/10 bg-white/60 backdrop-blur">
-        <div className="mx-auto flex max-w-xl items-center justify-between px-5 py-4">
-          <span className="font-display text-xl text-vq-forest-dark">Voeq</span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-vq-amber-dark">
-            NMU Business&nbsp;Register
-          </span>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="mx-auto max-w-xl px-5 pb-24 pt-8">
         <h1 className="font-display text-3xl leading-snug text-vq-forest-dark sm:text-4xl">
@@ -39,11 +33,7 @@ export default function Home() {
         <ApplyForm />
       </main>
 
-      <footer className="border-t border-vq-forest/10 py-8 text-center">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
-          Nigeria Maritime University · Okerenkoko &amp; Kurutie · A Voeq service · Powered by Legacylm
-        </p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
