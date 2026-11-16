@@ -23,7 +23,14 @@ import { z } from "zod";
 
 export const decisionSchema = z.object({
   applicationId: z.string().min(1),
-  kind: z.enum(["approve", "request_corrections", "reject"]),
+  kind: z.enum([
+    "approve",
+    "request_corrections",
+    "reject",
+    "suspend",
+    "lift_suspension",
+    "close",
+  ]),
   reason: z.string().trim().max(2000).optional(),
   items: z
     .array(
@@ -57,6 +64,12 @@ export async function recordDecision(
   if (input.kind === "request_corrections" && (!input.items || input.items.length === 0)) {
     throw new Error("A corrections request must list at least one concrete item");
   }
+  // The badge only means something if it can be lost — losing it must be
+  // written down (3.8/3.10). Lifting a suspension is the one lifecycle
+  // action that needs no reason: the suspension's reason already exists.
+  if ((input.kind === "suspend" || input.kind === "close") && !input.reason) {
+    throw new Error(`A ${input.kind} decision must carry a written reason`);
+  }
 
   return prisma.$transaction(async (tx) => {
     const application = await tx.application.findUniqueOrThrow({
@@ -77,7 +90,17 @@ export async function recordDecision(
     }
 
     const target: ApplicationStatus =
-      input.kind === "approve" ? "approved" : input.kind === "reject" ? "rejected" : "needs_correction";
+      input.kind === "approve"
+        ? "approved"
+        : input.kind === "reject"
+          ? "rejected"
+          : input.kind === "request_corrections"
+            ? "needs_correction"
+            : input.kind === "suspend"
+              ? "suspended"
+              : input.kind === "lift_suspension"
+                ? "registered"
+                : "closed";
     assertApplicationTransition(status, target);
 
     await tx.decision.create({
@@ -113,7 +136,8 @@ export async function recordDecision(
     let letter:
       | ReturnType<typeof applicationApproved>
       | ReturnType<typeof applicationRejected>
-      | ReturnType<typeof correctionsRequested>;
+      | ReturnType<typeof correctionsRequested>
+      | undefined;
 
     if (input.kind === "approve") {
       // The fee intent IS the payment code: issued at approval, rate snapshotted
@@ -137,16 +161,42 @@ export async function recordDecision(
       letter = applicationApproved(application.reference, application.businessName, paymentStepUrl);
     } else if (input.kind === "reject") {
       letter = applicationRejected(application.reference, input.reason!);
-    } else {
+    } else if (input.kind === "request_corrections") {
       letter = correctionsRequested(application.reference, input.items!);
     }
 
     await tx.application.update({ where: { id: application.id }, data });
 
-    await createNotification(tx, {
-      topic: `application.${input.kind}`,
-      payload: { to: application.contactEmail, template: letter },
-    });
+    // Letters fire for the applicant-facing decisions only. Suspend / lift /
+    // close are register-side governance (3.10): the badge truth lives in
+    // /api/public/verify and the applicant's status page — no letter pretends
+    // a suspension is friendly news. If letters are wanted for them later,
+    // they join the catalogue deliberately.
+    if (input.kind === "approve") {
+      await createNotification(tx, {
+        topic: "application.approve",
+        payload: {
+          to: application.contactEmail,
+          template: letter,
+        },
+      });
+    } else if (input.kind === "reject") {
+      await createNotification(tx, {
+        topic: "application.reject",
+        payload: {
+          to: application.contactEmail,
+          template: letter,
+        },
+      });
+    } else if (input.kind === "request_corrections") {
+      await createNotification(tx, {
+        topic: "application.request_corrections",
+        payload: {
+          to: application.contactEmail,
+          template: letter,
+        },
+      });
+    }
 
     return { reference: application.reference, status: target };
   });

@@ -118,6 +118,8 @@ export function signedAuthenticatedUrl(publicId: string): string {
 export async function promotePublicDerivative(args: {
   bytes: Buffer;
   mimeType: string;
+  /** Deterministic id → re-runs overwrite the same asset, never duplicate. */
+  publicId?: string;
 }): Promise<CloudinaryUploadResult> {
   if (!cloudinaryConfigured()) {
     throw new Error("Cloudinary env vars are not set — promotion unavailable");
@@ -125,10 +127,12 @@ export async function promotePublicDerivative(args: {
   const timestamp = Math.floor(Date.now() / 1000).toString();
   const folder = PUBLIC_FOLDER;
   const params: Record<string, string> = { folder, timestamp };
+  if (args.publicId) params.public_id = args.publicId;
   const form = new FormData();
   form.append("file", new Blob([new Uint8Array(args.bytes)], { type: args.mimeType }));
   form.append("folder", folder);
   form.append("timestamp", timestamp);
+  if (args.publicId) form.append("public_id", args.publicId);
   form.append("api_key", API_KEY);
   form.append("signature", signParams(params));
 

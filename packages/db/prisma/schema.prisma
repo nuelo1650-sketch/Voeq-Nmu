@@ -59,6 +59,9 @@ enum DecisionKind {
   approve
   reject
   request_corrections
+  suspend
+  lift_suspension
+  close
 }
 
 enum ImageField {
@@ -237,6 +240,8 @@ model Application {
   categoryId     String
   status         ApplicationStatus @default(draft)
   publicationStatus PublicationStatus @default(not_published) // separate from registration (ADR-006)
+  voeqVendorUrl     String? // applicant's claim of an existing voeq.ng shop (3.4 light; real match against the marketplace is a cross-repo job)
+  vendorSync        VendorSync?
 
   // Business snapshot (latest revision is authoritative; history in revisions)
   businessName        String
@@ -467,6 +472,30 @@ model FeeAllocation {
 
   @@index([intentId])
   @@index([status])
+}
+
+// One row per registered business (3.6, registry side). Created the moment
+// the fee is confirmed; a worker posts it to voeq.ng's internal vendor
+// endpoint when VOEQ_SYNC_URL is configured. Until then it waits — visible,
+// counted, never lost. Badge truth on voeq.ng always comes from /api/public/verify,
+// so a pending sync never fakes a badge.
+model VendorSync {
+  id           String          @id @default(cuid())
+  applicationId String         @unique
+  payload      Json // the vendor record voeq.ng needs — no personal contact data
+  status       VendorSyncStatus @default(pending)
+  attempts     Int             @default(0)
+  lastError    String?
+  syncedAt     DateTime?
+  createdAt    DateTime        @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id])
+}
+
+enum VendorSyncStatus {
+  pending
+  synced
+  failed
 }
 
 // ---------------------------------------------------------------------------

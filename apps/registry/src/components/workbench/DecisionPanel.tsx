@@ -65,7 +65,10 @@ export function DecisionPanel({
 }) {
   const router = useRouter();
   const [checked, setChecked] = useState<boolean[]>(CHECKLIST.map(() => false));
-  const [mode, setMode] = useState<"idle" | "corrections" | "reject" | "confirm-approve">("idle");
+  const [mode, setMode] = useState<
+    "idle" | "corrections" | "reject" | "confirm-approve" | "lifecycle"
+  >("idle");
+  const [lifecycleKind, setLifecycleKind] = useState<"suspend" | "lift_suspension" | "close" | null>(null);
   const [items, setItems] = useState<CorrectionItem[]>([]);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
@@ -75,6 +78,10 @@ export function DecisionPanel({
   const lookedChecked = checked[0];
   const allChecked = checked.every(Boolean);
   const decidable = status === "submitted" || status === "under_review";
+  // The badge lifecycle (3.10): registered businesses can be suspended or
+  // closed; suspended ones can be lifted back. Losing the badge requires a
+  // written reason — a badge that cannot be lost means nothing (3.8).
+  const lifecycleOpen = status === "registered" || status === "suspended";
   const endpoint = devMode ? "/api/dev/decision" : "/api/staff/decision";
 
   async function send(body: Record<string, unknown>, label: string) {
@@ -107,11 +114,112 @@ export function DecisionPanel({
     );
   }
 
-  if (!decidable) {
+  if (!decidable && !lifecycleOpen) {
     return (
       <p className="mt-6 rounded-xl border border-vq-forest/10 bg-white/60 px-4 py-3 text-sm text-vq-ink-muted">
         This application is <b>{status.replace("_", " ")}</b> — no decision is open on it right now.
       </p>
+    );
+  }
+
+  // --- the badge lifecycle: a separate panel with its own gravity -----------
+  if (!decidable && lifecycleOpen) {
+    const LIFECYCLE = {
+      suspend: {
+        label: "Suspend",
+        cls: "bg-vq-amber-dark",
+        ask: "Suspend this business? The NMU badge stops being valid the moment this lands.",
+        note: "The badge is checked live against the register — voeq.ng loses it automatically (3.8). A written reason is required.",
+      },
+      close: {
+        label: "Close",
+        cls: "bg-neutral-700",
+        ask: "Close this registration permanently? The entry leaves the directory and the badge dies with it.",
+        note: "Closure is final in this pass — the register keeps the history, but there is no reopen for closed.",
+      },
+      lift_suspension: {
+        label: "Lift suspension",
+        cls: "bg-vq-forest",
+        ask: "Lift the suspension? The badge becomes valid again immediately.",
+        note: "No new reason is required — the suspension's reason is already on the record.",
+      },
+    } as const;
+    const actions =
+      status === "registered"
+        ? ([LIFECYCLE.suspend, LIFECYCLE.close] as const)
+        : ([LIFECYCLE.lift_suspension] as const);
+    const chosen = lifecycleKind ? LIFECYCLE[lifecycleKind] : null;
+
+    return (
+      <div className="mt-6 rounded-2xl border border-vq-forest/15 bg-white/85 p-5">
+        <h3 className="font-display text-lg text-vq-forest-dark">The badge lifecycle</h3>
+        <p className="mt-1 text-xs text-vq-ink-subtle">
+          This business is <b>{status.replace("_", " ")}</b>. What you do here is
+          visible to the world through the verify API — write accordingly.
+        </p>
+
+        {chosen && (
+          <div className="mt-4 rounded-xl border border-vq-forest/25 bg-vq-cream px-4 py-3.5">
+            <p className="text-sm font-semibold text-vq-forest-dark">{chosen.ask}</p>
+            <p className="mt-1 text-xs text-vq-ink-subtle">{chosen.note}</p>
+            {lifecycleKind !== "lift_suspension" && (
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                rows={3}
+                placeholder="The reason, written plainly — it lands on the record and the verify response."
+                className="mt-2 w-full rounded-lg border border-vq-forest/20 bg-white px-3 py-2 text-sm"
+              />
+            )}
+            <div className="mt-3 flex gap-2">
+              <button
+                onClick={() =>
+                  send(
+                    { kind: lifecycleKind, reason: lifecycleKind === "lift_suspension" ? undefined : reason },
+                    lifecycleKind === "suspend"
+                      ? "Suspended"
+                      : lifecycleKind === "close"
+                        ? "Closed"
+                        : "Suspension lifted",
+                  )
+                }
+                disabled={busy || (lifecycleKind !== "lift_suspension" && reason.trim().length < 10)}
+                className={`${chosen.cls} px-4 py-2 text-sm font-semibold text-white enabled:cursor-pointer disabled:opacity-40`}
+              >
+                {busy ? "Recording…" : `Confirm — ${chosen.label.toLowerCase()}`}
+              </button>
+              <button
+                onClick={() => {
+                  setMode("idle");
+                  setLifecycleKind(null);
+                }}
+                className="border border-vq-forest/25 px-4 py-2 text-sm font-semibold text-vq-forest"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="mt-3 flex flex-wrap gap-2.5">
+          {actions.map((a) => (
+            <button
+              key={a.label}
+              onClick={() => {
+                setLifecycleKind(status === "registered" ? (a.label === "Suspend" ? "suspend" : "close") : "lift_suspension");
+                setMode("lifecycle");
+              }}
+              disabled={busy}
+              className={`${a.cls} px-5 py-2.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer disabled:opacity-40`}
+            >
+              {a.label}
+            </button>
+          ))}
+        </div>
+        {error && (
+          <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-800">{error}</p>
+        )}
+      </div>
     );
   }
 

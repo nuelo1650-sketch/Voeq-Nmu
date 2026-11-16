@@ -73,6 +73,7 @@ export async function ReviewView({
     ["contactEmail", "Email"],
     ["website", "Website"],
     ["socialHandle", "Social media"],
+    ["voeqVendorUrl", "Existing Voeq shop"],
     ["businessDescription", "Description"],
   ] as const;
   const prevData = (previous?.data ?? {}) as Record<string, unknown>;
@@ -190,6 +191,7 @@ export async function ReviewView({
         <Row label="Email" value={str("contactEmail") || a.contactEmail} />
         <Row label="Website" value={str("website") || "Not provided"} />
         <Row label="Social media" value={str("socialHandle") || "Not provided"} />
+        <Row label="Existing Voeq shop" value={str("voeqVendorUrl") || "Not provided"} />
         <Row label="Description" value={a.businessDescription || str("businessDescription") || "Not provided"} wide />
         <Row
           label="Consents"

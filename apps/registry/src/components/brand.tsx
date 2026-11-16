@@ -59,7 +59,13 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="border-t border-vq-forest/10 py-8 text-center">
-      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
+      <p className="text-xs text-vq-ink-muted">
+        <a href="/directory" className="font-semibold text-vq-forest underline">
+          The business register
+        </a>{" "}
+        · <a href="/track" className="underline">Track an application</a>
+      </p>
+      <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
         Nigeria Maritime University · Okerenkoko &amp; Kurutie · A Voeq service · Powered by Legacylm
       </p>
     </footer>

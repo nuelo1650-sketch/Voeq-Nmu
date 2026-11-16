@@ -46,6 +46,9 @@ export const applySchema = z.object({
   businessDescription: z.string().trim().max(600).optional().or(z.literal("")),
   website: z.string().trim().max(200).optional().or(z.literal("")),
   socialHandle: z.string().trim().max(80).optional().or(z.literal("")),
+  // 3.4 light — the applicant's claim of an existing voeq.ng shop. Stored on
+  // the register now; matching it against the marketplace is a cross-repo job.
+  voeqVendorUrl: z.string().trim().max(200).optional().or(z.literal("")),
   campusId: z.string().min(1),
   categoryId: z.string().min(1),
   ownerName: z.string().trim().min(3).max(120),

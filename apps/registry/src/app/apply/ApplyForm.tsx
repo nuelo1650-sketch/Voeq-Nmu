@@ -61,6 +61,7 @@ export function ApplyForm() {
         businessDescription?: string;
         website?: string;
         socialHandle?: string;
+        voeqVendorUrl?: string;
         categoryId?: string;
         campusId?: string;
         ownerName?: string;
@@ -80,6 +81,7 @@ export function ApplyForm() {
   const [businessDescription, setBusinessDescription] = useState(draft?.businessDescription ?? "");
   const [website, setWebsite] = useState(draft?.website ?? "");
   const [socialHandle, setSocialHandle] = useState(draft?.socialHandle ?? "");
+  const [voeqVendorUrl, setVoeqVendorUrl] = useState(draft?.voeqVendorUrl ?? "");
   const [categoryId, setCategoryId] = useState(draft?.categoryId ?? "");
   const [campusId, setCampusId] = useState(draft?.campusId ?? "");
   const [ownerName, setOwnerName] = useState(draft?.ownerName ?? "");
@@ -124,6 +126,7 @@ export function ApplyForm() {
             businessDescription,
             website,
             socialHandle,
+            voeqVendorUrl,
             categoryId,
             campusId,
             ownerName,
@@ -139,7 +142,7 @@ export function ApplyForm() {
       }
     }, 600);
     return () => clearTimeout(t);
-  }, [step, businessName, businessDescription, website, socialHandle, categoryId, campusId, ownerName, ownerPhone, contactEmail, consents]);
+  }, [step, businessName, businessDescription, website, socialHandle, voeqVendorUrl, categoryId, campusId, ownerName, ownerPhone, contactEmail, consents]);
 
   const handleFile = useCallback(async (field: FieldKey, file: File) => {
     setImages((prev) => ({ ...prev, [field]: { status: "compressing" } }));
@@ -197,6 +200,7 @@ export function ApplyForm() {
         businessDescription,
         website,
         socialHandle,
+        voeqVendorUrl,
         campusId,
         categoryId,
         ownerName,
@@ -337,6 +341,16 @@ export function ApplyForm() {
                 className={inputCls}
               />
             </Field>
+            <Field label="Already selling on Voeq?" hint="Optional — your shop's link, if you have one">
+              <input
+                value={voeqVendorUrl}
+                onChange={(e) => setVoeqVendorUrl(e.target.value.trim())}
+                inputMode="url"
+                placeholder="e.g. voeq.ng/shop/blessingstore"
+                maxLength={200}
+                className={inputCls}
+              />
+            </Field>
           </>
         )}
 
@@ -425,6 +439,7 @@ export function ApplyForm() {
               <ReviewRow label="Email" value={contactEmail} />
               <ReviewRow label="Website" value={website || "Not provided"} />
               <ReviewRow label="Social" value={socialHandle || "Not provided"} />
+              <ReviewRow label="Voeq shop" value={voeqVendorUrl || "Not provided"} />
               <ReviewRow
                 label="Describe"
                 value={businessDescription || "Not provided"}

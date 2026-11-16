@@ -291,7 +291,44 @@ export async function confirmAllocation(
     assertApplicationTransition("approved", "registered");
     await tx.application.update({
       where: { id: application.id },
-      data: { status: "registered" },
+      data: { status: "registered", publicationStatus: "published" },
+    });
+
+    // Phase 3: the vendor-sync row is created in the SAME transaction as the
+    // registration. Until VOEQ_SYNC_URL is configured the row waits — the
+    // badge's truth lives in /api/public/verify regardless.
+    const fullApplication = await tx.application.findUniqueOrThrow({
+      where: { id: application.id },
+      select: {
+        reference: true,
+        businessName: true,
+        businessDescription: true,
+        voeqVendorUrl: true,
+        category: { select: { name: true } },
+        campus: { select: { name: true } },
+      },
+    });
+    await tx.vendorSync.upsert({
+      where: { applicationId: application.id },
+      create: {
+        applicationId: application.id,
+        payload: {
+          reference: fullApplication.reference,
+          businessName: fullApplication.businessName,
+          description: fullApplication.businessDescription,
+          category: fullApplication.category.name,
+          campus: fullApplication.campus.name,
+          existingVendorUrl: fullApplication.voeqVendorUrl,
+        },
+      },
+      update: { payload: {
+        reference: fullApplication.reference,
+        businessName: fullApplication.businessName,
+        description: fullApplication.businessDescription,
+        category: fullApplication.category.name,
+        campus: fullApplication.campus.name,
+        existingVendorUrl: fullApplication.voeqVendorUrl,
+      } },
     });
     await createNotification(tx, {
       topic: "fee.confirmed",
@@ -301,6 +338,16 @@ export async function confirmAllocation(
       },
     });
   });
+
+  // Stage 8 — the public display copies, best-effort after the commit. A
+  // failure here never rolls back the registration; the directory renders
+  // the placeholder and a re-run promotes the rest.
+  try {
+    const { promoteApplicationImages } = await import("@/lib/promote");
+    await promoteApplicationImages(application.id);
+  } catch {
+    // recorded nothing on purpose — promotion is recoverable and idempotent
+  }
 
   return {
     reference: application.reference,

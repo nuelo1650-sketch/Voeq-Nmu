@@ -26,6 +26,9 @@ const KIND_LABELS: Record<string, string> = {
   request_corrections: "Corrections requested",
   claim_fee: "Payment claimed",
   confirm_fee: "Fee confirmed",
+  suspend: "Suspended",
+  lift_suspension: "Suspension lifted",
+  close: "Closed",
   reopen: "Reopened",
 };
 
@@ -318,6 +321,40 @@ function StatusNextStep({
             </p>
           )}
         </div>
+      </div>
+    );
+  }
+
+  if (status === "suspended") {
+    const last = [...decisions].reverse().find((d) => d.kind === "suspend");
+    return (
+      <div className="mt-8 border-l-4 border-vq-amber bg-vq-amber-light/60 p-5">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
+          Registration suspended
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-vq-ink-muted">
+          The NMU badge for this business is not valid while the suspension
+          stands. The reason, exactly as recorded:{" "}
+          <b>{last?.reason ?? "in your email"}</b> If you believe this is a
+          mistake, reply to your email and say so plainly — a person reads it,
+          and if the mistake is ours the suspension is lifted at no cost.
+        </p>
+      </div>
+    );
+  }
+
+  if (status === "closed") {
+    const last = [...decisions].reverse().find((d) => d.kind === "close");
+    return (
+      <div className="mt-8 border-l-4 border-neutral-300 bg-neutral-50 p-5">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-500">
+          Registration closed
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-vq-ink-muted">
+          This registration has been closed. The reason, exactly as recorded:{" "}
+          <b>{last?.reason ?? "in your email"}</b> The history stays on the
+          register; the badge does not.
+        </p>
       </div>
     );
   }
