@@ -9,10 +9,14 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+// The gate has two tiers (Kai: "I should not agree that something is right
+// when they are wrong"). Looking is required for EVERY decision. The two
+// consistency affirmations assert the application is CORRECT — so they gate
+// APPROVE only. You can reject or demand corrections having merely looked.
 const CHECKLIST = [
-  "I have opened every photo full-size",
-  "The business name is consistent with the photos",
-  "The category fits what the business actually is",
+  { text: "I have opened every photo full-size", approveOnly: false },
+  { text: "The business name is consistent with the photos", approveOnly: true },
+  { text: "The category fits what the business actually is", approveOnly: true },
 ];
 
 // Reason templates — the honest, complete sentences, one tap away (roadmap
@@ -68,7 +72,8 @@ export function DecisionPanel({
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
 
-  const checklistComplete = checked.every(Boolean);
+  const lookedChecked = checked[0];
+  const allChecked = checked.every(Boolean);
   const decidable = status === "submitted" || status === "under_review";
   const endpoint = devMode ? "/api/dev/decision" : "/api/staff/decision";
 
@@ -114,7 +119,8 @@ export function DecisionPanel({
     <div className="mt-6 rounded-2xl border border-vq-forest/15 bg-white/85 p-5">
       <h3 className="font-display text-lg text-vq-forest-dark">Your decision</h3>
 
-      {/* checklist — the gate */}
+      {/* checklist — the gate. Looking gates every decision; the two
+          consistency affirmations gate APPROVE only. */}
       <div className="mt-3 space-y-2">
         {CHECKLIST.map((item, i) => (
           <label key={i} className="flex cursor-pointer items-start gap-3 text-sm text-vq-ink">
@@ -126,22 +132,33 @@ export function DecisionPanel({
               }
               className="mt-0.5 h-4 w-4 shrink-0 accent-[#0F2A1D]"
             />
-            <span>{item}</span>
+            <span>
+              {item.text}
+              {item.approveOnly && (
+                <span className="ml-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-vq-ink-subtle">
+                  · needed to approve
+                </span>
+              )}
+            </span>
           </label>
         ))}
       </div>
-      {!checklistComplete && (
+      {!lookedChecked ? (
         <p className="mt-2 text-xs text-vq-ink-subtle">
-          Tick all three — the decision buttons unlock only when you have actually looked.
+          Open every photo and tick — no decision of any kind until you have actually looked.
         </p>
-      )}
+      ) : !allChecked ? (
+        <p className="mt-2 text-xs text-vq-ink-subtle">
+          The two consistency checks unlock Approve only. Corrections and reject are yours once you have looked.
+        </p>
+      ) : null}
 
       {/* action buttons — all three SOLID fills: they must read as buttons,
           not as decoration (Kai: corrections "feels like it's not clickable") */}
       <div className="mt-4 flex flex-wrap gap-2.5">
         <button
           onClick={() => setMode("confirm-approve")}
-          disabled={!checklistComplete || busy}
+          disabled={!allChecked || busy}
           className="bg-vq-forest px-5 py-2.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer enabled:hover:bg-vq-forest-mid disabled:opacity-40"
         >
           Approve
@@ -151,14 +168,14 @@ export function DecisionPanel({
             setMode("corrections");
             if (items.length === 0) setItems([{ field: "", instruction: "" }]);
           }}
-          disabled={!checklistComplete || busy}
+          disabled={!lookedChecked || busy}
           className="bg-vq-amber-dark px-5 py-2.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer enabled:hover:opacity-90 disabled:opacity-40"
         >
           Request corrections
         </button>
         <button
           onClick={() => setMode("reject")}
-          disabled={!checklistComplete || busy}
+          disabled={!lookedChecked || busy}
           className="bg-neutral-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer enabled:hover:bg-neutral-600 disabled:opacity-40"
         >
           Reject
