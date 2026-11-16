@@ -37,7 +37,7 @@ export async function ReviewView({
     include: {
       category: { select: { name: true } },
       campus: { select: { name: true } },
-      revisions: { orderBy: { revisionNo: "desc" }, take: 2, include: { images: true, consents: true } },
+      revisions: { orderBy: { revisionNo: "desc" }, include: { images: true, consents: true } },
       decisions: { orderBy: { decidedAt: "desc" } },
       staffNotes: { orderBy: { createdAt: "desc" }, take: 50 },
     },
@@ -54,6 +54,7 @@ export async function ReviewView({
     );
   }
 
+  const feeIntent = await prisma.feeIntent.findUnique({ where: { applicationId: id } });
   const revision = a.revisions[0];
   const previous = a.revisions[1];
   const photos = revision?.images ?? [];
@@ -225,32 +226,64 @@ export async function ReviewView({
         ))}
       </div>
 
-      {/* decision history */}
-      {a.decisions.length > 0 && (
-        <>
-          <h3 className="mt-6 font-display text-lg text-vq-forest-dark">Decisions</h3>
-          <ul className="mt-2 space-y-2">
-            {a.decisions.map((d) => (
-              <li key={d.id} className="rounded-xl border border-vq-forest/10 bg-white/70 px-4 py-3 text-sm">
-                <p className="font-semibold text-vq-forest-dark">
-                  {d.kind.replace("_", " ")}{" "}
-                  <span className="font-normal text-vq-ink-subtle">· {d.decidedByEmail} · {timeAgo(d.decidedAt)}</span>
-                </p>
-                {d.reason && <p className="mt-1 text-vq-ink-muted">{d.reason}</p>}
-                {Array.isArray(d.items) && (d.items as { field: string; instruction: string }[]).length > 0 && (
-                  <ul className="mt-1 list-disc pl-5 text-vq-ink-muted">
-                    {(d.items as { field: string; instruction: string }[]).map((i, k) => (
-                      <li key={k}>
-                        <b>{i.field}</b> — {i.instruction}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      {/* the full history (1.16) — every event, oldest first: each revision
+          the applicant submitted, each decision, each fee state change. The
+          reviewer can reconstruct the whole life of the file without asking
+          anyone anything. */}
+      <h3 className="mt-6 font-display text-lg text-vq-forest-dark">The history</h3>
+      <ul className="mt-2 space-y-2">
+        {a.revisions
+          .slice()
+          .sort((x, y) => x.revisionNo - y.revisionNo)
+          .map((r) => (
+            <li key={r.id} className="rounded-xl border border-vq-forest/10 bg-white/70 px-4 py-3 text-sm">
+              <p className="font-semibold text-vq-forest-dark">
+                {r.revisionNo === 1 ? "Application submitted" : `Resubmitted — revision ${r.revisionNo}`}
+                <span className="font-normal text-vq-ink-subtle">
+                  {" "}· {r.submittedAt.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                </span>
+              </p>
+              <p className="mt-0.5 font-mono text-[11px] text-vq-ink-subtle">
+                {r.images.length} photo{r.images.length === 1 ? "" : "s"} on this revision
+                {r.revisionNo > 1 && a.revisions.length > 1 && " · see the diff panel above for what changed"}
+              </p>
+            </li>
+          ))}
+        {a.decisions.map((d) => (
+          <li key={d.id} className="rounded-xl border border-vq-forest/10 bg-white/70 px-4 py-3 text-sm">
+            <p className="font-semibold text-vq-forest-dark">
+              {d.kind.replace("_", " ")}{" "}
+              <span className="font-normal text-vq-ink-subtle">· {d.decidedByEmail} · {timeAgo(d.decidedAt)}</span>
+            </p>
+            {d.reason && <p className="mt-1 text-vq-ink-muted">{d.reason}</p>}
+            {Array.isArray(d.items) && (d.items as { field: string; instruction: string }[]).length > 0 && (
+              <ul className="mt-1 list-disc pl-5 text-vq-ink-muted">
+                {(d.items as { field: string; instruction: string }[]).map((i, k) => (
+                  <li key={k}>
+                    <b>{i.field}</b> — {i.instruction}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+        {feeIntent && (
+          <li className="rounded-xl border border-vq-forest/10 bg-white/70 px-4 py-3 text-sm">
+            <p className="font-semibold text-vq-forest-dark">
+              Fee — {feeIntent.status.replace(/_/g, " ")}
+              <span className="font-normal text-vq-ink-subtle">
+                {" "}· ₦5,200 · issued {timeAgo(feeIntent.issuedAt)}
+                {feeIntent.confirmedAt ? ` · confirmed ${timeAgo(feeIntent.confirmedAt)}` : ""}
+              </span>
+            </p>
+            {feeIntent.claimAt && (
+              <p className="mt-1 text-vq-ink-muted">
+                Claimed by {feeIntent.claimSenderName} via {feeIntent.claimPayerBank}
+              </p>
+            )}
+          </li>
+        )}
+      </ul>
 
       {/* the desk's marginalia — internal only */}
       <NotesPanel

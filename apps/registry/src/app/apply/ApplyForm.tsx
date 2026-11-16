@@ -47,23 +47,55 @@ interface Meta {
 const STEPS = ["Business", "Owner", "Photos", "Review"] as const;
 
 export function ApplyForm() {
-  const [step, setStep] = useState(1);
+  // --- draft autosave (roadmap 1.3) ------------------------------------------
+  // The form saves itself to THIS DEVICE as the applicant types — no account,
+  // no tokens. A student on expensive data who loses the page loses nothing
+  // but their photos (files cannot persist in a browser; the photo step shows
+  // what to re-pick). The draft dies the moment submission succeeds.
+  // Lazy initializers: the draft is IN the first render — no restore race.
+  const [draft] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("nmu-application-draft-v1") ?? "null") as {
+        step?: number;
+        businessName?: string;
+        businessDescription?: string;
+        website?: string;
+        socialHandle?: string;
+        categoryId?: string;
+        campusId?: string;
+        ownerName?: string;
+        ownerPhone?: string;
+        contactEmail?: string;
+        consents?: Partial<Record<"declaration" | "terms" | "privacy" | "public_listing", boolean>>;
+      } | null;
+    } catch {
+      return null;
+    }
+  });
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
+
+  const [step, setStep] = useState(() => Math.min(Math.max(1, draft?.step ?? 1), 4));
   const [meta, setMeta] = useState<Meta | null>(null);
-  const [businessName, setBusinessName] = useState("");
-  const [businessDescription, setBusinessDescription] = useState("");
-  const [website, setWebsite] = useState("");
-  const [socialHandle, setSocialHandle] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [campusId, setCampusId] = useState("");
-  const [ownerName, setOwnerName] = useState("");
-  const [ownerPhone, setOwnerPhone] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
+  const [businessName, setBusinessName] = useState(draft?.businessName ?? "");
+  const [businessDescription, setBusinessDescription] = useState(draft?.businessDescription ?? "");
+  const [website, setWebsite] = useState(draft?.website ?? "");
+  const [socialHandle, setSocialHandle] = useState(draft?.socialHandle ?? "");
+  const [categoryId, setCategoryId] = useState(draft?.categoryId ?? "");
+  const [campusId, setCampusId] = useState(draft?.campusId ?? "");
+  const [ownerName, setOwnerName] = useState(draft?.ownerName ?? "");
+  const [ownerPhone, setOwnerPhone] = useState(draft?.ownerPhone ?? "");
+  const [contactEmail, setContactEmail] = useState(draft?.contactEmail ?? "");
   const [images, setImages] = useState<Record<FieldKey, FieldState>>({
     owner_photo: { status: "idle" },
     business_photo: { status: "idle" },
     cac_certificate: { status: "idle" },
   });
-  const [consents, setConsents] = useState({ declaration: false, terms: false, privacy: false, public_listing: false });
+  const [consents, setConsents] = useState({
+    declaration: draft?.consents?.declaration ?? false,
+    terms: draft?.consents?.terms ?? false,
+    privacy: draft?.consents?.privacy ?? false,
+    public_listing: draft?.consents?.public_listing ?? false,
+  });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
@@ -79,6 +111,35 @@ export function ApplyForm() {
       })
       .catch(() => setMeta({ campuses: [], categories: [] }));
   }, []);
+
+  // Autosave: debounced, best-effort, everything except the photos.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          "nmu-application-draft-v1",
+          JSON.stringify({
+            step,
+            businessName,
+            businessDescription,
+            website,
+            socialHandle,
+            categoryId,
+            campusId,
+            ownerName,
+            ownerPhone,
+            contactEmail,
+            consents,
+            savedAt: new Date().toISOString(),
+          }),
+        );
+        setDraftSavedAt(new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }));
+      } catch {
+        // storage full or blocked: autosave is a safety net, never a requirement
+      }
+    }, 600);
+    return () => clearTimeout(t);
+  }, [step, businessName, businessDescription, website, socialHandle, categoryId, campusId, ownerName, ownerPhone, contactEmail, consents]);
 
   const handleFile = useCallback(async (field: FieldKey, file: File) => {
     setImages((prev) => ({ ...prev, [field]: { status: "compressing" } }));
@@ -153,6 +214,9 @@ export function ApplyForm() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Submit failed");
+      try {
+        localStorage.removeItem("nmu-application-draft-v1"); // the draft did its job
+      } catch { /* best-effort */ }
       setReference(json.reference);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Something went wrong");
@@ -167,6 +231,17 @@ export function ApplyForm() {
 
   return (
     <section className="mt-10">
+      {draft?.businessName && (
+        <p className="mb-3 border-l-4 border-vq-forest bg-vq-forest/5 px-3 py-2 text-xs text-vq-forest-dark">
+          Welcome back — your draft from this device is loaded where you left it.
+          Photos are not saved in a browser; re-pick them on step 3.
+        </p>
+      )}
+      {draftSavedAt && (
+        <p className="mb-1 text-right font-mono text-[10px] uppercase tracking-[0.14em] text-vq-ink-subtle">
+          Draft saved · {draftSavedAt}
+        </p>
+      )}
       {/* step indicator */}
       <ol className="flex items-center gap-2">
         {STEPS.map((label, i) => {
