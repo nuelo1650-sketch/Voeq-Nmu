@@ -116,6 +116,24 @@ export async function recordDecision(
       | ReturnType<typeof correctionsRequested>;
 
     if (input.kind === "approve") {
+      // The fee intent IS the payment code: issued at approval, rate snapshotted
+      // from the current fee schedule (doc 07 §5.6 — history never restates).
+      // No intent → nothing to match, nothing confirmable (§2.6 rule 1).
+      const schedule = await tx.feeSchedule.findFirst({
+        where: { institutionId: application.institutionId },
+        orderBy: { version: "desc" },
+      });
+      if (!schedule) throw new Error("No fee schedule configured for this institution");
+      await tx.feeIntent.create({
+        data: {
+          applicationId: application.id,
+          reference: application.reference,
+          scheduleId: schedule.id,
+          schoolMinor: schedule.schoolMinor,
+          voeqMinor: schedule.voeqMinor,
+          totalMinor: schedule.schoolMinor + schedule.voeqMinor,
+        },
+      });
       letter = applicationApproved(application.reference, application.businessName, paymentStepUrl);
     } else if (input.kind === "reject") {
       letter = applicationRejected(application.reference, input.reason!);

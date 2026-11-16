@@ -395,6 +395,13 @@ model FeeIntent {
   issuedAt    DateTime        @default(now())
   confirmedAt DateTime?
 
+  // The applicant's "I have paid" claim (doc 07 §5.1a: annotates, never
+  // creates a credit). Written when the intent leaves `issued`.
+  claimPayerBank  String?
+  claimSenderName String?
+  claimAmountMinor Int?
+  claimAt     DateTime?
+
   application Application   @relation(fields: [applicationId], references: [id])
   schedule    FeeSchedule   @relation(fields: [scheduleId], references: [id])
   allocations FeeAllocation[]

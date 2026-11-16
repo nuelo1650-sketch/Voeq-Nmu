@@ -11,9 +11,12 @@
 
 import { prisma } from "@voeq/db";
 import Link from "next/link";
+import { formatNaira } from "@voeq/core";
 import { SiteFooter, SiteHeader } from "@/components/brand";
 import { verifyAccessToken } from "@/lib/access";
+import { getBankAccount } from "@/lib/bank";
 import { CopyText } from "./copy-text";
+import { ClaimForm } from "./claim-form";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +87,9 @@ export default async function ApplicationStatusPage({
   ];
 
   const statusLine = a.status.replace(/_/g, " ").toUpperCase();
+  const feeIntent = await prisma.feeIntent.findUnique({
+    where: { applicationId: a.id },
+  });
 
   return (
     <div className="min-h-dvh">
@@ -133,6 +139,7 @@ export default async function ApplicationStatusPage({
           reference={a.reference}
           decisions={a.decisions}
           token={token ?? ""}
+          feeIntent={feeIntent}
         />
 
         {/* the Voeq funnel (1.17) — approval is a lead for the marketplace */}
@@ -163,11 +170,19 @@ function StatusNextStep({
   reference,
   decisions,
   token,
+  feeIntent,
 }: {
   status: string;
   reference: string;
   decisions: { kind: string; reason: string | null; items: unknown }[];
   token: string;
+  feeIntent: {
+    status: string;
+    totalMinor: number;
+    claimPayerBank: string | null;
+    claimSenderName: string | null;
+    claimAt: Date | null;
+  } | null;
 }) {
   if (status === "submitted" || status === "under_review") {
     return (
@@ -221,6 +236,36 @@ function StatusNextStep({
   }
 
   if (status === "approved") {
+    const bank = getBankAccount();
+    // After the claim: the honest states the fee intent passes through.
+    if (feeIntent && feeIntent.status !== "issued") {
+      const line =
+        feeIntent.status === "awaiting_bank_evidence"
+          ? "Your claim is recorded. The bank's record reaches the register on its own, once a day — your entry is confirmed on the next working day after it appears. You do not need to do anything else."
+          : feeIntent.status === "matched"
+            ? "Your payment has been found on the bank's own record — your reference, the exact amount, the date, all three agree. It is now going through the final confirmation step, done by a second person. Nothing more is needed from you."
+            : "Your payment is fully confirmed.";
+      return (
+        <div className="mt-8 border border-vq-forest/20 bg-white/85 p-5">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
+            {feeIntent.status === "awaiting_bank_evidence"
+              ? "Payment claimed — the bank record is on its way"
+              : feeIntent.status === "matched"
+                ? "Found on the bank record — awaiting the second person's confirm"
+                : "Payment confirmed"}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-vq-ink-muted">{line}</p>
+          {feeIntent.claimAt && (
+            <p className="mt-3 text-xs text-vq-ink-subtle">
+              Claimed by <b>{feeIntent.claimSenderName}</b> via{" "}
+              {feeIntent.claimPayerBank} · {formatNaira(feeIntent.totalMinor)} against{" "}
+              <span className="font-mono">{reference}</span>
+            </p>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="mt-8">
         <div className="border border-vq-forest/20 bg-white/85 p-5">
@@ -232,30 +277,46 @@ function StatusNextStep({
             nothing is charged beyond it, ever.
           </p>
 
+          {bank.temporary && (
+            <p className="mt-3 border-l-4 border-vq-amber bg-vq-amber-light/60 px-3 py-2 text-xs leading-relaxed text-vq-amber-dark">
+              The account below is the register&apos;s temporary testing account while
+              the University&apos;s own dedicated account is being opened. Do not
+              transfer real registration money here unless you are part of the test —
+              this page switches to the University&apos;s account the day it lands.
+            </p>
+          )}
+
           <dl className="mt-4 divide-y divide-vq-forest/10 border border-vq-forest/10">
-            <PayRow label="Amount" value="₦5,200 — no more, no less" />
             <PayRow
-              label="Narration"
-              value={reference}
-              copy
+              label="Amount"
+              value={`${formatNaira(feeIntent?.totalMinor ?? 520_000)} — no more, no less`}
             />
-            <PayRow label="Account name" value="The University's account — being confirmed with the bursary" placeholder />
-            <PayRow label="Account number" value="Placeholder — arrives with the school's confirmation" placeholder />
-            <PayRow label="Bank" value="Placeholder — arrives with the school's confirmation" placeholder />
+            <PayRow label="Narration" value={reference} copy />
+            <PayRow label="Account name" value={bank.accountName} />
+            <PayRow label="Account number" value={bank.accountNumber} copy />
+            <PayRow label="Bank" value={bank.bankName} />
           </dl>
 
           <p className="mt-3 text-xs leading-relaxed text-vq-ink-subtle">
             Put <span className="font-mono font-bold">{reference}</span> in the
             transfer narration exactly as written, character for character —
-            that is how your money is found in the University&apos;s bank
-            record. The account details above are placeholders being confirmed
-            with the school; this page updates the moment they land.
+            that is how your money is found in the bank record.
           </p>
           <p className="mt-3 text-xs leading-relaxed text-vq-ink-subtle">
             You do not send a screenshot. The bank&apos;s record reaches the
             register on its own, and a person confirms your entry when the
             three signals line up: your reference, the exact amount, the date.
           </p>
+
+          {feeIntent ? (
+            <ClaimForm token={token} reference={reference} />
+          ) : (
+            <p className="mt-4 border-l-4 border-vq-amber bg-vq-amber-light/60 px-3 py-2 text-xs text-vq-amber-dark">
+              Your payment step is being prepared on the register&apos;s side — this
+              card gains the claim button the moment it is ready. You can transfer
+              meanwhile; the reference in the narration is what finds your money.
+            </p>
+          )}
         </div>
       </div>
     );
