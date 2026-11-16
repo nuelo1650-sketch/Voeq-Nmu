@@ -3,8 +3,14 @@
 ## What this project is
 A separate repo (this workspace) implementing the **Voeq × Nigeria Maritime
 University** business registration, verification and management system, per the
-NMU specification in `docs/spec/`. Planning complete 2026-11-15; build not
-started.
+NMU specification in `docs/spec/`. **ALL CODING PHASES (0–5) COMPLETE as of
+2026-11-16** (Phases 4–5: commits 69706ab, ee7749e). Remaining: deployment
+(Vercel + CNAME, Resend voeq.ng verification, staff allowlists), the
+voeq.ng-side work on the other machine (sync endpoint, badge indicator,
+onboarding), and the brother's one-sitting full-workflow verification LAST.
+See `.workbuddy-ai/memory/2026-11-16.md` for the phase-by-phase log and
+environment gotchas (wipe `.next` via PowerShell before any build; start dev
+with `npm run dev` from the repo root — env lives at root).
 
 ## Non-obvious context that is expensive to rediscover
 
