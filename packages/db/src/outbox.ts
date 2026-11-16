@@ -7,7 +7,8 @@
 // twice is recoverable; a silent state is not.
 // ---------------------------------------------------------------------------
 
-import type { PrismaClient, Prisma } from "./client";
+import type { Prisma } from "@prisma/client";
+import type { PrismaClient } from "./index";
 import type { EmailAdapter } from "@voeq/email";
 
 export type OutboxTx = Prisma.TransactionClient;

@@ -289,7 +289,7 @@ model ApplicationImage {
   id             String     @id @default(cuid())
   revisionId     String
   field          ImageField
-  r2Key          String     @unique // private R2 bucket; no public URL ever
+  cloudinaryPublicId String @unique // private authenticated asset; no public URL ever
   originalName   String
   mimeType       String
   sizeBytes      Int

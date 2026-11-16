@@ -1,0 +1,78 @@
+// ---------------------------------------------------------------------------
+// The application form's single source of truth for shape and limits.
+// Shared by the submit route (server validation) and importable by the client
+// form for client-side hints. One schema, no drift.
+// ---------------------------------------------------------------------------
+
+import { z } from "zod";
+
+export const IMAGE_FIELDS = ["cac_certificate", "owner_photo", "business_photo"] as const;
+export type ImageField = (typeof IMAGE_FIELDS)[number];
+
+/** Fields the register cannot review without. CAC is optional by design —
+ *  most campus businesses are informal; the register exists to change that. */
+export const REQUIRED_IMAGE_FIELDS: readonly ImageField[] = ["owner_photo", "business_photo"];
+
+export const CONSENT_TYPES = ["declaration", "terms", "privacy", "public_listing"] as const;
+export type ConsentType = (typeof CONSENT_TYPES)[number];
+
+/** Consent document version accepted at submission (recorded per consent row). */
+export const CONSENT_DOC_VERSION = "v1";
+
+/** Hard cap on the ORIGINAL upload payload (roadmap stage 4). The client
+ *  compresses to ≤200KB; the cap exists so a bypassed client still can't
+ *  push bytes through. */
+export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+/** Post-compression size ceiling recorded in the DB (stage 2 commitment). */
+export const MAX_IMAGE_BYTES_AFTER_COMPRESS = 300 * 1024;
+
+/** Sniffed-magic-bytes → allowed mime. Content-Type headers are never trusted. */
+export const SNIFFED_MIME: ReadonlyMap<string, string> = new Map([
+  ["ffd8ff", "image/jpeg"],
+  ["89504e470d0a1a0a", "image/png"],
+]);
+
+export const nigerianPhone = z
+  .string()
+  .trim()
+  .regex(
+    /^(?:\+234\d{10}|0\d{10})$/,
+    "Use a Nigerian number: 0801… (11 digits) or +234…",
+  );
+
+export const applySchema = z.object({
+  businessName: z.string().trim().min(2).max(120),
+  businessDescription: z.string().trim().max(600).optional().or(z.literal("")),
+  campusId: z.string().min(1),
+  categoryId: z.string().min(1),
+  ownerName: z.string().trim().min(3).max(120),
+  ownerPhone: nigerianPhone,
+  contactEmail: z.string().trim().email().max(160),
+  images: z
+    .array(
+      z.object({
+        field: z.enum(IMAGE_FIELDS),
+        publicId: z.string().min(1).max(160),
+        originalName: z.string().min(1).max(160),
+        mimeType: z.enum(["image/jpeg", "image/png"]),
+        sizeBytes: z.number().int().positive().lte(MAX_IMAGE_BYTES_AFTER_COMPRESS),
+        width: z.number().int().positive(),
+        height: z.number().int().positive(),
+        checksumSha256: z.string().length(64),
+      }),
+    )
+    .max(3),
+  consents: z.object({
+    declaration: z.literal(true),
+    terms: z.literal(true),
+    privacy: z.literal(true),
+    public_listing: z.literal(true),
+  }),
+});
+
+export type ApplyInput = z.infer<typeof applySchema>;
+
+export function missingRequiredImages(images: { field: ImageField }[]): ImageField[] {
+  return REQUIRED_IMAGE_FIELDS.filter((req) => !images.some((i) => i.field === req));
+}

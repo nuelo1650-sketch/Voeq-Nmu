@@ -1,36 +1,55 @@
 // ---------------------------------------------------------------------------
-// Phase 0 home — a placeholder front door. The real landing (landing-v3
-// direction) is built in Phase 1 (roadmap 1.1). This page exists so the app
-// boots, renders in the voeq grammar, and links the two Phase 0 surfaces.
+// Phase 1.1 — the application form IS the home page (Kai's decision, landing
+// scrapped). Slim voeq header, a two-line trust strip, then the form begins.
+// No scroll past marketing to reach it. Mobile-first: no pixel of this page
+// ships without passing 390px.
 // ---------------------------------------------------------------------------
+
+import { ApplyForm } from "./apply/ApplyForm";
 
 export default function Home() {
   return (
-    <main className="mx-auto max-w-2xl px-6 py-24">
-      <p className="font-mono text-xs uppercase tracking-[0.18em] text-vq-amber-dark">
-        Nigeria Maritime University · Official business register
-      </p>
-      <h1 className="mt-4 font-display text-4xl leading-tight text-vq-forest-dark">
-        The register is being built.
-      </h1>
-      <p className="mt-4 text-vq-ink-muted">
-        Phase 0 — foundations. The database schema, auth, outbox, and the design
-        system are in place. The application flow arrives in Phase 1.
-      </p>
-      <div className="mt-8 flex gap-4">
-        <a
-          href="/health"
-          className="rounded-full border border-vq-forest/25 bg-white/50 px-5 py-2.5 text-sm font-semibold text-vq-forest transition hover:bg-white/80"
-        >
-          System health
-        </a>
-        <a
-          href="/staff"
-          className="rounded-full bg-vq-forest px-5 py-2.5 text-sm font-semibold text-vq-glass shadow-md transition hover:bg-vq-forest-mid"
-        >
-          Staff sign-in
-        </a>
-      </div>
-    </main>
+    <div className="min-h-dvh">
+      <header className="border-b border-vq-forest/10 bg-white/60 backdrop-blur">
+        <div className="mx-auto flex max-w-xl items-center justify-between px-5 py-4">
+          <span className="font-display text-xl text-vq-forest-dark">Voeq</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-vq-amber-dark">
+            NMU Business&nbsp;Register
+          </span>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-xl px-5 pb-24 pt-8">
+        <h1 className="font-display text-3xl leading-snug text-vq-forest-dark sm:text-4xl">
+          Register your business with the University.
+        </h1>
+        <p className="mt-3 text-[15px] leading-relaxed text-vq-ink-muted">
+          One application, read by a person at the Media Unit. Listed for the
+          whole campus when approved.
+        </p>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <TrustChip>Nothing is charged until approved</TrustChip>
+          <TrustChip>Decision within five working days</TrustChip>
+          <TrustChip>Operated by the Media Unit</TrustChip>
+        </div>
+
+        <ApplyForm />
+      </main>
+
+      <footer className="border-t border-vq-forest/10 py-8 text-center">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
+          Nigeria Maritime University · Okerenkoko &amp; Kurutie · A Voeq service · Powered by Legacylm
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+function TrustChip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-vq-forest/15 bg-white/70 px-3 py-1.5 text-xs font-semibold text-vq-forest">
+      {children}
+    </span>
   );
 }

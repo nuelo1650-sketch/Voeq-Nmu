@@ -6,13 +6,15 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./outbox": "./src/outbox.ts"
   },
   "scripts": {
     "generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "worker": "tsx src/worker.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.3.0"
