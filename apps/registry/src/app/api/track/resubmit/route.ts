@@ -10,10 +10,16 @@ import { assertApplicationTransition } from "@voeq/core";
 import { IMAGE_FIELDS, missingRequiredImages, type ImageField } from "@/lib/apply-schema";
 import { resubmitSchema, missingRequiredResubmitImages } from "@/lib/resubmit";
 import { verifyAccessToken } from "@/lib/access";
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  // Phase 5.1 — resubmission is token-gated; the IP cap keeps it from
+  // becoming a firehose when a token leaks into a script.
+  const blocked = tooManyRequests(rateLimit("track.resubmit", clientIp(req)));
+  if (blocked) return blocked;
+
   let body: unknown;
   try {
     body = await req.json();

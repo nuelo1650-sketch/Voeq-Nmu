@@ -44,6 +44,13 @@ export function BrandLogo({
 export function SiteHeader() {
   return (
     <header className="border-b border-vq-forest/10 bg-white/60 backdrop-blur">
+      {/* keyboard users skip the masthead straight into the page (5.4) */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-50 focus:border focus:border-vq-forest focus:bg-white focus:px-3 focus:py-1.5 focus:text-sm focus:text-vq-forest"
+      >
+        Skip to content
+      </a>
       <div className="flex items-center justify-between px-5 py-3.5 sm:px-8">
         <Link href="/" aria-label="Voeq — home" className="flex items-center">
           <BrandLogo height={24} />
@@ -64,6 +71,7 @@ export function SiteFooter() {
           The business register
         </a>{" "}
         · <a href="/track" className="underline">Track an application</a>
+        {" "}· <a href="/privacy" className="underline">Privacy notice</a>
       </p>
       <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
         Nigeria Maritime University · Okerenkoko &amp; Kurutie · A Voeq service · Powered by Legacylm

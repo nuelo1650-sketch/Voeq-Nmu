@@ -7,10 +7,16 @@ import { prisma } from "@voeq/db";
 import { createNotification } from "@voeq/db/outbox";
 import { applicationAccessLink } from "@voeq/email";
 import { mintAccessToken, ACCESS_LINK_SHORT_MINUTES } from "@/lib/access";
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  // Phase 5.1 — brute-force guard: the silence of this endpoint is only
+  // honest if probing is expensive. 5 reference+email guesses a minute, max.
+  const blocked = tooManyRequests(rateLimit("track.link", clientIp(req)));
+  if (blocked) return blocked;
+
   let body: unknown;
   try {
     body = await req.json();

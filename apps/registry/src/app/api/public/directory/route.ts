@@ -4,10 +4,14 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@voeq/db";
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
+  const blocked = tooManyRequests(rateLimit("public.directory", clientIp(req)));
+  if (blocked) return blocked;
+
   const url = new URL(req.url);
   const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 100), 1), 200);
 

@@ -14,10 +14,16 @@
 import { NextResponse } from "next/server";
 import { SNIFFED_MIME, MAX_UPLOAD_BYTES } from "@/lib/apply-schema";
 import { uploadPrivateOriginal, cloudinaryConfigured } from "@/lib/cloudinary";
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  // Phase 5.1 — 30 uploads per hour per address (6 images per submission,
+  // retries included, with headroom).
+  const blocked = tooManyRequests(rateLimit("apply.image", clientIp(req)));
+  if (blocked) return blocked;
+
   if (!cloudinaryConfigured()) {
     return NextResponse.json({ error: "Image storage is not configured" }, { status: 503 });
   }

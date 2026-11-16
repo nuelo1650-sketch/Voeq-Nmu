@@ -14,6 +14,7 @@ import { feeAwaitingEvidence } from "@voeq/email";
 import { assertFeeIntentTransition } from "@voeq/core";
 import { verifyAccessToken } from "@/lib/access";
 import { z } from "zod";
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,10 @@ const claimSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  // Phase 5.1 — token-gated already; the IP cap stops token-free probing.
+  const blocked = tooManyRequests(rateLimit("track.claim", clientIp(req)));
+  if (blocked) return blocked;
+
   let body: unknown;
   try {
     body = await req.json();

@@ -45,7 +45,7 @@ export default async function DirectoryPage() {
   return (
     <div className="min-h-dvh">
       <SiteHeader />
-      <main className="mx-auto max-w-3xl px-5 pb-24 pt-8">
+      <main id="main" className="mx-auto max-w-3xl px-5 pb-24 pt-8">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-vq-amber-dark">
           Nigeria Maritime University · Okerenkoko &amp; Kurutie
         </p>

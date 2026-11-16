@@ -98,7 +98,7 @@ export default async function ApplicationStatusPage({
     <div className="min-h-dvh">
       <SiteHeader />
 
-      <main className="mx-auto max-w-xl px-5 pb-20 pt-10">
+      <main id="main" className="mx-auto max-w-xl px-5 pb-20 pt-10">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
             {a.reference} · {statusLine}
@@ -427,7 +427,7 @@ function LockedScreen({ reference, reason }: { reference: string; reason: string
   return (
     <div className="min-h-dvh">
       <SiteHeader />
-      <main className="mx-auto max-w-xl px-5 pb-24 pt-14 text-center">
+      <main id="main" className="mx-auto max-w-xl px-5 pb-24 pt-14 text-center">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
           {reason === "expired-or-invalid" ? "Link expired" : "No match"}
         </p>

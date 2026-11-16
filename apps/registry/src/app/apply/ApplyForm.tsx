@@ -461,7 +461,11 @@ export function ApplyForm() {
                 I accept the terms of the NMU business register (v1).
               </Consent>
               <Consent checked={consents.privacy} onChange={(v) => setConsents((c) => ({ ...c, privacy: v }))}>
-                I accept the privacy notice (v1) — my details are used to run this register, nothing else.
+                I accept the{" "}
+                <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-vq-forest underline underline-offset-2">
+                  privacy notice (v1)
+                </a>{" "}
+                — my details are used to run this register, nothing else.
               </Consent>
               <Consent
                 checked={consents.public_listing}
@@ -578,12 +582,14 @@ function StepTitle({ children }: { children: React.ReactNode }) {
 }
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  // The <label> WRAPS the control: implicit association, no id bookkeeping,
+  // and every input in the form is announced correctly by a screen reader.
   return (
-    <div className="mb-4">
-      <label className="mb-1.5 block text-sm font-semibold text-vq-forest-dark">{label}</label>
+    <label className="mb-4 block">
+      <span className="mb-1.5 block text-sm font-semibold text-vq-forest-dark">{label}</span>
       {children}
-      {hint && <p className="mt-1 text-xs text-vq-ink-subtle">{hint}</p>}
-    </div>
+      {hint && <span className="mt-1 block text-xs text-vq-ink-subtle">{hint}</span>}
+    </label>
   );
 }
 

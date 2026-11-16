@@ -6,10 +6,16 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@voeq/db";
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
+  // Phase 5.1 — the badge API is hot but not infinite: 120 checks a minute
+  // per address. voeq.ng profiles check on page view, well under the cap.
+  const blocked = tooManyRequests(rateLimit("public.verify", clientIp(req)));
+  if (blocked) return blocked;
+
   const url = new URL(req.url);
   const reference = (url.searchParams.get("reference") ?? "").trim().toUpperCase();
   if (!/^NMU-\d{4}-\d{4}$/.test(reference)) {

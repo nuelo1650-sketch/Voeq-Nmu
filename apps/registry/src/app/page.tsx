@@ -13,7 +13,7 @@ export default function Home() {
     <div className="min-h-dvh">
       <SiteHeader />
 
-      <main className="mx-auto max-w-xl px-5 pb-24 pt-8">
+      <main id="main" className="mx-auto max-w-xl px-5 pb-24 pt-8">
         <h1 className="font-display text-3xl leading-snug text-vq-forest-dark sm:text-4xl">
           Register your business with the University.
         </h1>

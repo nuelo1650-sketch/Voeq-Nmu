@@ -14,10 +14,16 @@ import { applicationReceived } from "@voeq/email";
 import { formatReference } from "@voeq/core";
 import { applySchema, missingRequiredImages, CONSENT_DOC_VERSION, IMAGE_FIELDS, type ImageField } from "@/lib/apply-schema";
 import { writeAudit } from "@/lib/audit-write";
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  // Phase 5.1 — three submissions per hour per address. A real applicant
+  // needs one; a form-spammer needs more.
+  const blocked = tooManyRequests(rateLimit("apply.submit", clientIp(req)));
+  if (blocked) return blocked;
+
   let body: unknown;
   try {
     body = await req.json();

@@ -53,6 +53,7 @@ function FilterLink({ href, label, active }: { href: string; label: string; acti
   return (
     <Link
       href={href}
+      aria-current={active ? "page" : undefined}
       className={`px-3 py-1.5 text-xs font-semibold transition ${
         active
           ? "bg-vq-forest text-white"

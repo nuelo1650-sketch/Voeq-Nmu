@@ -70,6 +70,7 @@ export async function AdminSurface({
               ) : (
                 <Link
                   href={`?tab=${t.key}`}
+                  aria-current={activeTab === t.key ? "page" : undefined}
                   className={`px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] transition ${
                     activeTab === t.key
                       ? "bg-vq-forest text-white"

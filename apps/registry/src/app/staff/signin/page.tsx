@@ -7,7 +7,7 @@ export default function StaffSignInPage() {
   return (
     <div className="min-h-dvh">
       <SiteHeader />
-      <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6">
+      <main id="main" className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6">
       <div className="rounded-2xl border border-vq-forest/10 bg-white p-8 shadow-sm">
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-vq-amber-dark">
           Staff access

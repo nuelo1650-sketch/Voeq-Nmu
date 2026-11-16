@@ -104,7 +104,7 @@ export default async function RevisePage({
   return (
     <div className="min-h-dvh">
       <SiteHeader />
-      <main className="mx-auto max-w-xl px-5 pb-20 pt-10">
+      <main id="main" className="mx-auto max-w-xl px-5 pb-20 pt-10">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
           {a.reference} · Correction {revision?.revisionNo === 1 ? "" : `· revision ${revision!.revisionNo + 1} of your application`}
         </p>
@@ -143,7 +143,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh">
       <SiteHeader />
-      <main className="mx-auto max-w-xl px-5 pb-24 pt-14">{children}</main>
+      <main id="main" className="mx-auto max-w-xl px-5 pb-24 pt-14">{children}</main>
       <SiteFooter />
     </div>
   );
