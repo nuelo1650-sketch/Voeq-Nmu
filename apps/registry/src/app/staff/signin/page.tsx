@@ -18,7 +18,7 @@ export default function StaffSignInPage() {
         </p>
         <button
           onClick={() => signIn("google", { callbackUrl: "/staff" })}
-          className="mt-6 w-full rounded-full bg-vq-forest px-5 py-3 text-sm font-semibold text-vq-glass shadow-md transition hover:bg-vq-forest-mid"
+          className="mt-6 w-full bg-vq-forest px-5 py-3 text-sm font-semibold text-vq-glass shadow-md transition hover:bg-vq-forest-mid"
         >
           Continue with Google
         </button>

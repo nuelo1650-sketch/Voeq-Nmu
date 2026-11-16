@@ -54,6 +54,10 @@ export async function ReviewView({
 
   const revision = a.revisions[0];
   const photos = revision?.images ?? [];
+  // The full form snapshot — the reviewer sees EVERY field the applicant
+  // wrote, with an honest placeholder where a field was left empty.
+  const data = (revision?.data ?? {}) as Record<string, unknown>;
+  const str = (k: string): string => (typeof data[k] === "string" && data[k] ? (data[k] as string) : "");
 
   return (
     <div>
@@ -71,14 +75,17 @@ export async function ReviewView({
         <StatusChip status={a.status} />
       </div>
 
-      {/* details */}
+      {/* details — every field on the form, nothing hidden */}
       <dl className="mt-5 divide-y divide-vq-forest/10 rounded-xl border border-vq-forest/10 bg-white/80">
+        <Row label="Business name" value={a.businessName} />
         <Row label="Category" value={a.category.name} />
         <Row label="Campus" value={a.campus.name} />
-        <Row label="Owner" value={revision?.data ? (revision.data as Record<string, unknown>).ownerName as string : a.ownerName} />
-        <Row label="Phone" value={a.ownerPhone} />
-        <Row label="Email" value={a.contactEmail} />
-        {a.businessDescription && <Row label="Description" value={a.businessDescription} wide />}
+        <Row label="Owner" value={str("ownerName") || a.ownerName} />
+        <Row label="Phone" value={str("ownerPhone") || a.ownerPhone} />
+        <Row label="Email" value={str("contactEmail") || a.contactEmail} />
+        <Row label="Website" value={str("website") || "Not provided"} />
+        <Row label="Social media" value={str("socialHandle") || "Not provided"} />
+        <Row label="Description" value={a.businessDescription || str("businessDescription") || "Not provided"} wide />
         <Row
           label="Consents"
           value={

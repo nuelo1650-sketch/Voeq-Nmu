@@ -101,6 +101,8 @@ export function ApplyForm() {
   const [meta, setMeta] = useState<Meta | null>(null);
   const [businessName, setBusinessName] = useState("");
   const [businessDescription, setBusinessDescription] = useState("");
+  const [website, setWebsite] = useState("");
+  const [socialHandle, setSocialHandle] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [campusId, setCampusId] = useState("");
   const [ownerName, setOwnerName] = useState("");
@@ -182,6 +184,8 @@ export function ApplyForm() {
       const payload = {
         businessName,
         businessDescription,
+        website,
+        socialHandle,
         campusId,
         categoryId,
         ownerName,
@@ -221,7 +225,7 @@ export function ApplyForm() {
           return (
             <li key={label} className="flex flex-1 items-center gap-2">
               <span
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                className={`flex h-7 w-7 shrink-0 items-center justify-center font-mono text-xs font-bold ${
                   state === "current"
                     ? "bg-vq-forest text-white"
                     : state === "done"
@@ -288,6 +292,25 @@ export function ApplyForm() {
                 className={`${inputCls} resize-none`}
               />
               <p className="mt-1 text-right text-[11px] text-vq-ink-subtle">{businessDescription.length}/600</p>
+            </Field>
+            <Field label="Website" hint="Optional — if the business has one">
+              <input
+                value={website}
+                onChange={(e) => setWebsite(e.target.value.trim())}
+                inputMode="url"
+                placeholder="e.g. blessingstore.voeq.ng"
+                maxLength={200}
+                className={inputCls}
+              />
+            </Field>
+            <Field label="Social media" hint="Optional — Instagram, WhatsApp Business, X…">
+              <input
+                value={socialHandle}
+                onChange={(e) => setSocialHandle(e.target.value.trim())}
+                placeholder="e.g. @blessingstore"
+                maxLength={80}
+                className={inputCls}
+              />
             </Field>
           </>
         )}
@@ -375,6 +398,12 @@ export function ApplyForm() {
               <ReviewRow label="Owner" value={ownerName} />
               <ReviewRow label="Phone" value={ownerPhone} />
               <ReviewRow label="Email" value={contactEmail} />
+              <ReviewRow label="Website" value={website || "Not provided"} />
+              <ReviewRow label="Social" value={socialHandle || "Not provided"} />
+              <ReviewRow
+                label="Describe"
+                value={businessDescription || "Not provided"}
+              />
               <ReviewRow
                 label="Photos"
                 value={`${ownerPhotoDone ? "You ✓" : ""}${ownerPhotoDone && businessPhotoDone ? " · " : ""}${businessPhotoDone ? "Shop ✓" : ""}${images.cac_certificate.status === "done" ? " · CAC ✓" : ""}`}
@@ -416,7 +445,7 @@ export function ApplyForm() {
         {step > 1 && (
           <button
             onClick={() => setStep((s) => s - 1)}
-            className="rounded-full border border-vq-forest/25 bg-white/60 px-5 py-3 text-sm font-semibold text-vq-forest transition hover:bg-white"
+            className="border border-vq-forest/25 bg-white/60 px-5 py-3 text-sm font-semibold text-vq-forest transition hover:bg-white"
           >
             Back
           </button>
@@ -425,7 +454,7 @@ export function ApplyForm() {
           <button
             onClick={() => setStep((s) => s + 1)}
             disabled={!canNext}
-            className="flex-1 rounded-full bg-vq-forest px-5 py-3.5 text-sm font-semibold text-white shadow-md transition enabled:hover:bg-vq-forest-mid disabled:opacity-40 sm:flex-none sm:px-8"
+            className="flex-1 bg-vq-forest px-5 py-3.5 text-sm font-semibold text-white shadow-md transition enabled:hover:bg-vq-forest-mid disabled:opacity-40 sm:flex-none sm:px-8"
           >
             Continue
           </button>
@@ -433,7 +462,7 @@ export function ApplyForm() {
           <button
             onClick={submit}
             disabled={!allConsents || submitting}
-            className="flex-1 rounded-full bg-vq-forest px-5 py-3.5 text-sm font-semibold text-white shadow-md transition enabled:hover:bg-vq-forest-mid disabled:opacity-40 sm:flex-none sm:px-8"
+            className="flex-1 bg-vq-forest px-5 py-3.5 text-sm font-semibold text-white shadow-md transition enabled:hover:bg-vq-forest-mid disabled:opacity-40 sm:flex-none sm:px-8"
           >
             {submitting ? "Submitting…" : "Submit application"}
           </button>
@@ -466,7 +495,7 @@ function SuccessPanel({ reference, businessName }: { reference: string; business
         onClick={() => {
           navigator.clipboard.writeText(reference).then(() => setCopied(true));
         }}
-        className="mt-3 rounded-full border border-vq-forest/25 bg-white/60 px-4 py-2 text-xs font-semibold text-vq-forest transition hover:bg-white"
+        className="mt-3 border border-vq-forest/25 bg-white/60 px-4 py-2 text-xs font-semibold text-vq-forest transition hover:bg-white"
       >
         {copied ? "Copied ✓" : "Copy reference"}
       </button>

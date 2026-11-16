@@ -100,6 +100,8 @@ export async function POST(req: Request) {
           data: {
             businessName: input.businessName,
             businessDescription: input.businessDescription || null,
+            website: input.website || null,
+            socialHandle: input.socialHandle || null,
             campus: { id: campus.id, name: campus.name },
             category: { id: category.id, name: category.name },
             ownerName: input.ownerName,

@@ -44,6 +44,8 @@ export const nigerianPhone = z
 export const applySchema = z.object({
   businessName: z.string().trim().min(2).max(120),
   businessDescription: z.string().trim().max(600).optional().or(z.literal("")),
+  website: z.string().trim().max(200).optional().or(z.literal("")),
+  socialHandle: z.string().trim().max(80).optional().or(z.literal("")),
   campusId: z.string().min(1),
   categoryId: z.string().min(1),
   ownerName: z.string().trim().min(3).max(120),

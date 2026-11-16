@@ -23,7 +23,7 @@ export function EmailPreviews({ previews }: { previews: Preview[] }) {
           <button
             key={w}
             onClick={() => setWidth(w)}
-            className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+            className={`px-3 py-1 text-xs font-semibold transition ${
               width === w
                 ? "bg-vq-forest text-white"
                 : "border border-neutral-300 bg-white text-neutral-600 hover:border-vq-forest"

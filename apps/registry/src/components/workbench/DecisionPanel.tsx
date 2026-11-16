@@ -136,12 +136,13 @@ export function DecisionPanel({
         </p>
       )}
 
-      {/* action buttons */}
+      {/* action buttons — all three SOLID fills: they must read as buttons,
+          not as decoration (Kai: corrections "feels like it's not clickable") */}
       <div className="mt-4 flex flex-wrap gap-2.5">
         <button
           onClick={() => setMode("confirm-approve")}
           disabled={!checklistComplete || busy}
-          className="rounded-full bg-vq-forest px-5 py-2.5 text-sm font-semibold text-white shadow-md transition enabled:hover:bg-vq-forest-mid disabled:opacity-40"
+          className="bg-vq-forest px-5 py-2.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer enabled:hover:bg-vq-forest-mid disabled:opacity-40"
         >
           Approve
         </button>
@@ -151,14 +152,14 @@ export function DecisionPanel({
             if (items.length === 0) setItems([{ field: "", instruction: "" }]);
           }}
           disabled={!checklistComplete || busy}
-          className="rounded-full border border-vq-amber/60 bg-vq-amber-light px-5 py-2.5 text-sm font-semibold text-vq-amber-dark transition enabled:hover:border-vq-amber disabled:opacity-40"
+          className="bg-vq-amber-dark px-5 py-2.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer enabled:hover:opacity-90 disabled:opacity-40"
         >
           Request corrections
         </button>
         <button
           onClick={() => setMode("reject")}
           disabled={!checklistComplete || busy}
-          className="rounded-full border border-neutral-300 bg-white px-5 py-2.5 text-sm font-semibold text-neutral-600 transition enabled:hover:border-neutral-500 disabled:opacity-40"
+          className="bg-neutral-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer enabled:hover:bg-neutral-600 disabled:opacity-40"
         >
           Reject
         </button>
@@ -182,13 +183,13 @@ export function DecisionPanel({
             <button
               onClick={() => send({ kind: "approve" }, "Approved")}
               disabled={busy}
-              className="rounded-full bg-vq-forest px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+              className="bg-vq-forest px-4 py-2 text-sm font-semibold text-white enabled:cursor-pointer disabled:opacity-40"
             >
               {busy ? "Recording…" : "Yes — approve"}
             </button>
             <button
               onClick={() => setMode("idle")}
-              className="rounded-full border border-vq-forest/25 px-4 py-2 text-sm font-semibold text-vq-forest"
+              className="border border-vq-forest/25 px-4 py-2 text-sm font-semibold text-vq-forest"
             >
               Not yet
             </button>
@@ -225,7 +226,7 @@ export function DecisionPanel({
                     <button
                       key={k}
                       onClick={() => setItems((prev) => prev.map((it, j) => (j === i ? { ...t } : it)))}
-                      className="rounded-full border border-vq-forest/20 bg-white px-2.5 py-1 text-[11px] font-semibold text-vq-forest hover:border-vq-forest"
+                      className="border border-vq-forest/20 bg-white px-2.5 py-1 text-[11px] font-semibold text-vq-forest hover:border-vq-forest"
                     >
                       {t.field.toLowerCase()}
                     </button>
@@ -252,13 +253,13 @@ export function DecisionPanel({
                 )
               }
               disabled={busy || items.every((i) => !i.field.trim() || !i.instruction.trim())}
-              className="rounded-full bg-vq-amber-dark px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+              className="bg-vq-amber-dark px-4 py-2 text-sm font-semibold text-white enabled:cursor-pointer disabled:opacity-40"
             >
               {busy ? "Recording…" : "Send corrections"}
             </button>
             <button
               onClick={() => setMode("idle")}
-              className="rounded-full border border-vq-forest/25 px-4 py-2 text-sm font-semibold text-vq-forest"
+              className="border border-vq-forest/25 px-4 py-2 text-sm font-semibold text-vq-forest"
             >
               Cancel
             </button>
@@ -285,13 +286,13 @@ export function DecisionPanel({
             <button
               onClick={() => send({ kind: "reject", reason }, "Rejected")}
               disabled={busy || reason.trim().length < 10}
-              className="rounded-full bg-neutral-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+              className="bg-neutral-700 px-4 py-2 text-sm font-semibold text-white enabled:cursor-pointer disabled:opacity-40"
             >
               {busy ? "Recording…" : "Send rejection"}
             </button>
             <button
               onClick={() => setMode("idle")}
-              className="rounded-full border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-600"
+              className="border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-600"
             >
               Cancel
             </button>

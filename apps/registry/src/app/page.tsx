@@ -28,10 +28,12 @@ export default function Home() {
           whole campus when approved.
         </p>
 
-        <div className="mt-5 flex flex-wrap gap-2">
-          <TrustChip>Nothing is charged until approved</TrustChip>
-          <TrustChip>Decision within five working days</TrustChip>
-          <TrustChip>Operated by the Media Unit</TrustChip>
+        <div className="mt-5 border-y border-vq-forest/15 py-3">
+          <ul className="space-y-1 text-sm text-vq-ink-muted">
+            <li><span className="mr-2 text-vq-forest">—</span>Nothing is charged until approved</li>
+            <li><span className="mr-2 text-vq-forest">—</span>Decision within five working days</li>
+            <li><span className="mr-2 text-vq-forest">—</span>Operated by the Media Unit</li>
+          </ul>
         </div>
 
         <ApplyForm />
@@ -43,13 +45,5 @@ export default function Home() {
         </p>
       </footer>
     </div>
-  );
-}
-
-function TrustChip({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="rounded-full border border-vq-forest/15 bg-white/70 px-3 py-1.5 text-xs font-semibold text-vq-forest">
-      {children}
-    </span>
   );
 }
