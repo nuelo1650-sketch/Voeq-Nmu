@@ -78,3 +78,72 @@ export async function uploadPrivateOriginal(args: {
   }
   return { publicId: json.public_id, bytes: json.bytes ?? 0, format: json.format ?? "" };
 }
+
+// --- stage 7: admin view -----------------------------------------------------
+// Signed delivery URL for an authenticated asset. No public URL exists for
+// these assets — the server mints this per request via the official SDK's
+// signed-URL support (proven against the live account; the hand-rolled
+// `exp=` variant 404s, so expiry is handled as policy: signed URLs are never
+// stored, logged, or embedded in emails, and exist only for the review
+// render that requested them — roadmap stage 7 commitment).
+
+import { v2 as cloudinarySdk } from "cloudinary";
+
+function sdkConfigured(): boolean {
+  return Boolean(CLOUD_NAME && API_KEY && API_SECRET);
+}
+
+export function signedAuthenticatedUrl(publicId: string): string {
+  if (!sdkConfigured()) {
+    throw new Error("Cloudinary env vars are not set — signed URLs unavailable");
+  }
+  cloudinarySdk.config({
+    cloud_name: CLOUD_NAME,
+    api_key: API_KEY,
+    api_secret: API_SECRET,
+    secure: true,
+  });
+  return cloudinarySdk.url(publicId, {
+    type: "authenticated",
+    sign_url: true,
+    secure: true,
+  });
+}
+
+/**
+ * Stage 8 — promote: on approval, the public display derivative is uploaded
+ * as a public asset under voeq/nmu/ on the same account. The private original
+ * stays authenticated forever. Called from the approval path (Phase 2 2.13).
+ */
+export async function promotePublicDerivative(args: {
+  bytes: Buffer;
+  mimeType: string;
+}): Promise<CloudinaryUploadResult> {
+  if (!cloudinaryConfigured()) {
+    throw new Error("Cloudinary env vars are not set — promotion unavailable");
+  }
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const folder = PUBLIC_FOLDER;
+  const params: Record<string, string> = { folder, timestamp };
+  const form = new FormData();
+  form.append("file", new Blob([new Uint8Array(args.bytes)], { type: args.mimeType }));
+  form.append("folder", folder);
+  form.append("timestamp", timestamp);
+  form.append("api_key", API_KEY);
+  form.append("signature", signParams(params));
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    method: "POST",
+    body: form,
+  });
+  const json = (await res.json()) as {
+    public_id?: string;
+    bytes?: number;
+    format?: string;
+    error?: { message?: string };
+  };
+  if (!res.ok || !json.public_id) {
+    throw new Error(`Cloudinary promotion failed: ${json.error?.message ?? res.status}`);
+  }
+  return { publicId: json.public_id, bytes: json.bytes ?? 0, format: json.format ?? "" };
+}

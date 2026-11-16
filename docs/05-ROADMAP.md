@@ -56,8 +56,8 @@ second storage system.** The mechanism that makes this safe:
 │ (not to CDN!)     │                              ┌──────────────────────────┐
 └───────────────────┘                              │ 7 ADMIN VIEW             │
                                                    │ signed delivery URL,     │
-                                                   │ ~10 min expiry, minted   │
-                                                   │ per request for logged-  │
+                                                   │ minted per request for   │
+                                                   │ logged-in staff only;    │
                                                    │ in register staff only;  │
                                                    │ full-size + zoom inline  │
                                                    │ in the review screen     │
@@ -94,10 +94,10 @@ Stage-by-stage commitments:
 6. **Store (private)** — Cloudinary authenticated asset, `public_id` recorded
    in the DB row; no public URL exists to leak; originals retained per the
    retention policy.
-7. **Admin view** — the server mints a signed delivery URL (SDK signature +
-   ~10-minute expiry) per request, only for logged-in register-family staff;
-   full-size inline viewer with zoom in the review screen; reviewers always
-   see the original, never a re-compressed copy. Signed URLs are never stored,
+7. **Admin view** — the server mints a signed delivery URL (official SDK
+   signature) per request, only for logged-in register-family staff; full-size
+   inline viewer with zoom in the review screen; reviewers always see the
+   original, never a re-compressed copy. Signed URLs are never stored,
    never logged, never embedded in emails.
 8. **Promote (only on approval)** — the public directory needs a *display*
    image, not the applicant's original. A derivative is generated (≤1200px,
