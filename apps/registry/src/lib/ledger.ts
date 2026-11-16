@@ -21,6 +21,7 @@ import { prisma } from "@voeq/db";
 import { isExactMatch, assertFeeIntentTransition, assertApplicationTransition, formatNaira } from "@voeq/core";
 import { createNotification } from "@voeq/db/outbox";
 import { feeConfirmed, paymentException } from "@voeq/email";
+import { writeAudit } from "@/lib/audit-write";
 
 const REFERENCE_RE = /NMU-\d{4}-\d{4}/i;
 
@@ -335,6 +336,20 @@ export async function confirmAllocation(
       payload: {
         to: application.contactEmail,
         template: feeConfirmed(application.reference, application.businessName, publicUrl),
+      },
+    });
+    await writeAudit(tx, {
+      entityType: "Application",
+      entityId: application.id,
+      action: "fee.confirmed",
+      actorEmail: checkerEmail,
+      actorFamily: "register",
+      data: {
+        reference: application.reference,
+        allocationId: allocation.id,
+        totalMinor: allocation.totalMinor,
+        schoolMinor: allocation.schoolMinor,
+        voeqMinor: allocation.voeqMinor,
       },
     });
   });

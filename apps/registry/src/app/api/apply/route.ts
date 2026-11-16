@@ -13,6 +13,7 @@ import { createNotification } from "@voeq/db/outbox";
 import { applicationReceived } from "@voeq/email";
 import { formatReference } from "@voeq/core";
 import { applySchema, missingRequiredImages, CONSENT_DOC_VERSION, IMAGE_FIELDS, type ImageField } from "@/lib/apply-schema";
+import { writeAudit } from "@/lib/audit-write";
 
 export const dynamic = "force-dynamic";
 
@@ -162,6 +163,22 @@ export async function POST(req: Request) {
             input.businessName,
             `${process.env.APP_URL ?? "http://localhost:3000"}/track`,
           ),
+        },
+      });
+
+      // The audit trail starts here — the submission is the first entry in
+      // the application's hash chain.
+      await writeAudit(tx, {
+        entityType: "Application",
+        entityId: application.id,
+        action: "application.submitted",
+        actorEmail: null,
+        actorFamily: null,
+        data: {
+          reference,
+          businessName: input.businessName,
+          revisionNo: 1,
+          imageCount: input.images.length,
         },
       });
 

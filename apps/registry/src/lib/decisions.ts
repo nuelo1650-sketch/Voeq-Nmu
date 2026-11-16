@@ -19,6 +19,7 @@ import {
 } from "@voeq/email";
 import { assertApplicationTransition, type ApplicationStatus } from "@voeq/core";
 import { mintAccessToken } from "@/lib/access";
+import { writeAudit } from "@/lib/audit-write";
 import { z } from "zod";
 
 export const decisionSchema = z.object({
@@ -197,6 +198,22 @@ export async function recordDecision(
         },
       });
     }
+
+    // The audit entry commits or dies with the decision it describes.
+    await writeAudit(tx, {
+      entityType: "Application",
+      entityId: application.id,
+      action: `application.${input.kind}`,
+      actorEmail: staff.email,
+      actorFamily: staff.family,
+      data: {
+        reference: application.reference,
+        from: application.status,
+        to: target,
+        ...(input.reason ? { reason: input.reason } : {}),
+        ...(input.items ? { items: input.items } : {}),
+      },
+    });
 
     return { reference: application.reference, status: target };
   });
