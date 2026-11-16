@@ -12,7 +12,7 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
     include: {
       category: { select: { name: true } },
       campus: { select: { name: true } },
-      revisions: { orderBy: { revisionNo: "desc" }, take: 1, select: { images: { select: { id: true } } } },
+      revisions: { orderBy: { revisionNo: "desc" }, take: 1, select: { revisionNo: true, images: { select: { id: true } } } },
     },
     take: 100,
   });
@@ -40,7 +40,11 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
                   <div className="min-w-0">
                     <p className="truncate text-[15px] font-semibold text-vq-forest-dark">{a.businessName}</p>
                     <p className="mt-0.5 text-xs text-vq-ink-muted">
-                      <span className="font-mono">{a.reference}</span> · {a.category.name} ·{" "}
+                      <span className="font-mono">{a.reference}</span>
+                      {(a.revisions[0]?.revisionNo ?? 1) > 1 && (
+                        <span className="font-mono text-vq-amber-dark"> · rev {a.revisions[0]!.revisionNo}</span>
+                      )}{" "}
+                      · {a.category.name} ·{" "}
                       {a.campus.name.replace(" Campus", "")} · {a.revisions[0]?.images.length ?? 0} photo
                       {(a.revisions[0]?.images.length ?? 0) === 1 ? "" : "s"}
                     </p>

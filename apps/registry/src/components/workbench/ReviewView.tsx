@@ -36,7 +36,7 @@ export async function ReviewView({
     include: {
       category: { select: { name: true } },
       campus: { select: { name: true } },
-      revisions: { orderBy: { revisionNo: "desc" }, take: 1, include: { images: true, consents: true } },
+      revisions: { orderBy: { revisionNo: "desc" }, take: 2, include: { images: true, consents: true } },
       decisions: { orderBy: { decidedAt: "desc" } },
     },
   });
@@ -53,11 +53,58 @@ export async function ReviewView({
   }
 
   const revision = a.revisions[0];
+  const previous = a.revisions[1];
   const photos = revision?.images ?? [];
   // The full form snapshot — the reviewer sees EVERY field the applicant
   // wrote, with an honest placeholder where a field was left empty.
   const data = (revision?.data ?? {}) as Record<string, unknown>;
   const str = (k: string): string => (typeof data[k] === "string" && data[k] ? (data[k] as string) : "");
+
+  // Side-by-side revisions (roadmap 1.14): what changed, field by field, so
+  // the reviewer never re-reads an application from scratch after a
+  // correction request.
+  const FIELD_ORDER = [
+    ["businessName", "Business name"],
+    ["ownerName", "Owner"],
+    ["ownerPhone", "Phone"],
+    ["contactEmail", "Email"],
+    ["website", "Website"],
+    ["socialHandle", "Social media"],
+    ["businessDescription", "Description"],
+  ] as const;
+  const prevData = (previous?.data ?? {}) as Record<string, unknown>;
+  const textChanges = previous
+    ? FIELD_ORDER.filter(([k]) => {
+        const before = prevData[k];
+        const after = data[k];
+        const norm = (v: unknown) => (typeof v === "string" && v ? v : "");
+        return norm(before) !== norm(after);
+      })
+    : [];
+  const campusChanged =
+    previous &&
+    (prevData.campus as { name?: string } | undefined)?.name !== (data.campus as { name?: string } | undefined)?.name;
+  const categoryChanged =
+    previous &&
+    (prevData.category as { name?: string } | undefined)?.name !== (data.category as { name?: string } | undefined)?.name;
+  type PhotoChange = { field: string; what: "kept" | "replaced" | "added" | "removed" };
+  const photoChanges: PhotoChange[] = [];
+  if (previous) {
+    for (const field of ["owner_photo", "business_photo", "cac_certificate"] as const) {
+      const before = previous.images.find((i) => i.field === field)?.cloudinaryPublicId;
+      const after = revision?.images.find((i) => i.field === field)?.cloudinaryPublicId;
+      if (before === after) {
+        if (before) photoChanges.push({ field, what: "kept" });
+      } else if (before && after) {
+        photoChanges.push({ field, what: "replaced" });
+      } else if (!before && after) {
+        photoChanges.push({ field, what: "added" });
+      } else {
+        photoChanges.push({ field, what: "removed" });
+      }
+    }
+  }
+  const hasDiff = Boolean(previous) && (textChanges.length > 0 || campusChanged || categoryChanged || photoChanges.some((p) => p.what !== "kept"));
 
   return (
     <div>
@@ -74,6 +121,55 @@ export async function ReviewView({
         </div>
         <StatusChip status={a.status} />
       </div>
+
+      {/* side-by-side revisions — what changed, before the full dossier */}
+      {hasDiff && (
+        <div className="mt-5 border-l-4 border-vq-forest bg-vq-forest/5 p-4">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-vq-forest">
+            Revision {revision!.revisionNo} — what changed since revision {previous!.revisionNo}
+          </p>
+          {textChanges.length > 0 && (
+            <ul className="mt-3 space-y-1.5">
+              {textChanges.map(([k, label]) => {
+                const norm = (v: unknown) => (typeof v === "string" && v ? v : "—");
+                const before = norm(prevData[k]);
+                const after = norm(data[k]);
+                return (
+                  <li key={k} className="text-sm leading-relaxed">
+                    <b className="text-vq-forest-dark">{label}:</b>{" "}
+                    <span className="text-neutral-500 line-through">{before}</span>{" "}
+                    <span className="text-vq-forest-dark">→ {after}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {campusChanged && (
+            <p className="mt-2 text-sm">
+              <b className="text-vq-forest-dark">Campus:</b>{" "}
+              <span className="text-neutral-500 line-through">{(prevData.campus as { name?: string })?.name}</span>{" "}
+              <span className="text-vq-forest-dark">→ {(data.campus as { name?: string })?.name}</span>
+            </p>
+          )}
+          {categoryChanged && (
+            <p className="mt-2 text-sm">
+              <b className="text-vq-forest-dark">Category:</b>{" "}
+              <span className="text-neutral-500 line-through">{(prevData.category as { name?: string })?.name}</span>{" "}
+              <span className="text-vq-forest-dark">→ {(data.category as { name?: string })?.name}</span>
+            </p>
+          )}
+          {photoChanges.some((p) => p.what !== "kept") && (
+            <p className="mt-2 text-sm">
+              <b className="text-vq-forest-dark">Photos:</b>{" "}
+              {photoChanges
+                .filter((p) => p.what !== "kept")
+                .map((p) => `${p.field.replace(/_/g, " ")} ${p.what}`)
+                .join(" · ")}
+              {photoChanges.some((p) => p.what === "kept") && " · the rest kept unchanged"}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* details — every field on the form, nothing hidden */}
       <dl className="mt-5 divide-y divide-vq-forest/10 rounded-xl border border-vq-forest/10 bg-white/80">

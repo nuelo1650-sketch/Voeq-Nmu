@@ -289,7 +289,10 @@ model ApplicationImage {
   id             String     @id @default(cuid())
   revisionId     String
   field          ImageField
-  cloudinaryPublicId String @unique // private authenticated asset; no public URL ever
+  cloudinaryPublicId String // private authenticated asset; no public URL ever.
+  // NOT unique: the same evidence may be carried forward onto a new revision
+  // when the applicant resubmits without replacing a photo — the asset is
+  // identical, the revision record still needs its own row.
   originalName   String
   mimeType       String
   sizeBytes      Int

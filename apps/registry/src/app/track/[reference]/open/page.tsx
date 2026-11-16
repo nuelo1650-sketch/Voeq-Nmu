@@ -132,6 +132,7 @@ export default async function ApplicationStatusPage({
           status={a.status}
           reference={a.reference}
           decisions={a.decisions}
+          token={token ?? ""}
         />
 
         {/* the Voeq funnel (1.17) — approval is a lead for the marketplace */}
@@ -161,10 +162,12 @@ function StatusNextStep({
   status,
   reference,
   decisions,
+  token,
 }: {
   status: string;
   reference: string;
   decisions: { kind: string; reason: string | null; items: unknown }[];
+  token: string;
 }) {
   if (status === "submitted" || status === "under_review") {
     return (
@@ -204,10 +207,15 @@ function StatusNextStep({
         </ul>
         <p className="mt-3 text-xs leading-relaxed text-vq-ink-subtle">
           Nothing from your application is lost — the same reference continues.
-          The resubmission flow is being finished; for now, reply to the
-          corrections email once you have fixed each item and the Media Unit
-          will take it from there.
+          You fix only what is flagged and resubmit; the Media Unit re-reads it
+          the day it arrives — no queue-jumping, no penalty.
         </p>
+        <a
+          href={`/track/${encodeURIComponent(reference)}/revise?token=${encodeURIComponent(token)}`}
+          className="mt-4 inline-block bg-vq-amber-dark px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:opacity-90"
+        >
+          Fix and resubmit
+        </a>
       </div>
     );
   }
