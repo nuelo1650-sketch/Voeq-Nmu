@@ -114,25 +114,27 @@ retries from the worker; a failed upload never corrupts the draft.
 
 ## The email catalogue — every letter and its gate
 
-Exactly **seven transactional emails** exist. No marketing, no newsletters, no
-"we miss you". Every letter is fired by exactly one state transition, through
-the outbox worker — never inline in a request handler, never sent twice for
-the same event. Dev-only rendered previews of all seven live at
-`/dev/emails` (blocked in production); Kai approves each letter before
-deployment.
+Exactly **eight transactional emails** exist. No marketing, no newsletters, no
+"we miss you". Every letter is fired by exactly one state transition (or, for
+the access letter, one on-demand request), through the outbox worker — never
+inline in a request handler, never sent twice for the same event. Dev-only
+rendered previews of all eight live at `/dev/emails` (blocked in production);
+Kai approves each letter before deployment.
 
 | # | Letter | Fires when (the gate) | Repeat policy |
 |---|--------|----------------------|---------------|
 | 1 | Application received | The application's SUBMITTED transition is committed in its DB transaction (validation passed server-side) | Once per submission |
 | 2 | Corrections requested | A register-family staff member records a corrections decision **with at least one concrete item** — never automatic | Once per revision request |
-| 3 | Approved — payment step | The APPROVED decision; maker-checker applies (approver ≠ reviewer) | Once per approval |
+| 3 | Approved — payment step | The APPROVED decision; maker-checker applies (approver ≠ reviewer). Its button opens the applicant's status page via a long-lived (30-day) access token | Once per approval |
 | 4 | Rejected | The REJECTED decision, with the written reason included verbatim — never softened, never auto-generated | Once per rejection |
 | 5 | Payment claim received | The applicant claims payment (fee intent → CLAIMED) | Once per intent |
 | 6 | Fee confirmed | The three-signal match (reference + exact amount + date window) passed on the bank statement CSV **and** a staff member confirms — never auto-confirmed | Once per registration |
 | 7 | Payment exception | A bank CSV credit fails the three-signal match against every expectation, or matches with a wrong amount/date; sent within two working days of detection | Once per exception, re-sent only if the concern changes |
+| 8 | Access link | The applicant requests access at `/track` and the reference + email match. Never proactive; the endpoint's response never reveals whether a pair matched | On request; the link expires in 30 minutes, re-requests are free (rate limiting in Phase 5.1) |
 
 Guaranteed minimum per successful applicant: **3 letters** (1 → 3 or 4 → 6).
 Maximum in a normal lifecycle: **5** (adds one or two exceptions/corrections).
+Letter #8 is on-demand and does not count toward lifecycle minimums.
 Exceptions (7) always state the exact concern in the applicant's own record's
 words — the email never guesses (Q-P6 decision).
 

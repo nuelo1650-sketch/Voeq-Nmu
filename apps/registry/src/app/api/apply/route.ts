@@ -150,11 +150,17 @@ export async function POST(req: Request) {
 
       // Letter #1 — queued in the SAME transaction (§19). The worker sends it;
       // if the process dies right now, the poller still finds this row.
+      // trackUrl points at the /track front door (1.5): reference + email in,
+      // access link out by email.
       await createNotification(tx, {
         topic: "application.received",
         payload: {
           to: input.contactEmail,
-          template: applicationReceived(reference, input.businessName),
+          template: applicationReceived(
+            reference,
+            input.businessName,
+            `${process.env.APP_URL ?? "http://localhost:3000"}/track`,
+          ),
         },
       });
 

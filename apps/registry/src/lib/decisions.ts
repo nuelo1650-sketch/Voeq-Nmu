@@ -18,6 +18,7 @@ import {
   correctionsRequested,
 } from "@voeq/email";
 import { assertApplicationTransition, type ApplicationStatus } from "@voeq/core";
+import { mintAccessToken } from "@/lib/access";
 import { z } from "zod";
 
 export const decisionSchema = z.object({
@@ -97,8 +98,18 @@ export async function recordDecision(
     };
 
     // Letter #3 — approved carries the payment step (the fee is charged only
-    // after approval, never before).
-    const paymentStepUrl = `${process.env.APP_URL ?? "http://localhost:3000"}/apply/${application.reference}/payment`;
+    // after approval, never before). The button opens the applicant's own
+    // status page — payment card included — via a long-lived access token,
+    // so no password and no separate request is needed (roadmap 1.5/1.15).
+    const base = process.env.APP_URL ?? "http://localhost:3000";
+    const paymentStepUrl =
+      input.kind === "approve"
+        ? `${base}/track/${encodeURIComponent(application.reference)}/open?token=${mintAccessToken(
+            application.id,
+            application.contactEmail,
+            "long",
+          )}`
+        : `${base}/track`;
     let letter:
       | ReturnType<typeof applicationApproved>
       | ReturnType<typeof applicationRejected>

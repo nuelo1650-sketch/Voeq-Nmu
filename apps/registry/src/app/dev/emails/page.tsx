@@ -7,6 +7,7 @@ import {
   feeAwaitingEvidence,
   feeConfirmed,
   paymentException,
+  applicationAccessLink,
 } from "@voeq/email";
 import { EmailPreviews } from "./preview-client";
 
@@ -71,6 +72,12 @@ const PREVIEWS = [
     gate: "Fires when a bank CSV credit fails the three-signal match against every expectation, or matches with a wrong amount/date. Sent within two working days of detection.",
     letter: paymentException(REF, FIX_CONCERN),
   },
+  {
+    id: "access-link",
+    name: "8 · Access link",
+    gate: "Fires only when an applicant requests access at /track with a matching reference + email. Never proactive. Link expires in 30 minutes; re-requests are free.",
+    letter: applicationAccessLink(REF, NAME, `http://localhost:3000/track/${REF}/open?token=preview`, 30),
+  },
 ];
 
 export default function DevEmailsPage() {
@@ -81,7 +88,7 @@ export default function DevEmailsPage() {
       <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
         Dev-only preview
       </p>
-      <h1 className="font-display text-3xl text-vq-forest-dark">The seven letters</h1>
+      <h1 className="font-display text-3xl text-vq-forest-dark">The eight letters</h1>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-600">
         Every email the system can send, in the real skin. Direction decided:
         B, the fuller letter. Nothing here is a real application — the names

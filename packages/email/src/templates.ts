@@ -3,12 +3,12 @@
 //
 // Direction decided (Kai, 2026-11-16): **Direction B, the fuller letter** —
 // reviewed at /dev/emails against Direction A (compact) and chosen as-is.
-// Same skin for all seven; the body is a proper letter: an opening that
+// Same skin for all eight; the body is a proper letter: an opening that
 // talks to the applicant, a numbered walk-through, a "good to know" section,
 // and a signature.
 //
 // Principles:
-//   1. One skin, seven letters. Every email a person ever receives from the
+//   1. One skin, eight letters. Every email a person ever receives from the
 //      register is unmistakably the same sender: forest header, cream page,
 //      serif voice, one amber reference chip, one footer. Consistency IS the
 //      brand; nothing looks system-default.
@@ -205,7 +205,7 @@ ${preheader}
 }
 
 // ---------------------------------------------------------------------------
-// The seven letters. Each one is fired by exactly one state transition —
+// The eight letters. Each one is fired by exactly one state transition —
 // the catalogue of gates lives in docs/05-ROADMAP.md, "The email catalogue".
 // ---------------------------------------------------------------------------
 
@@ -426,6 +426,44 @@ export function paymentException(reference: string, concern: string): EmailTempl
         para(`If anything above is unclear, reply to this email. A person reads it.`),
         signoff(),
       ].join(""),
+    }),
+  };
+}
+
+// Letter #8 — access link (on demand). Fires when an applicant asks the
+// register to let them into their own application's page: reference + email
+// matched, link minted, letter sent. Never fired proactively.
+export function applicationAccessLink(
+  reference: string,
+  businessName: string,
+  accessUrl: string,
+  expiresMinutes: number,
+): EmailTemplate {
+  return {
+    subject: `Your access link — ${reference} — one click opens your application's page`,
+    html: shell({
+      preheader: `One click opens ${businessName}'s page — the full story, the decisions, and your next step. The link works for ${expiresMinutes} minutes.`,
+      status: { label: "Your access link", tone: "amber" },
+      title: "Your link into the register.",
+      body: [
+        para(`Someone asked the register for a link into <b>${esc(businessName)}</b>'s application page, and this is it. If that someone was you, click the button below — everything about your application is behind it, exactly as the Media Unit sees it from their side.`),
+        sectionHeading("What to do"),
+        stepsBlock([
+          `Click the button below within <b>${expiresMinutes} minutes</b> — the link expires after that, on purpose.`,
+          `Your application's page opens: the full story so far, every decision made, and exactly what is required of you next.`,
+          `If the link expires before you use it, no problem — request another from the same page. It costs nothing and it arrives in minutes.`,
+        ]),
+        refChip(reference, "The application this link opens"),
+        sectionHeading("Good to know"),
+        bulletsBlock([
+          `This link is <b>personal</b> — it opens your application and nobody else's. Do not forward it.`,
+          `The page never asks you for money and never asks you to re-enter your details. If a page does, it is not us.`,
+          `Requesting a new link is always free. There is no limit and no penalty.`,
+        ]),
+        para(`If you did not request this link, ignore it — nothing happens without your click. And if you are curious who was asking: it may have been you on another device, or the Media Unit checking something with you. When in doubt, reply to this email and a person answers.`),
+        signoff(),
+      ].join(""),
+      cta: { href: accessUrl, label: "Open my application's page" },
     }),
   };
 }

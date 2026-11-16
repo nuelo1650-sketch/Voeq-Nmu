@@ -504,6 +504,26 @@ function SuccessPanel({ reference, businessName }: { reference: string; business
         <li>2 · If something needs fixing, they email you exactly what.</li>
         <li>3 · Nothing is charged until your entry is approved.</li>
       </ol>
+      <div className="mx-auto mt-6 max-w-sm border-t border-vq-forest/15 pt-5 text-sm leading-relaxed text-vq-ink-muted">
+        <p>
+          Want to watch it move?{" "}
+          <a href="/track" className="font-semibold text-vq-forest underline">
+            Track your application
+          </a>{" "}
+          — your reference and this email address are all it takes.
+        </p>
+        <p className="mt-3">
+          <b>P.S.</b> — Do you also want to{" "}
+          <a
+            href="https://voeq.ng/for-vendors"
+            className="font-semibold text-vq-forest underline"
+          >
+            sell on Voeq
+          </a>
+          ? The campus marketplace thousands of students already use. Getting
+          started takes minutes.
+        </p>
+      </div>
     </section>
   );
 }
