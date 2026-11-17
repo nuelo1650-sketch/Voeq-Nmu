@@ -50,3 +50,4 @@ playwright-report/
 # local scratch
 .tmp/
 *.local
+tooling/backups/
