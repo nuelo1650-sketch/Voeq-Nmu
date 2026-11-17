@@ -26,8 +26,10 @@ export default function StaffSignInPage() {
           Continue with Google
         </button>
         <p className="mt-4 text-xs text-vq-ink-subtle">
-          Every sign-in and every action inside is recorded against your Google
-          account email. The log cannot be deleted.
+          You land in your own desk automatically — the Media Unit workbench for
+          register staff, the admin console for platform staff. Every sign-in
+          and every action inside is recorded against your Google account
+          email. The log cannot be deleted.
         </p>
       </div>
       </main>

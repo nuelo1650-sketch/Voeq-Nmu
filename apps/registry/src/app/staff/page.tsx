@@ -19,6 +19,10 @@ export default async function StaffHome({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/staff/signin");
+  // Role-based landing (Kai: "how do I get to admin?"): platform-family
+  // accounts are bounced straight to the super-admin console — they should
+  // never sit in the Media Unit's desk. Register family stays here.
+  if (session.user.family === "platform") redirect("/admin");
   const { id, status } = await searchParams;
 
   return (
