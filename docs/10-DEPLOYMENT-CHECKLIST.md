@@ -51,7 +51,9 @@ be executed by the agent given a Vercel access token.
 
 - Add the domain in Vercel: `nmu.voeq.ng` → it shows the CNAME target (`cname.vercel-dns.com`).
 - In Cloudflare DNS: create CNAME `nmu` → `cname.vercel-dns.com`.
-  - **Phase A (launch day, simplest): DNS-only (grey cloud).** Vercel issues TLS directly; nothing can interfere. Verify the whole app end to end.
+  - **Phase A (launch day, simplest): DNS-only (grey cloud). DECIDED.**
+    Vercel issues TLS directly; nothing can interfere. Verify the whole app
+    end to end.
   - **Phase B (after launch verification): enable proxy (orange cloud)** with SSL mode `Full (strict)`, then add the WAF rate-limit rule below. Proxying through Cloudflare is what puts the outermost DDoS shield in front of Vercel.
 - Cloudflare WAF rule (Phase B): rate-limit `> 30 requests / 10 seconds` per IP on `http.request.uri.path contains "/api/"` → Block. Turnstile + app-level limits handle the rest.
 
@@ -70,13 +72,15 @@ be executed by the agent given a Vercel access token.
 - Schedule `tooling/backup.sh` (needs `pg_dump` on the machine that runs it; Supabase project settings show the direct connection string for dumping).
 - Run `tooling/restore-test.sh` **once before launch** into a scratch database, then monthly. An untested backup is not a backup.
 
-## 7. Pre-launch data note
+## 7. Pre-launch data note — DECIDED
 
-The Supabase project carries the dev fixtures (`NMU-2026-0001` REGISTERED,
-`NMU-2026-0002`, the demo RPA institution and demo account from Phase 4).
-Decide before the brother's test: keep `NMU-2026-0001` (useful as the live
-example in the directory + badge demo) and delete the rest from
-`/dev/admin`; or wipe all fixtures for a clean launch. **[KAI]**
+**Wipe clean.** All dev fixtures go before the brother's test: the demo
+"Rivers Port Academy" institution and its campus/category, the demo
+desk-reviewer account, and both fixture applications (`NMU-2026-0001`,
+`NMU-2026-0002`) with their fee-intent/ledger rows and Cloudinary test
+assets. The register launches empty — the first real application comes
+from the one-sitting verification. Wipe runs through `/dev/admin` +
+direct DB cleanup at deploy time, before step 8.
 
 ## 8. The one-sitting verification — LAST, after everything above
 
