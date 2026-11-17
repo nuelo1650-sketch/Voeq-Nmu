@@ -29,6 +29,12 @@ export const metadata: Metadata = {
   title: "NMU Business Register",
   description:
     "The official business register of the Nigeria Maritime University. One application, reviewed by a person, listed for the whole campus when approved. A Voeq service for NMU.",
+  icons: {
+    // the genuine voeq.ng brand mark (gold q on forest), fetched from the
+    // live main site — the same file the marketplace serves
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

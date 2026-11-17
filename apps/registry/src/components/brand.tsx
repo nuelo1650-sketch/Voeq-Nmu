@@ -72,6 +72,7 @@ export function SiteFooter() {
         </a>{" "}
         · <a href="/track" className="underline">Track an application</a>
         {" "}· <a href="/privacy" className="underline">Privacy notice</a>
+        {" "}· <a href="/staff/signin" className="underline">Staff sign-in</a>
       </p>
       <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
         Nigeria Maritime University · Okerenkoko &amp; Kurutie · A Voeq service · Powered by Legacylm

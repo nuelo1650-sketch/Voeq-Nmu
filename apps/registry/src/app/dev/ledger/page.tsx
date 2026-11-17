@@ -7,6 +7,7 @@
 import { prisma } from "@voeq/db";
 import { formatNaira } from "@voeq/core";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/brand";
 import { ImportForm, ConfirmButton } from "./ledger-client";
 
@@ -15,6 +16,8 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Fee ledger — dev preview" };
 
 export default async function DevLedgerPage() {
+  if (process.env.NODE_ENV === "production") notFound();
+
   const [intents, credits, stagedAllocations, confirmedAgg] = await Promise.all([
     prisma.feeIntent.findMany({
       orderBy: { issuedAt: "desc" },
