@@ -9,10 +9,13 @@ export function ImportForm() {
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // React 19 nulls the synthetic event's currentTarget after the await —
+    // capture the element before anything asynchronous (E2E found this).
+    const form = e.currentTarget;
     setBusy(true);
     setResult(null);
     setError(null);
-    const fd = new FormData(e.currentTarget);
+    const fd = new FormData(form);
     try {
       const res = await fetch("/api/dev/ledger/import", { method: "POST", body: fd });
       const json = await res.json();
@@ -22,7 +25,7 @@ export function ImportForm() {
           (json.duplicatesSkipped ? `, skipped ${json.duplicatesSkipped} duplicate row(s)` : "") +
           ` — ${json.staged} staged, ${json.unmatched} unmatched.`,
       );
-      e.currentTarget.reset();
+      form.reset();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Import failed");
     } finally {
