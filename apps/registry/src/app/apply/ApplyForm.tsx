@@ -18,6 +18,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { compressImage, sha256Hex } from "@/lib/image-client";
+import { TurnstileGate, turnstileClientEnforced } from "@/components/turnstile-widget";
 
 type FieldKey = "owner_photo" | "business_photo" | "cac_certificate";
 
@@ -100,6 +101,9 @@ export function ApplyForm() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  // Turnstile: empty until the invisible check issues a single-use token.
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReset, setTurnstileReset] = useState(0);
   const [reference, setReference] = useState<string | null>(null);
   const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
 
@@ -210,6 +214,7 @@ export function ApplyForm() {
           .filter((s) => s.descriptor)
           .map((s) => s.descriptor!),
         consents,
+        turnstileToken: turnstileToken || undefined,
       };
       const res = await fetch("/api/apply", {
         method: "POST",
@@ -224,6 +229,9 @@ export function ApplyForm() {
       setReference(json.reference);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Something went wrong");
+      // The old token was consumed by the failed attempt — get a fresh one.
+      setTurnstileToken("");
+      setTurnstileReset((n) => n + 1);
     } finally {
       setSubmitting(false);
     }
@@ -475,6 +483,10 @@ export function ApplyForm() {
               </Consent>
             </div>
 
+            {turnstileClientEnforced && (
+              <TurnstileGate onToken={setTurnstileToken} resetSignal={turnstileReset} />
+            )}
+
             {submitError && (
               <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
                 {submitError}
@@ -505,10 +517,14 @@ export function ApplyForm() {
         ) : (
           <button
             onClick={submit}
-            disabled={!allConsents || submitting}
+            disabled={!allConsents || submitting || (turnstileClientEnforced && !turnstileToken)}
             className="flex-1 bg-vq-forest px-5 py-3.5 text-sm font-semibold text-white shadow-md transition enabled:hover:bg-vq-forest-mid disabled:opacity-40 sm:flex-none sm:px-8"
           >
-            {submitting ? "Submitting…" : "Submit application"}
+            {submitting
+              ? "Submitting…"
+              : turnstileClientEnforced && !turnstileToken
+                ? "Security check…"
+                : "Submit application"}
           </button>
         )}
       </div>

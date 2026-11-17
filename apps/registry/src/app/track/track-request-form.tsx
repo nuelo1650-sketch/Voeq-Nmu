@@ -4,6 +4,7 @@
 // the reference+email pair matched — the endpoint never leaks existence.
 
 import { useState } from "react";
+import { TurnstileGate, turnstileClientEnforced } from "@/components/turnstile-widget";
 
 export function TrackRequestForm() {
   const [reference, setReference] = useState("");
@@ -11,6 +12,9 @@ export function TrackRequestForm() {
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Turnstile: single-use token; reset after every failed attempt.
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReset, setTurnstileReset] = useState(0);
 
   async function request() {
     setBusy(true);
@@ -19,7 +23,11 @@ export function TrackRequestForm() {
       const res = await fetch("/api/track/link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reference, email }),
+        body: JSON.stringify({
+          reference,
+          email,
+          turnstileToken: turnstileToken || undefined,
+        }),
       });
       if (!res.ok) {
         const json = await res.json();
@@ -28,6 +36,8 @@ export function TrackRequestForm() {
       setSent(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+      setTurnstileToken("");
+      setTurnstileReset((n) => n + 1);
     } finally {
       setBusy(false);
     }
@@ -47,6 +57,8 @@ export function TrackRequestForm() {
             setSent(false);
             setReference("");
             setEmail("");
+            setTurnstileToken("");
+            setTurnstileReset((n) => n + 1);
           }}
           className="mt-4 border border-vq-forest/25 bg-white/60 px-4 py-2 text-xs font-semibold text-vq-forest transition hover:bg-white"
         >
@@ -87,6 +99,9 @@ export function TrackRequestForm() {
         placeholder="you@example.com"
         className="w-full border border-vq-forest/20 bg-white px-4 py-3 text-[15px] text-vq-ink placeholder:text-vq-ink-subtle focus:border-vq-forest focus:outline-none"
       />
+      {turnstileClientEnforced && (
+        <TurnstileGate onToken={setTurnstileToken} resetSignal={turnstileReset} />
+      )}
       {error && (
         <p className="mt-3 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
           {error}
@@ -94,7 +109,7 @@ export function TrackRequestForm() {
       )}
       <button
         type="submit"
-        disabled={!reference.trim() || !email.includes("@") || busy}
+        disabled={!reference.trim() || !email.includes("@") || busy || (turnstileClientEnforced && !turnstileToken)}
         className="mt-5 w-full bg-vq-forest px-5 py-3.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer enabled:hover:bg-vq-forest-mid disabled:opacity-40"
       >
         {busy ? "Sending…" : "Email me my access link"}

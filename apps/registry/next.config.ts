@@ -11,16 +11,20 @@ import type { NextConfig } from "next";
 //     preview placeholders.
 //   - frame-ancestors 'none': the register is never framed — badge truth
 //     flows through /api/public/verify, not through embedding pages.
+//   - challenges.cloudflare.com in script-src + frame-src: the Turnstile
+//     widget (apply + track request). The widget is an iframe Cloudflare
+//     serves itself; verification of its token happens server-side.
 // ---------------------------------------------------------------------------
 const isProd = process.env.NODE_ENV === "production";
 
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
+  `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://res.cloudinary.com",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://challenges.cloudflare.com",
+  "frame-src https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",

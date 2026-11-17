@@ -8,6 +8,7 @@ import { createNotification } from "@voeq/db/outbox";
 import { applicationAccessLink } from "@voeq/email";
 import { mintAccessToken, ACCESS_LINK_SHORT_MINUTES } from "@/lib/access";
 import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
+import { verifyTurnstile, turnstileUserMessage } from "@/lib/turnstile";
 
 export const dynamic = "force-dynamic";
 
@@ -24,11 +25,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Expected JSON" }, { status: 400 });
   }
 
-  const parsed = (body as { reference?: unknown; email?: unknown }) ?? {};
+  const parsed = (body as { reference?: unknown; email?: unknown; turnstileToken?: unknown }) ?? {};
   const reference = typeof parsed.reference === "string" ? parsed.reference.trim().toUpperCase() : "";
   const email = typeof parsed.email === "string" ? parsed.email.trim().toLowerCase() : "";
   if (!reference || !email.includes("@")) {
     return NextResponse.json({ error: "Reference and email are both required" }, { status: 400 });
+  }
+
+  // Cloudflare Turnstile — this endpoint queues a real email per hit, so a
+  // bot burning the quota is a real harm. Verified before any lookup.
+  const human = await verifyTurnstile(parsed.turnstileToken, clientIp(req));
+  if (!human.ok) {
+    return NextResponse.json(
+      { error: turnstileUserMessage(human.reason) },
+      { status: 403 },
+    );
   }
 
   const app = await prisma.application.findFirst({

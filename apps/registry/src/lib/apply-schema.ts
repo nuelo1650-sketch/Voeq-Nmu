@@ -54,6 +54,10 @@ export const applySchema = z.object({
   ownerName: z.string().trim().min(3).max(120),
   ownerPhone: nigerianPhone,
   contactEmail: z.string().trim().email().max(160),
+  // Cloudflare Turnstile token — single-use, verified server-side against
+  // siteverify when TURNSTILE_SECRET_KEY is set. Optional here because the
+  // server, not the form, decides whether it is required.
+  turnstileToken: z.string().min(1).max(4096).optional(),
   images: z
     .array(
       z.object({

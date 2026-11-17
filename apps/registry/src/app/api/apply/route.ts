@@ -15,6 +15,7 @@ import { formatReference } from "@voeq/core";
 import { applySchema, missingRequiredImages, CONSENT_DOC_VERSION, IMAGE_FIELDS, type ImageField } from "@/lib/apply-schema";
 import { writeAudit } from "@/lib/audit-write";
 import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
+import { verifyTurnstile, turnstileUserMessage } from "@/lib/turnstile";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,16 @@ export async function POST(req: Request) {
     );
   }
   const input = parsed.data;
+
+  // Cloudflare Turnstile — automation costs real review time and a real
+  // person's trust. Verified before anything is written.
+  const human = await verifyTurnstile(input.turnstileToken, clientIp(req));
+  if (!human.ok) {
+    return NextResponse.json(
+      { error: turnstileUserMessage(human.reason) },
+      { status: 403 },
+    );
+  }
 
   const missing = missingRequiredImages(input.images);
   if (missing.length > 0) {
