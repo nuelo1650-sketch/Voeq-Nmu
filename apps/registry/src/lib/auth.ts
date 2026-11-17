@@ -35,7 +35,16 @@ declare module "@auth/core/jwt" {
   }
 }
 
-const providers: Provider[] = [Google];
+// Auth.js v5's Google provider defaults to AUTH_GOOGLE_ID/AUTH_GOOGLE_SECRET.
+// Our credentials live in GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET (one canonical
+// place, used by dev and Vercel) — pass them explicitly or Google sees an
+// empty client_id and answers 401 invalid_client. (Found at first real sign-in.)
+const providers: Provider[] = [
+  Google({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  }),
+];
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
