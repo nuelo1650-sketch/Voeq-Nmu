@@ -6,6 +6,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@voeq/db";
 import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
+// Public register data — never cached: newly registered and newly
+// suspended businesses must appear/disappear immediately.
+const json = (body: unknown, init?: ResponseInit) =>
+  NextResponse.json(body as object, {
+    ...init,
+    headers: { "Cache-Control": "no-store" }, // badge truth is NEVER cached
+  });
+
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
@@ -34,7 +42,7 @@ export async function GET(req: Request) {
     take: limit,
   });
 
-  return NextResponse.json(
+  return json(
     {
       count: businesses.length,
       businesses: businesses.map((b) => ({

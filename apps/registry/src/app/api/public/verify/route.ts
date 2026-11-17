@@ -8,6 +8,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@voeq/db";
 import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
+// Badge truth must NEVER be served stale — a suspended or closed business
+// whose badge still reads valid is a fraud vector. (Found by E2E: the CDN
+// served a cached valid:true for a since-deleted application.)
+const json = (body: unknown, init?: ResponseInit) =>
+  NextResponse.json(body as object, {
+    ...init,
+    headers: { "Cache-Control": "no-store" }, // badge truth is NEVER cached
+  });
+
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
@@ -19,8 +28,8 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const reference = (url.searchParams.get("reference") ?? "").trim().toUpperCase();
   if (!/^NMU-\d{4}-\d{4}$/.test(reference)) {
-    return NextResponse.json(
-      { valid: false, reason: "Not a register reference" },
+    return json(
+{ valid: false, reason: "Not a register reference" },
       { status: 400 },
     );
   }
@@ -43,14 +52,15 @@ export async function GET(req: Request) {
   });
 
   if (!application) {
-    return NextResponse.json({ valid: false, reason: "No such registration" });
+    return json(
+{ valid: false, reason: "No such registration" });
   }
 
   const active = application.status === "registered" && application.publicationStatus === "published";
   const lastLifecycle = application.decisions[0];
 
-  return NextResponse.json(
-    {
+  return json(
+{
       reference,
       valid: active,
       businessName: application.businessName,
