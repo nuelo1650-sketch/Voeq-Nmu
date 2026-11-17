@@ -1,16 +1,18 @@
-// Real staff decision route — requires an Auth.js session. Identity is the
-// verified Google email; the allowlist decides who got here at all.
+// Real staff decision route — requires an Auth.js session AND an ACTIVE
+// register-family account. Identity is the verified Google email; the desk
+// gate re-reads the account row server-side on every call, so suspended or
+// disabled accounts lose their power the moment the admin flips the switch.
 
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { decisionSchema, recordDecision } from "@/lib/decisions";
+import { staffGate } from "@/lib/staff";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  const gate = await staffGate("register");
+  if (!gate.ok) {
+    return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
   let body: unknown;
@@ -30,11 +32,9 @@ export async function POST(req: Request) {
   }
 
   try {
-    // Family resolution from the allowlists happens in the staff pages; the
-    // decision itself is attributed to the verified email either way.
     const result = await recordDecision(parsed.data, {
-      email: session.user.email,
-      family: "register",
+      email: gate.staff.email,
+      family: gate.staff.family,
     });
     return NextResponse.json(result);
   } catch (err) {

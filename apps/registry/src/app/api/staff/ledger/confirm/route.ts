@@ -1,16 +1,17 @@
-// Real confirmation — register-family session, maker-checker ENFORCED: the
-// account that staged a match can never confirm it (doc 07 §2.6 rule 5).
+// Real confirmation — ACTIVE register-family account (the desk gate re-reads
+// the account row on every call), maker-checker ENFORCED: the account that
+// staged a match can never confirm it (doc 07 §2.6 rule 5).
 
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { confirmAllocation } from "@/lib/ledger";
+import { staffGate } from "@/lib/staff";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+  const gate = await staffGate("register");
+  if (!gate.ok) {
+    return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
   let body: { allocationId?: string };
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const result = await confirmAllocation(body.allocationId, session.user.email);
+    const result = await confirmAllocation(body.allocationId, gate.staff.email);
     return NextResponse.json({ ok: true, ...result }, { status: 200 });
   } catch (err) {
     return NextResponse.json(

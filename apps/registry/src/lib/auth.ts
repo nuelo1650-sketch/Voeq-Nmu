@@ -64,7 +64,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       try {
         // Role-based, not person-bound (doc 07 §4.6): the account is created
         // with its family on first sign-in; privileges are separate RoleGrant
-        // rows, each grant/revocation itself audited.
+        // rows, each grant/revocation itself audited. Created SUSPENDED —
+        // exactly like accounts made in the admin console — so the super
+        // admin's activation is the single door into the desk. Sign-in is
+        // allowed (identity is recorded), but the desk gate refuses until
+        // the account is flipped active.
         await prisma.staffAccount.upsert({
           where: { email },
           update: { lastLoginAt: new Date(), name: user.name ?? undefined },
@@ -72,6 +76,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             email,
             name: user.name ?? null,
             family,
+            status: "suspended",
             lastLoginAt: new Date(),
           },
         });

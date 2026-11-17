@@ -87,9 +87,7 @@ export async function AdminSurface({
 
       <div className="mt-6">
         {activeTab === "overview" &&
-          (can("monitoring.read") ? (
-            <OverviewPanel report={await gatherReports()} />
-          ) : null)}
+          (can("monitoring.read") ? <OverviewTab /> : null)}
 
         {activeTab === "institutions" &&
           (can("institutions.read") ? <InstitutionsTab dev={viewer.dev} /> : null)}
@@ -105,6 +103,25 @@ export async function AdminSurface({
 }
 
 // --- per-tab data ------------------------------------------------------------
+
+// The overview fires the heaviest query burst in the app (the whole report
+// bundle in one pass). A transient pool hiccup must degrade the strip, not
+// kill the page — this is the fix for the raw error screen Kai hit on prod
+// (digest 4166713706). The error boundary at app/error.tsx is the backstop
+// for the other tabs.
+async function OverviewTab() {
+  try {
+    return <OverviewPanel report={await gatherReports()} />;
+  } catch {
+    return (
+      <div className="border border-vq-amber/50 bg-vq-amber-light/60 px-4 py-3 text-sm leading-relaxed text-vq-amber-dark">
+        The reports could not be gathered right now — usually a short hiccup
+        reaching the register&apos;s database. Everything else still works; refresh
+        or try this tab again in a moment and the figures will come back.
+      </div>
+    );
+  }
+}
 
 async function InstitutionsTab({ dev }: { dev: boolean }) {
   const institutions = await prisma.institution.findMany({

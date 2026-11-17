@@ -44,6 +44,7 @@ function Bar({ label, count, max }: { label: string; count: number; max: number 
 export function OverviewPanel({ report }: { report: ReportBundle }) {
   const maxStatus = Math.max(1, ...report.applicationsByStatus.map((s) => s.count));
   const maxCat = Math.max(1, ...report.byCategory.map((c) => c.count));
+  const maxCampus = Math.max(1, ...report.byCampus.map((c) => c.count));
   const lastSent = report.outbox.lastSentAt
     ? report.outbox.lastSentAt.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
     : "never";
@@ -141,7 +142,7 @@ export function OverviewPanel({ report }: { report: ReportBundle }) {
               <p className="text-sm text-vq-ink-subtle">—</p>
             ) : (
               report.byCampus.map((c) => (
-                <Bar key={c.name} label={c.name} count={c.count} max={maxCat} />
+                <Bar key={c.name} label={c.name} count={c.count} max={maxCampus} />
               ))
             )}
           </div>

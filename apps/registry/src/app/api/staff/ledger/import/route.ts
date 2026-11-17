@@ -1,15 +1,16 @@
-// Real statement import — register-family session required.
+// Real statement import — ACTIVE register-family account required (the desk
+// gate re-reads the account row on every call).
 
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { importStatement } from "@/lib/ledger";
+import { staffGate } from "@/lib/staff";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+  const gate = await staffGate("register");
+  if (!gate.ok) {
+    return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
   const form = await req.formData();
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
 
   try {
     const text = await file.text();
-    const result = await importStatement(file.name.slice(0, 120), text, session.user.email);
+    const result = await importStatement(file.name.slice(0, 120), text, gate.staff.email);
     return NextResponse.json({ ok: true, ...result }, { status: 201 });
   } catch (err) {
     return NextResponse.json(

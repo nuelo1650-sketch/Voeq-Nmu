@@ -48,7 +48,27 @@ function averageHours(values: number[]): number | null {
   return Math.round(hours * 10) / 10;
 }
 
+/**
+ * One retry after a short pause — the whole bundle is a single parallel
+ * burst of queries, and on a cold serverless instance against the Supabase
+ * pooler the first pass can lose a connection race. A 400ms pause is enough
+ * for the pooler to free a slot; a second failure is real and propagates
+ * (the overview tab degrades gracefully rather than 500ing).
+ */
+async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch {
+    await new Promise((r) => setTimeout(r, 400));
+    return fn();
+  }
+}
+
 export async function gatherReports(): Promise<ReportBundle> {
+  return withRetry(doGatherReports);
+}
+
+async function doGatherReports(): Promise<ReportBundle> {
   const since14 = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
   const [

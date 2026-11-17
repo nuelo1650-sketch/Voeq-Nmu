@@ -7,6 +7,7 @@
 
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { prisma } from "@voeq/db";
 import { QueueView } from "@/components/workbench/QueueView";
 import { ReviewView } from "@/components/workbench/ReviewView";
 
@@ -23,6 +24,31 @@ export default async function StaffHome({
   // accounts are bounced straight to the super-admin console — they should
   // never sit in the Media Unit's desk. Register family stays here.
   if (session.user.family === "platform") redirect("/admin");
+
+  // The desk gate: a session is not authority. The account row must exist
+  // and be ACTIVE — a suspended or disabled account sees the waiting screen,
+  // and nothing behind it responds either way (the desk APIs gate too).
+  const email = session.user.email?.trim().toLowerCase() ?? "";
+  const account = email
+    ? await prisma.staffAccount.findUnique({ where: { email } }).catch(() => null)
+    : null;
+  if (!account || account.status !== "active") {
+    return (
+      <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
+          NMU Business Register · Media Unit
+        </p>
+        <h1 className="mt-1 font-display text-3xl text-vq-forest-dark">The desk is closed</h1>
+        <div className="mt-4 border border-vq-amber/50 bg-vq-amber-light/60 px-4 py-3 text-sm leading-relaxed text-vq-amber-dark">
+          {account
+            ? "This account is suspended — a super admin has to activate it before the workbench opens. Nothing was lost; the queue will be exactly where it was."
+            : "No staff account exists for this Google email yet. Ask a super admin to create one in the admin console, then sign in again."}
+        </div>
+        <p className="mt-3 font-mono text-xs text-vq-ink-subtle">{email}</p>
+      </main>
+    );
+  }
+
   const { id, status } = await searchParams;
 
   return (
