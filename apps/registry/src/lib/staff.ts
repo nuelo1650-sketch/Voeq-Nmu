@@ -2,7 +2,9 @@
 // The staff desk gate — the counterpart to lib/admin.ts, for the register
 // desk (Media Unit) rather than the super-admin surface. One rule, enforced
 // at every door: a session alone is NOT authority. The StaffAccount row must
-// exist and be ACTIVE, and these doors belong to the register family only.
+// exist and be ACTIVE. Register doors belong to the register family — plus
+// platform accounts, which pass every door as superusers (one-way wall,
+// Kai's Option A, 2026-11-18).
 //
 // Found the hard way (2026-11-17 investigation): the desk routes trusted the
 // session email alone, so a suspended or disabled account kept full decision
@@ -60,11 +62,11 @@ export async function staffGate(
       error: `This account is ${account.status} — a super admin must activate it before the desk responds`,
     };
   }
-  if (family && account.family !== family) {
+  if (family && account.family !== family && account.family !== "platform") {
     return {
       ok: false,
       status: 403,
-      error: `This desk belongs to the ${family} family — the families never mix`,
+      error: `This desk belongs to the ${family} family — a platform superuser passes, a register account does not`,
     };
   }
 

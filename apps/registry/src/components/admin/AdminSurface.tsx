@@ -53,6 +53,12 @@ export async function AdminSurface({
         the whole machine from one chair. {viewer.name ?? viewer.email} ·{" "}
         {viewer.dev ? "dev preview" : "signed in"}.
       </p>
+      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-vq-ink-subtle">
+        Daily register work — queue, reviews, ledger — lives at{" "}
+        <a href="/staff" className="underline">
+          /staff · the workbench
+        </a>
+      </p>
 
       {/* tab nav — mono, ruled, no pills */}
       <nav className="mt-6 flex flex-wrap gap-2 border-y border-vq-forest/10 py-3">

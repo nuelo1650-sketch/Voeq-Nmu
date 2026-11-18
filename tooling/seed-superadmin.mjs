@@ -34,6 +34,22 @@ const PLATFORM_PERMISSIONS = [
   "directory.read", // shared
 ];
 
+// Register-family keys — the superuser model (Kai's Option A, 2026-11-18)
+// means the bootstrap super-admin ALSO works the Media Unit desk: queue,
+// decisions, ledger. Lawful since canHold lets platform hold register keys.
+const REGISTER_PERMISSIONS = [
+  "applications.read",
+  "applications.decide",
+  "applications.request-corrections",
+  "ledger.import",
+  "ledger.stage-match",
+  "ledger.confirm-fee",
+  "ledger.write-off",
+  "ledger.read",
+];
+
+const ALL_PERMISSIONS = [...PLATFORM_PERMISSIONS, ...REGISTER_PERMISSIONS];
+
 const prisma = new PrismaClient();
 
 try {
@@ -44,7 +60,7 @@ try {
   });
 
   let granted = 0;
-  for (const key of PLATFORM_PERMISSIONS) {
+  for (const key of ALL_PERMISSIONS) {
     const existing = await prisma.roleGrant.findFirst({
       where: { staffAccountId: account.id, permissionKey: key, revokedAt: null },
     });
@@ -61,8 +77,8 @@ try {
   }
 
   console.log(`super-admin ready: ${email}`);
-  console.log(`  family: platform · status: active · institution: none`);
-  console.log(`  grants: ${PLATFORM_PERMISSIONS.length} platform permissions (${granted} newly written)`);
+  console.log(`  family: platform (superuser — also holds register keys) · status: active · institution: none`);
+  console.log(`  grants: ${ALL_PERMISSIONS.length} permissions (${granted} newly written)`);
 } finally {
   await prisma.$disconnect();
 }

@@ -184,6 +184,15 @@ must be added as a **Test user**.
 
 ## 7. Still pending
 
+0. **Access model (settled 2026-11-18):** Kai chose the **superuser model** —
+   the two-family wall is one-way. Platform accounts may hold register-family
+   permissions (`canHold` in `packages/core/src/permissions.ts`); register
+   accounts can never hold platform keys. `staffGate` passes platform through
+   register doors, `/staff` no longer bounces platform accounts, and the seed
+   script grants both sets. The super-admin therefore works BOTH desks:
+   `/admin` (governance) and `/staff` (queue, reviews, ledger). Maker–checker
+   on fee confirmation still requires two different people.
+
 1. **Kai:** retry `https://nmu.voeq.ng/staff/signin`; if Google shows
    "Access blocked", add `owidavid2002@gmail.com` as a **Test user**.
 2. **Native push-to-deploy:** Vercel GitHub App must be authorized on

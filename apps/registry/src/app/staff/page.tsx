@@ -20,10 +20,12 @@ export default async function StaffHome({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/staff/signin");
-  // Role-based landing (Kai: "how do I get to admin?"): platform-family
-  // accounts are bounced straight to the super-admin console — they should
-  // never sit in the Media Unit's desk. Register family stays here.
-  if (session.user.family === "platform") redirect("/admin");
+  // Superuser model (Kai chose Option A, 2026-11-18): platform accounts are
+  // ALSO register workers, so the old bounce to /admin is gone — a platform
+  // superuser works this desk like anyone else. The desk gate below still
+  // refuses missing/suspended accounts, and the APIs gate identically
+  // (lib/staff.ts lets platform through as superuser).
+  const family = session.user.family;
 
   // The desk gate: a session is not authority. The account row must exist
   // and be ACTIVE — a suspended or disabled account sees the waiting screen,
@@ -57,7 +59,14 @@ export default async function StaffHome({
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-amber-dark">
           NMU Business Register · Media Unit
         </p>
-        <p className="text-xs text-vq-ink-subtle">{session.user.email}</p>
+        <p className="text-xs text-vq-ink-subtle">
+          {family === "platform" && (
+            <a href="/admin" className="mr-3 underline">
+              Platform console
+            </a>
+          )}
+          {session.user.email}
+        </p>
       </div>
       <h1 className="mt-1 font-display text-3xl text-vq-forest-dark">The workbench</h1>
       <p className="mt-2 text-sm leading-relaxed text-vq-ink-muted">

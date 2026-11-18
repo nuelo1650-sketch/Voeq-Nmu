@@ -1,8 +1,13 @@
 // ---------------------------------------------------------------------------
-// Permission matrix — two mutually exclusive admin families (doc 07 §4.6).
+// Permission matrix — two admin families (doc 07 §4.6), with ONE one-way
+// exception added 2026-11-18 (Kai chose the superuser model, Option A):
 //
 // Rules, enforced here AND at every assignment site:
 //   1. An account holds roles from ONE family only — platform OR register.
+//      EXCEPTION: a platform account MAY additionally hold register-family
+//      permissions — platform is the superuser over the whole machine. A
+//      register account can NEVER hold platform permissions; the wall is
+//      one-way.
 //   2. Roles attach to accounts (Google emails), never to people.
 //   3. Every grant/revocation is an audited event, including self-assignment.
 //   4. Permission checks resolve through here — no code path "happens to work".
@@ -52,7 +57,10 @@ export function canHold(
   permission: PermissionKey,
 ): boolean {
   const family = familyOf(permission);
-  return family === "shared" || family === accountFamily;
+  if (family === "shared") return true;
+  // The one-way wall: platform passes every door; register stays in its own.
+  if (accountFamily === "platform") return true;
+  return family === accountFamily;
 }
 
 /**
