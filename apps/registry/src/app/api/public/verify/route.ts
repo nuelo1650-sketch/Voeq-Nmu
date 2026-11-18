@@ -60,7 +60,7 @@ export async function GET(req: Request) {
   const lastLifecycle = application.decisions[0];
 
   return json(
-{
+    {
       reference,
       valid: active,
       businessName: application.businessName,
@@ -78,6 +78,5 @@ export async function GET(req: Request) {
                   : "Registration not yet complete or not published",
           }),
     },
-    { headers: { "Cache-Control": "public, max-age=60" } },
   );
 }

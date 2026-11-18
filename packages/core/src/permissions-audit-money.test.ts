@@ -4,15 +4,15 @@ import { hashEntry, canonicalJson, verifyChain } from "./audit";
 import { formatNaira, parseNairaToMinor, FEE_TOTAL_KOBO, FEE_SCHOOL_KOBO, FEE_VOEQ_KOBO } from "./money";
 import { formatReference, parseReference, extractReferenceFromNarration } from "./reference";
 
-describe("permission matrix — two families that cannot mix", () => {
+describe("permission matrix — one-way family wall (superuser model)", () => {
   it("register accounts cannot hold platform permissions", () => {
     expect(canHold("register", "fee-schedule.manage")).toBe(false);
     expect(canHold("register", "staff.grant")).toBe(false);
   });
 
-  it("platform accounts cannot hold register permissions", () => {
-    expect(canHold("platform", "applications.decide")).toBe(false);
-    expect(canHold("platform", "ledger.confirm-fee")).toBe(false);
+  it("platform is the superuser — it may hold register permissions", () => {
+    expect(canHold("platform", "applications.decide")).toBe(true);
+    expect(canHold("platform", "ledger.confirm-fee")).toBe(true);
   });
 
   it("each family holds its own permissions", () => {
@@ -29,7 +29,8 @@ describe("permission matrix — two families that cannot mix", () => {
   it("validateGrants returns exactly the unlawful keys", () => {
     const grants: PermissionKey[] = ["applications.read", "staff.grant", "ledger.import", "categories.manage"];
     expect(validateGrants("register", grants)).toEqual(["staff.grant", "categories.manage"]);
-    expect(validateGrants("platform", grants)).toEqual(["applications.read", "ledger.import"]);
+    // platform passes everything now — the wall is one-way
+    expect(validateGrants("platform", grants)).toEqual([]);
   });
 });
 
