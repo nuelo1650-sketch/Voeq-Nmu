@@ -85,7 +85,7 @@ export function ReviseForm({ initial }: { initial: ReviseInitial }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<number | null>(null);
-  const [meta, setMeta] = useState<{ campuses: { id: string; name: string }[]; categories: { id: string; name: string }[] } | null>(null);
+  const [meta, setMeta] = useState<{ campuses: { id: string; name: string }[]; categories: { id: string; name: string; slug: string }[] } | null>(null);
 
   if (!meta) {
     fetch("/api/form-meta")
