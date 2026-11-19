@@ -210,6 +210,14 @@ export async function POST(req: Request) {
       });
 
       return { reference, applicationId: application.id };
+    }, {
+      // The submit transaction writes the application, revision, images,
+      // consents, fee intent and the letter — a dozen round-trips. Prisma's
+      // default 5s timeout was exceeded (5.2s) on a slow Supabase-pooler day
+      // and the applicant saw a 500 for a submission that was correct. Give
+      // it headroom: a slow database must never cost a real application.
+      maxWait: 15_000,
+      timeout: 30_000,
     });
 
     // Send the confirmation letter now — serverless has no poller worker
