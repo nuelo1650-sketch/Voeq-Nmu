@@ -145,19 +145,21 @@ export default async function ApplicationStatusPage({
           feeIntent={feeIntent}
         />
 
-        {/* the Voeq funnel (1.17) — approval is a lead for the marketplace */}
+        {/* the Voeq funnel (1.17) — a callout, not a footnote: Kai had it as an
+            easy-to-miss P.S.; it must be seen once the entry is approved */}
         {(a.status === "approved" || a.status === "registered") && (
-          <p className="mt-8 border-t border-vq-forest/15 pt-5 text-sm leading-relaxed text-vq-ink-muted">
-            <b>P.S.</b> — Do you also want to{" "}
+          <div className="mt-8 rounded-xl border-2 border-vq-forest bg-vq-cream px-5 py-5 text-center">
+            <p className="font-display text-lg text-vq-forest-dark">Do you also want to sell on Voeq?</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-vq-ink-muted">
+              The campus marketplace thousands of students already use. You are approved here; getting started there takes minutes.
+            </p>
             <a
               href="https://voeq.ng/for-vendors"
-              className="font-semibold text-vq-forest underline"
+              className="mt-4 inline-block rounded-full bg-vq-forest px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
             >
-              sell on Voeq
+              Become a Voeq vendor →
             </a>
-            ? The campus marketplace thousands of students already use. You are
-            approved here; getting started there takes minutes.
-          </p>
+          </div>
         )}
       </main>
 

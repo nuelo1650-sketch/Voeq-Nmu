@@ -61,7 +61,10 @@ export default async function StaffHome({
         </p>
         <p className="text-xs text-vq-ink-subtle">
           {family === "platform" && (
-            <a href="/admin" className="mr-3 underline">
+            <a
+              href="/admin"
+              className="mr-3 inline-block border border-vq-forest/40 bg-white px-3 py-1.5 text-xs font-bold text-vq-forest transition hover:border-vq-forest"
+            >
               Platform console
             </a>
           )}

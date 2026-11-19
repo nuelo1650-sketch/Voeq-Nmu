@@ -53,22 +53,30 @@ export async function AdminSurface({
         the whole machine from one chair. {viewer.name ?? viewer.email} ·{" "}
         {viewer.dev ? "dev preview" : "signed in"}.
       </p>
-      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-vq-ink-subtle">
-        Daily register work — queue, reviews, ledger — lives at{" "}
-        <a href="/staff" className="underline">
-          /staff · the workbench
+      {/* the other desk — a BUTTON, not a footnote (Kai, 2026-11-19: the
+          tiny mono line was nearly invisible, and double-privileged staff
+          need both desks obvious) */}
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <a
+          href="/staff"
+          className="inline-block border-2 border-vq-forest bg-vq-forest px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
+        >
+          Open the workbench →
         </a>
-      </p>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-vq-ink-subtle">
+          Daily register work — queue · reviews · ledger
+        </span>
+      </div>
 
-      {/* tab nav — mono, ruled, no pills */}
-      <nav className="mt-6 flex flex-wrap gap-2 border-y border-vq-forest/10 py-3">
+      {/* tab nav — mono, ruled, no pills; sized up so every tab reads at a glance */}
+      <nav className="mt-6 flex flex-wrap gap-2.5 border-y border-vq-forest/10 py-3">
         {TABS.map((t) => {
           const locked = !can(t.permission);
           return (
             <span key={t.key} className="flex items-center">
               {locked ? (
                 <span
-                  className="px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-vq-ink-subtle"
+                  className="px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-vq-ink-subtle"
                   title={`Requires the "${t.permission}" permission`}
                 >
                   {t.label} · locked
@@ -77,7 +85,7 @@ export async function AdminSurface({
                 <Link
                   href={`?tab=${t.key}`}
                   aria-current={activeTab === t.key ? "page" : undefined}
-                  className={`px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] transition ${
+                  className={`px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] transition ${
                     activeTab === t.key
                       ? "bg-vq-forest text-white"
                       : "border border-vq-forest/20 bg-white text-vq-forest hover:border-vq-forest/50"

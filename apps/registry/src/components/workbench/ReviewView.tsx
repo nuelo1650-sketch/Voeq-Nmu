@@ -8,6 +8,7 @@ import Link from "next/link";
 import { StatusChip } from "./shared";
 import { NotesPanel } from "./NotesPanel";
 import { DecisionPanel } from "./DecisionPanel";
+import { PhotoLightbox } from "./PhotoLightbox";
 
 const FIELD_LABELS: Record<string, string> = {
   owner_photo: "Photo of the owner",
@@ -184,10 +185,16 @@ export async function ReviewView({
       {/* details — every field on the form, nothing hidden */}
       <dl className="mt-5 divide-y divide-vq-forest/10 rounded-xl border border-vq-forest/10 bg-white/80">
         <Row label="Business name" value={a.businessName} />
-        <Row label="Category" value={a.category.name} />
-        {str("categoryOther") && (
-          <Row label="Category (applicant's words)" value={str("categoryOther")} />
-        )}
+        {/* "Other" is not a category — when the applicant typed their own, it
+            IS the category on this desk (Kai, 2026-11-19) */}
+        <Row
+          label="Category"
+          value={
+            str("categoryOther")
+              ? `${a.category.name} — “${str("categoryOther")}”`
+              : a.category.name
+          }
+        />
         <Row label="Campus" value={a.campus.name} />
         <Row label="Owner" value={str("ownerName") || a.ownerName} />
         <Row label="Phone" value={str("ownerPhone") || a.ownerPhone} />
@@ -208,28 +215,20 @@ export async function ReviewView({
         />
       </dl>
 
-      {/* photos — full-size, signed, ~10 min expiry, minted for this render */}
+      {/* photos — full-size, signed, ~10 min expiry, minted for this render.
+          Click any photo for a fullscreen view (PhotoLightbox). */}
       <h3 className="mt-6 font-display text-lg text-vq-forest-dark">The evidence</h3>
       <p className="mt-1 text-xs text-vq-ink-subtle">
-        Full-size originals, private on Cloudinary. These signed links are minted for this render only — they are
-        never stored, logged, or emailed.
+        Tap any photo to enlarge it and read the details. Originals, private on Cloudinary. These signed links are
+        minted for this render only — they are never stored, logged, or emailed.
       </p>
-      <div className="mt-3 grid gap-4 sm:grid-cols-2">
-        {photos.map((img) => (
-          <figure key={img.id} className="overflow-hidden rounded-xl border border-vq-forest/10 bg-white/80">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={signedAuthenticatedUrl(img.cloudinaryPublicId)}
-              alt={FIELD_LABELS[img.field] ?? img.field}
-              className="max-h-96 w-full object-contain bg-vq-cream"
-            />
-            <figcaption className="px-3 py-2 text-xs text-vq-ink-muted">
-              {FIELD_LABELS[img.field] ?? img.field} · {(img.sizeBytes / 1024).toFixed(0)}KB ·{" "}
-              {img.width}×{img.height}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+      <PhotoLightbox
+        photos={photos.map((img) => ({
+          src: signedAuthenticatedUrl(img.cloudinaryPublicId),
+          alt: FIELD_LABELS[img.field] ?? img.field,
+          caption: `${FIELD_LABELS[img.field] ?? img.field} · ${(img.sizeBytes / 1024).toFixed(0)}KB · ${img.width}×${img.height}`,
+        }))}
+      />
 
       {/* the full history (1.16) — every event, oldest first: each revision
           the applicant submitted, each decision, each fee state change. The

@@ -112,6 +112,23 @@ function para(innerHTML: string): string {
   return `<p style="font-family:${SANS};font-size:15px;line-height:1.65;color:${C.body};margin:14px 0;">${innerHTML}</p>`;
 }
 
+// --- the Voeq vendor ask — must be SEEN, not squinted at ---------------------
+// Kai (2026-11-19): the P.S. paragraph was nearly invisible. It is now a
+// ruled callout card with a real button, impossible to scroll past.
+function vendorCallout(): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:26px 0 18px;">
+    <tr><td style="border:2px solid ${C.forest};border-radius:12px;background:${C.cream};padding:22px 24px;text-align:center;">
+      <div style="font-family:${SERIF};font-size:19px;color:${C.forestInk};margin-bottom:6px;">Do you also want to sell on Voeq?</div>
+      <div style="font-family:${SANS};font-size:14px;line-height:1.6;color:${C.body};margin-bottom:16px;">
+        The campus marketplace thousands of students already use. You are verified here — getting started there takes minutes.
+      </div>
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr><td style="background:${C.forest};border-radius:999px;">
+        <a href="https://voeq.ng/for-vendors" style="display:inline-block;padding:12px 26px;font-family:${SANS};font-size:14px;font-weight:bold;color:${C.white};text-decoration:none;">Become a Voeq vendor &rarr;</a>
+      </td></tr></table>
+    </td></tr>
+  </table>`;
+}
+
 // --- letter-structure blocks --------------------------------------------------
 function sectionHeading(label: string): string {
   return `<div style="font-family:${SANS};font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:${C.amberInk};margin:26px 0 10px;border-top:1px solid ${C.line};padding-top:22px;">${esc(label)}</div>`;
@@ -309,6 +326,7 @@ export function applicationApproved(
           `Pay <b>once</b>. If your bank shows the transfer as pending, wait — do not send a second one.`,
           `Use the reference <b>exactly</b>. No extra spaces, no abbreviations.`,
         ]),
+        vendorCallout(),
         signoff(),
       ].join(""),
       cta: { href: paymentStepUrl, label: "Open the payment step" },
@@ -393,7 +411,7 @@ export function feeConfirmed(reference: string, businessName: string, publicUrl:
         bulletsBlock([
           `<b>Nobody from this register will ever ask you for another payment.</b> The fee was one transfer of ₦5,200, and it is done. If anyone contacts you claiming otherwise, ignore them and tell the Media Unit.`,
         ]),
-        para(`<b>P.S.</b> — Do you also want to <a href="https://voeq.ng/for-vendors" style="color:${C.forest};font-weight:bold;">sell on Voeq</a>? The campus marketplace thousands of students already use. You are approved here; getting started there takes minutes.`),
+        vendorCallout(),
         signoff(),
       ].join(""),
       cta: { href: publicUrl, label: "See your public entry" },

@@ -192,7 +192,7 @@ export function ReviseForm({ initial }: { initial: ReviseInitial }) {
         <select value={form.categoryId} onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))} className={inputCls}>
           <option value="" disabled>Choose a category…</option>
           {meta?.categories.map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.id} value={c.id}>{c.slug === "other" ? "Something else (not listed)" : c.name}</option>
           ))}
         </select>
         {meta?.categories.find((c) => c.id === form.categoryId)?.slug === "other" && (

@@ -318,7 +318,7 @@ export function ApplyForm() {
                 </option>
                 {meta?.categories.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.name}
+                    {c.slug === "other" ? "Something else (not listed)" : c.name}
                   </option>
                 ))}
               </select>
@@ -464,8 +464,14 @@ export function ApplyForm() {
             <StepTitle>Review and agree</StepTitle>
             <dl className="divide-y divide-vq-forest/10 rounded-xl border border-vq-forest/10 bg-white/60">
               <ReviewRow label="Business" value={businessName} />
-              <ReviewRow label="Category" value={meta?.categories.find((c) => c.id === categoryId)?.name ?? "—"} />
-              {otherPicked && <ReviewRow label="Category (your words)" value={categoryOther || "—"} />}
+              <ReviewRow
+                label="Category"
+                value={
+                  otherPicked
+                    ? `Something else — “${categoryOther || "—"}”`
+                    : meta?.categories.find((c) => c.id === categoryId)?.name ?? "—"
+                }
+              />
               <ReviewRow label="Campus" value={meta?.campuses.find((c) => c.id === campusId)?.name ?? "—"} />
               <ReviewRow label="Owner" value={ownerName} />
               <ReviewRow label="Phone" value={ownerPhone} />
@@ -597,17 +603,20 @@ function SuccessPanel({ reference, businessName }: { reference: string; business
           </a>{" "}
           — your reference and this email address are all it takes.
         </p>
-        <p className="mt-3">
-          <b>P.S.</b> — Do you also want to{" "}
-          <a
-            href="https://voeq.ng/for-vendors"
-            className="font-semibold text-vq-forest underline"
-          >
-            sell on Voeq
-          </a>
-          ? The campus marketplace thousands of students already use. Getting
-          started takes minutes.
+      </div>
+      {/* the Voeq funnel (1.17) — a callout, not a footnote: Kai had it as an
+          easy-to-miss P.S.; applicants must actually SEE this */}
+      <div className="mx-auto mt-5 max-w-sm rounded-xl border-2 border-vq-forest bg-vq-cream px-5 py-5 text-center">
+        <p className="font-display text-lg text-vq-forest-dark">Do you also want to sell on Voeq?</p>
+        <p className="mt-1.5 text-sm leading-relaxed text-vq-ink-muted">
+          The campus marketplace thousands of students already use. Getting started takes minutes.
         </p>
+        <a
+          href="https://voeq.ng/for-vendors"
+          className="mt-4 inline-block rounded-full bg-vq-forest px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
+        >
+          Become a Voeq vendor →
+        </a>
       </div>
     </section>
   );

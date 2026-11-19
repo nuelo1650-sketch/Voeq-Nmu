@@ -346,12 +346,13 @@ export function DecisionPanel({
                   rows={2}
                   className="mt-2 w-full rounded-lg border border-vq-forest/20 px-3 py-2 text-sm"
                 />
-                <div className="mt-2 flex flex-wrap gap-1.5">
+                <div className="mt-2 flex flex-wrap gap-2">
                   {CORRECTION_TEMPLATES.map((t, k) => (
                     <button
                       key={k}
+                      type="button"
                       onClick={() => setItems((prev) => prev.map((it, j) => (j === i ? { ...t } : it)))}
-                      className="border border-vq-forest/20 bg-white px-2.5 py-1 text-[11px] font-semibold text-vq-forest hover:border-vq-forest"
+                      className="border border-vq-forest/25 bg-white px-3.5 py-2 text-xs font-bold text-vq-forest transition hover:border-vq-forest hover:bg-vq-cream"
                     >
                       {t.field.toLowerCase()}
                     </button>
