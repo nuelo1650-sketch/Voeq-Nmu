@@ -407,6 +407,13 @@ model FeeIntent {
   claimAmountMinor Int?
   claimAt     DateTime?
 
+  // Optional screenshot of the transfer receipt (Kai, 2026-11-19). Private
+  // Cloudinary asset, same pipeline as application images. Supplementary
+  // evidence for a human at the desk — it never creates or matches a credit;
+  // the bank statement does the proving.
+  receiptPublicId   String?
+  receiptUploadedAt DateTime?
+
   application Application   @relation(fields: [applicationId], references: [id])
   schedule    FeeSchedule   @relation(fields: [scheduleId], references: [id])
   allocations FeeAllocation[]

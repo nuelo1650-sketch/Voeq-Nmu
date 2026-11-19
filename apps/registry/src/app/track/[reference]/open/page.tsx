@@ -17,6 +17,7 @@ import { verifyAccessToken } from "@/lib/access";
 import { getBankAccount } from "@/lib/bank";
 import { CopyText } from "./copy-text";
 import { ClaimForm } from "./claim-form";
+import { ReceiptUpload } from "./receipt-upload";
 
 export const dynamic = "force-dynamic";
 
@@ -187,6 +188,7 @@ function StatusNextStep({
     claimPayerBank: string | null;
     claimSenderName: string | null;
     claimAt: Date | null;
+    receiptPublicId: string | null;
   } | null;
 }) {
   if (status === "submitted" || status === "under_review") {
@@ -267,6 +269,15 @@ function StatusNextStep({
               <span className="font-mono">{reference}</span>
             </p>
           )}
+          {feeIntent.status === "awaiting_bank_evidence" && (
+            feeIntent.receiptPublicId ? (
+              <p className="mt-3 border-l-4 border-vq-forest bg-vq-forest/5 px-3 py-2 text-sm text-vq-forest-dark">
+                Your receipt screenshot is with the desk ✓
+              </p>
+            ) : (
+              <ReceiptUpload token={token} />
+            )
+          )}
         </div>
       );
     }
@@ -284,10 +295,10 @@ function StatusNextStep({
 
           {bank.temporary && (
             <p className="mt-3 border-l-4 border-vq-amber bg-vq-amber-light/60 px-3 py-2 text-xs leading-relaxed text-vq-amber-dark">
-              The account below is the register&apos;s temporary testing account while
-              the University&apos;s own dedicated account is being opened. Do not
-              transfer real registration money here unless you are part of the test —
-              this page switches to the University&apos;s account the day it lands.
+              The account below is the Media Unit&apos;s account — the desk that runs
+              this register. It is being used while the University&apos;s own dedicated
+              account is being opened; this page switches to that account the day it
+              lands. Nothing changes in how you pay or how your money is found.
             </p>
           )}
 
@@ -308,9 +319,11 @@ function StatusNextStep({
             that is how your money is found in the bank record.
           </p>
           <p className="mt-3 text-xs leading-relaxed text-vq-ink-subtle">
-            You do not send a screenshot. The bank&apos;s record reaches the
+            You do not need to send a screenshot — the bank&apos;s record reaches the
             register on its own, and a person confirms your entry when the
             three signals line up: your reference, the exact amount, the date.
+            But if you want the desk to see your receipt immediately, you can
+            send one below.
           </p>
 
           {feeIntent ? (
@@ -385,7 +398,7 @@ function StatusNextStep({
           On the record
         </p>
         <p className="mt-2 text-sm leading-relaxed text-vq-ink-muted">
-          Payment confirmed on the University&apos;s own bank record.{" "}
+          Payment confirmed on the Media Unit&apos;s bank record.{" "}
           <b>{reference}</b> is your official proof of registration — keep it.
           Your business now stands in the official NMU directory, and nobody
           from this register will ever ask you for another payment.

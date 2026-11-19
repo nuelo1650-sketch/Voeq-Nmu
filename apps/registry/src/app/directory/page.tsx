@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "The NMU Business Register — directory",
   description:
-    "Businesses registered through the Nigeria Maritime University business register — verified on the University's own bank record.",
+    "Businesses registered through the Nigeria Maritime University business register — verified on the Media Unit's bank record.",
 };
 
 const CLOUD = process.env.CLOUDINARY_CLOUD_NAME ?? "";

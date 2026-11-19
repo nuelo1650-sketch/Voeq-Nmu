@@ -285,6 +285,22 @@ export async function ReviewView({
                 Claimed by {feeIntent.claimSenderName} via {feeIntent.claimPayerBank}
               </p>
             )}
+            {feeIntent.receiptPublicId && (
+              <div className="mt-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-vq-ink-subtle">
+                  Receipt screenshot from the applicant — tap to enlarge
+                </p>
+                <PhotoLightbox
+                  photos={[
+                    {
+                      src: signedAuthenticatedUrl(feeIntent.receiptPublicId),
+                      alt: "Payment receipt screenshot",
+                      caption: "Payment receipt · applicant-submitted",
+                    },
+                  ]}
+                />
+              </div>
+            )}
           </li>
         )}
       </ul>

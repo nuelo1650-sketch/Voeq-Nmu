@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { ReceiptUpload } from "./receipt-upload";
 
 // The "I have paid" claim (doc 07 §5.1a) — the applicant's word, recorded
 // with care, able to start the SLA clock, never able to create a credit.
+// The optional receipt screenshot rides alongside (receipt-upload.tsx).
 
 export function ClaimForm({ token, reference }: { token: string; reference: string }) {
   const [payerBank, setPayerBank] = useState("");
@@ -46,8 +48,8 @@ export function ClaimForm({ token, reference }: { token: string; reference: stri
         After you have transferred — tell the register
       </p>
       <p className="mt-1 text-xs leading-relaxed text-vq-ink-muted">
-        Not a screenshot — just your word, recorded against {reference}. It starts
-        the confirmation clock; the bank&apos;s own record does the proving.
+        Your word, recorded against {reference}. It starts the confirmation clock; the bank&apos;s own
+        record does the proving.
       </p>
       <div className="mt-3 space-y-2.5">
         <input
@@ -76,6 +78,7 @@ export function ClaimForm({ token, reference }: { token: string; reference: stri
       >
         {busy ? "Recording…" : "I have paid"}
       </button>
+      <ReceiptUpload token={token} />
       {error && (
         <p className="mt-2 border-l-4 border-red-600 bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}

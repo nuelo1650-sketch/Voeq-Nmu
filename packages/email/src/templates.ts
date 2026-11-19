@@ -243,8 +243,8 @@ export function applicationReceived(
         stepsBlock([
           `A member of the Media Unit reads your application from top to bottom — the form, the documents, the photos.`,
           `If anything needs fixing, we write to you with exactly what and why. Nothing is lost; you continue the same application.`,
-          `If it is approved, we send you the University's account details and the payment step — a single transfer of ₦5,200.`,
-          `When the University's bank record confirms your payment, your business goes live in the official NMU directory.`,
+          `If it is approved, we send you the Media Unit's account details and the payment step — a single transfer of ₦5,200.`,
+          `When the Media Unit's bank record confirms your payment, your business goes live in the official NMU directory.`,
         ]),
         refChip(reference),
         sectionHeading("Good to know"),
@@ -309,14 +309,14 @@ export function applicationApproved(
         para(`<b>${esc(businessName)}</b> has been approved for the NMU business register. Congratulations — genuinely. Now there is exactly one step left, and because money deserves slow sentences, here is the whole thing explained.`),
         sectionHeading("The one step left"),
         stepsBlock([
-          `Transfer <b>₦5,200</b> — no more, no less — into the University's account. The account details are on your payment page, copied and ready.`,
-          `Put <b>${esc(reference)}</b> in the transfer narration exactly as written, character for character. This is how we find your money in the University's bank record — the narration is your name inside the bank's own ledger.`,
-          `That is all. You do not send us a screenshot; the bank's record reaches us on its own, once a day at 23:00.`,
+          `Transfer <b>₦5,200</b> — no more, no less — into the Media Unit's account (the desk that runs this register). The account details are on your payment page, copied and ready.`,
+          `Put <b>${esc(reference)}</b> in the transfer narration exactly as written, character for character. This is how we find your money in the bank's own record — the narration is your name inside the ledger.`,
+          `That is all. The bank's record reaches us on its own, once a day at 23:00 — and if you want the desk to see your receipt immediately, you can send a screenshot of it on your payment page.`,
         ]),
         refChip(reference, "Your transfer narration"),
         sectionHeading("What happens after you pay"),
         stepsBlock([
-          `The University's bank record arrives to us nightly at 23:00.`,
+          `The Media Unit's bank record arrives to us nightly at 23:00.`,
           `We match three independent signals: your reference, the exact amount, and the date.`,
           `When all three line up, a staff member confirms, your entry goes live in the official directory, and we email you the moment it happens.`,
         ]),
@@ -373,7 +373,7 @@ export function feeAwaitingEvidence(reference: string): EmailTemplate {
         para(`You have told us you have paid against ${esc(reference)}. Good — and here is exactly what happens from this moment, so you are never left wondering.`),
         sectionHeading("The timeline"),
         stepsBlock([
-          `<b>Tonight, 23:00</b> — the University's bank record arrives to us. It arrives whether you paid or not; it is the bank's own record, not ours.`,
+          `<b>Tonight, 23:00</b> — the Media Unit's bank record arrives to us. It arrives whether you paid or not; it is the bank's own record, not ours.`,
           `<b>Next working day</b> — we match your reference, the exact amount, and the date against that record. When they line up, a staff member confirms.`,
           `<b>The same day</b> — your entry goes live in the official directory and your confirmation email lands here.`,
         ]),
@@ -399,7 +399,7 @@ export function feeConfirmed(reference: string, businessName: string, publicUrl:
       status: { label: "Confirmed — on the record", tone: "solid" },
       title: "Your business is on the record.",
       body: [
-        para(`Payment confirmed. <b>${esc(businessName)}</b> is now registered in the official NMU business directory — matched against the University's own bank record, confirmed by a person, and signed into the audit trail. Welcome to the record.`),
+        para(`Payment confirmed. <b>${esc(businessName)}</b> is now registered in the official NMU business directory — matched against the bank's own record, confirmed by a person, and signed into the audit trail. Welcome to the record.`),
         refChip(reference, "Your official reference"),
         sectionHeading("What being on the record means"),
         bulletsBlock([
@@ -429,7 +429,7 @@ export function paymentException(reference: string, concern: string): EmailTempl
       body: [
         para(`Money deserves careful letters, so let us be precise: we received a payment that we cannot yet attach to your application ${esc(reference)}. This is not an accusation and not a loss — it is a mismatch, and mismatches have known fixes.`),
         detailCard("What the bank record shows", `<p style="margin:0;">${esc(concern)}</p>`),
-        para(`That paragraph is copied from the University's own bank record — this email does not guess, and it does not round numbers off.`),
+        para(`That paragraph is copied from the bank's own record — this email does not guess, and it does not round numbers off.`),
         sectionHeading("How this gets fixed"),
         stepsBlock([
           `Read the concern above and check it against your own transfer receipt.`,
