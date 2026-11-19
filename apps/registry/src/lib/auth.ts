@@ -1,10 +1,17 @@
 // ---------------------------------------------------------------------------
 // Auth.js v5 — Google OAuth ONLY for staff (doc 07 §4.7). No passwords exist
-// anywhere in the system. Sign-in is denied unless:
-//   1. Google has verified the email, AND
-//   2. the email is on exactly one family allowlist (platform or register).
-// On first sign-in the StaffAccount row is created with the resolved family.
-// The account email is the audit identity for every action the account takes.
+// anywhere in the system.
+//
+// The DOOR is the StaffAccount row, not an env allowlist (Kai, 2026-11-19:
+// adding a staff member required editing env vars on Vercel — unacceptable
+// friction, and the accounts console already mints accounts). Sign-in flow:
+//   1. Google verifies the email (identity).
+//   2. If a StaffAccount row exists for that email, its family rides the
+//      session and lastLogin is recorded.
+//   3. If no row exists, sign-in still succeeds but the session carries NO
+//      family and NO account id — every desk gate refuses, and the staff
+//      pages say honestly: "ask a super admin to create your account".
+// Privileges come from RoleGrant rows; activation is the admin's switch.
 // ---------------------------------------------------------------------------
 
 import NextAuth from "next-auth";
@@ -12,7 +19,6 @@ import Google from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers";
 import type { JWT } from "@auth/core/jwt";
 import { prisma } from "@voeq/db";
-import { familyForEmail } from "@/lib/allowlist";
 
 import type { AdminFamily } from "@voeq/core";
 
@@ -58,35 +64,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const verified = (user as { emailVerified?: unknown }).emailVerified;
       if (verified === false) return false;
 
-      const family = familyForEmail(email);
-      if (!family) return false; // not allowlisted, or on both lists
-
       try {
-        // Role-based, not person-bound (doc 07 §4.6): the account is created
-        // with its family on first sign-in; privileges are separate RoleGrant
-        // rows, each grant/revocation itself audited. Created SUSPENDED —
-        // exactly like accounts made in the admin console — so the super
-        // admin's activation is the single door into the desk. Sign-in is
-        // allowed (identity is recorded), but the desk gate refuses until
-        // the account is flipped active.
-        await prisma.staffAccount.upsert({
+        // The account row is the door (see header note). No row → the session
+        // carries no authority and the desks explain what to do. An existing
+        // row gets its lastLogin recorded; nothing is auto-created.
+        await prisma.staffAccount.updateMany({
           where: { email },
-          update: { lastLoginAt: new Date(), name: user.name ?? undefined },
-          create: {
-            email,
-            name: user.name ?? null,
-            family,
-            status: "suspended",
-            lastLoginAt: new Date(),
-          },
+          data: { lastLoginAt: new Date() },
         });
-        // TODO(Phase 1): writeAudit("staff.signed_in") once the app role has
-        // insert grants (prisma/sql/audit-immutable.sql applies with the DB).
         return true;
       } catch (err) {
         // Database unreachable — fail closed. Never open the admin without
         // being able to record identity.
-        console.error("[auth] staff account upsert failed:", err);
+        console.error("[auth] staff account lookup failed:", err);
         return false;
       }
     },

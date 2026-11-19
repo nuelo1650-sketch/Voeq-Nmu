@@ -300,31 +300,29 @@ export function applicationApproved(
   paymentStepUrl: string,
 ): EmailTemplate {
   return {
-    subject: `Approved: ${businessName} — the payment step, explained properly`,
+    subject: `Approved: ${businessName} — one transfer of ₦5,200 to be listed`,
     html: shell({
-      preheader: `${businessName} is approved for the NMU register. One transfer of ₦5,200 puts you on the record — here is how to make it count.`,
+      preheader: `${businessName} is approved. Transfer ₦5,200 with your reference in the narration — that is the whole step.`,
       status: { label: "Approved", tone: "forest" },
       title: "Your business is approved.",
       body: [
-        para(`<b>${esc(businessName)}</b> has been approved for the NMU business register. Congratulations — genuinely. Now there is exactly one step left, and because money deserves slow sentences, here is the whole thing explained.`),
-        sectionHeading("The one step left"),
+        para(`<b>${esc(businessName)}</b> is approved for the NMU business register. One step left — pay, and you are on the record.`),
+        sectionHeading("How to pay"),
         stepsBlock([
-          `Transfer <b>₦5,200</b> — no more, no less — into the Media Unit's account (the desk that runs this register). The account details are on your payment page, copied and ready.`,
-          `Put <b>${esc(reference)}</b> in the transfer narration exactly as written, character for character. This is how we find your money in the bank's own record — the narration is your name inside the ledger.`,
-          `That is all. The bank's record reaches us on its own, once a day at 23:00 — and if you want the desk to see your receipt immediately, you can send a screenshot of it on your payment page.`,
+          `Transfer <b>₦5,200</b> — exactly — into the Media Unit's account. The account details are on your payment page.`,
+          `Put <b>${esc(reference)}</b> in the transfer narration, exactly as written. This is how we find your money.`,
+          `Optional: send a screenshot of your receipt on the payment page so the desk sees it immediately.`,
         ]),
         refChip(reference, "Your transfer narration"),
-        sectionHeading("What happens after you pay"),
+        sectionHeading("After you pay"),
         stepsBlock([
-          `The Media Unit's bank record arrives to us nightly at 23:00.`,
-          `We match three independent signals: your reference, the exact amount, and the date.`,
-          `When all three line up, a staff member confirms, your entry goes live in the official directory, and we email you the moment it happens.`,
+          `The bank record reaches us nightly at 23:00. We match your reference, the exact amount, and the date.`,
+          `When they line up, a staff member confirms — your entry goes live in the directory and we email you.`,
         ]),
-        sectionHeading("Three small things that save everyone time"),
         bulletsBlock([
-          `Pay the <b>exact amount</b>. ₦5,000 or ₦5,500 will not match and will raise an exception letter instead of a confirmation.`,
-          `Pay <b>once</b>. If your bank shows the transfer as pending, wait — do not send a second one.`,
-          `Use the reference <b>exactly</b>. No extra spaces, no abbreviations.`,
+          `Pay the exact amount — ₦5,000 or ₦5,500 will not match.`,
+          `Pay once — if the transfer shows pending, wait.`,
+          `Use the reference exactly — no extra spaces.`,
         ]),
         vendorCallout(),
         signoff(),
@@ -364,27 +362,25 @@ export function applicationRejected(reference: string, reason: string): EmailTem
 
 export function feeAwaitingEvidence(reference: string): EmailTemplate {
   return {
-    subject: `We have your payment claim — ${reference} — and here is the timeline`,
+    subject: `Payment claim received — ${reference}`,
     html: shell({
-      preheader: "You have told us you paid. Here is exactly when the bank record arrives and when your confirmation happens. No action needed.",
+      preheader: "We have your payment claim. Confirmation usually lands the next working day. No action needed.",
       status: { label: "Payment pending", tone: "amber" },
       title: "We have your payment claim.",
       body: [
-        para(`You have told us you have paid against ${esc(reference)}. Good — and here is exactly what happens from this moment, so you are never left wondering.`),
+        para(`You have told us you paid against <b>${esc(reference)}</b>. Here is what happens next — no action needed from you.`),
         sectionHeading("The timeline"),
         stepsBlock([
-          `<b>Tonight, 23:00</b> — the Media Unit's bank record arrives to us. It arrives whether you paid or not; it is the bank's own record, not ours.`,
-          `<b>Next working day</b> — we match your reference, the exact amount, and the date against that record. When they line up, a staff member confirms.`,
-          `<b>The same day</b> — your entry goes live in the official directory and your confirmation email lands here.`,
+          `<b>Tonight, 23:00</b> — the bank record reaches us.`,
+          `<b>Next working day</b> — we match your reference, the exact amount, and the date. A staff member confirms.`,
+          `<b>The same day</b> — your entry goes live in the directory and the confirmation email lands.`,
         ]),
         refChip(reference),
-        sectionHeading("If the record does not show it"),
+        sectionHeading("If nothing happens within two working days"),
         bulletsBlock([
-          `<b>Wait two working days.</b> Banks are slow sometimes; that is normal.`,
-          `After two working days with no confirmation, reply to this email with your transfer details — bank, amount, date, and time.`,
-          `Please do not pay again. A second payment is the hardest kind of mistake to unwind.`,
+          `Reply to this email with your transfer details — bank, amount, date, time.`,
+          `Do not pay again — a second payment is the hardest mistake to unwind.`,
         ]),
-        para(`<b>No action is needed from you right now.</b> The next move belongs to the bank record, and it arrives on schedule.`),
         signoff(),
       ].join(""),
     }),

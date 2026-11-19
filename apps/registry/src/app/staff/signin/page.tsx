@@ -16,8 +16,9 @@ export default function StaffSignInPage() {
           Sign in to the register desk
         </h1>
         <p className="mt-3 text-sm text-vq-ink-muted">
-          Staff sign in with Google only. Your account must be on the
-          University&apos;s allowlist — there are no passwords here, on purpose.
+          Staff sign in with Google only. Your account must already be created
+          and activated by a super admin in the admin console — there are no
+          passwords here, on purpose.
         </p>
         <button
           onClick={() => signIn("google", { callbackUrl: "/staff" })}

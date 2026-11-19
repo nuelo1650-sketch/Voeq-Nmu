@@ -87,6 +87,39 @@ export function AccountsPanel({
 
   const canCreate = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) && (family === "platform" || institutionId !== "");
 
+  async function applyPreset(
+    acc: AdminAccount,
+    preset: "reviewer" | "money" | "full" | "none",
+  ) {
+    const holdable = permissions.filter(
+      (p) => acc.family === "platform" || p.family !== "platform",
+    );
+    const targets: string[] =
+      preset === "reviewer"
+        ? ["applications.read", "applications.decide", "applications.request-corrections", "ledger.read", "directory.read"]
+        : preset === "money"
+          ? ["applications.read", "ledger.read", "directory.read"]
+          : preset === "full"
+            ? holdable.map((p) => p.key)
+            : [];
+    const current = acc.grants.filter((g) => !g.revokedAt).map((g) => g.permissionKey);
+    const toGrant = targets.filter((k) => !current.includes(k));
+    const toRevoke =
+      preset === "none"
+        ? current
+        : current.filter((k) => !targets.includes(k) && holdable.some((p) => p.key === k));
+
+    for (const key of toGrant) {
+      await run({ op: "grant.set", accountId: acc.id, permissionKey: key, granted: true }, "");
+    }
+    for (const key of toRevoke) {
+      await run({ op: "grant.set", accountId: acc.id, permissionKey: key, granted: false }, "");
+    }
+    const label =
+      preset === "none" ? "all permissions cleared" : `preset applied — ${targets.length} permissions`;
+    await run({ op: "account.update", id: acc.id, status: acc.status }, `${acc.email}: ${label}.`);
+  }
+
   return (
     <div className="space-y-8">
       <ActionFeedback error={error} flash={flash} />
@@ -96,10 +129,11 @@ export function AccountsPanel({
           Staff accounts — Google emails, never passwords
         </SectionHeading>
 
-        <p className="mt-2 border border-vq-amber/50 bg-vq-amber-light/60 px-4 py-2.5 text-sm text-vq-amber-dark">
-          Creating an account here does not open the sign-in door. Sign-in still
-          requires the email on the STAFF_ALLOWLIST_PLATFORM / STAFF_ALLOWLIST_REGISTER
-          env lists — add it there too, then activate the account below.
+        <p className="mt-2 border border-vq-forest/20 bg-white px-4 py-2.5 text-sm leading-relaxed text-vq-ink-muted">
+          <b className="text-vq-forest-dark">Adding someone takes three steps, all here:</b>{" "}
+          1 · create their account below · 2 · open <b>Permissions</b> and hand out exactly what
+          their role needs · 3 · <b>Activate</b>. Then they just sign in with that Google email —
+          no server settings to touch.
         </p>
 
         {!showCreate ? (
@@ -108,30 +142,55 @@ export function AccountsPanel({
           </div>
         ) : (
           <div className="mt-3 border border-vq-forest/15 bg-white/70 px-4 py-3">
-            <div className="grid gap-2 sm:grid-cols-2">
-              <TextInput value={email} onChange={setEmail} placeholder="Google email" mono />
-              <TextInput value={accName} onChange={setAccName} placeholder="Name (optional)" />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-vq-ink-subtle">
+                  1 · Their Google email
+                </span>
+                <TextInput value={email} onChange={setEmail} placeholder="name@gmail.com" mono />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-vq-ink-subtle">
+                  Their name (optional)
+                </span>
+                <TextInput value={accName} onChange={setAccName} placeholder="e.g. Daniel Owi" />
+              </label>
             </div>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              {(["register", "platform"] as const).map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setFamily(f)}
-                  className={`px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] transition ${
-                    family === f
-                      ? "bg-vq-forest text-white"
-                      : "border border-vq-forest/20 bg-white text-vq-forest hover:border-vq-forest/50"
-                  }`}
-                >
-                  {f === "register" ? "Register (Media Unit)" : "Platform (Voeq)"}
-                </button>
-              ))}
-              {family === "register" && institutions.length > 0 && (
+            <div className="mt-3">
+              <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-vq-ink-subtle">
+                2 · Which desk do they sit at?
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                {(["register", "platform"] as const).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setFamily(f)}
+                    className={`px-4 py-2 text-xs font-bold transition ${
+                      family === f
+                        ? "bg-vq-forest text-white"
+                        : "border border-vq-forest/20 bg-white text-vq-forest hover:border-vq-forest/50"
+                    }`}
+                  >
+                    {f === "register" ? "Media Unit desk (workbench)" : "Platform console (admin)"}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1.5 text-xs leading-relaxed text-vq-ink-subtle">
+                {family === "register"
+                  ? "The daily register work: review queue, decisions, the fee ledger."
+                  : "Governance: institutions, accounts, audit chain. A platform account can also be given workbench powers below."}
+              </p>
+            </div>
+            {family === "register" && institutions.length > 0 && (
+              <label className="mt-3 block">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-vq-ink-subtle">
+                  Their institution
+                </span>
                 <select
                   value={institutionId}
                   onChange={(e) => setInstitutionId(e.target.value)}
-                  className="border border-vq-forest/20 bg-white px-3 py-1.5 text-sm text-vq-ink focus:border-vq-forest focus:outline-none"
+                  className="border border-vq-forest/20 bg-white px-3 py-2 text-sm text-vq-ink focus:border-vq-forest focus:outline-none"
                 >
                   {institutions.map((i) => (
                     <option key={i.id} value={i.id}>
@@ -139,10 +198,11 @@ export function AccountsPanel({
                     </option>
                   ))}
                 </select>
-              )}
-            </div>
-            <p className="mt-2 text-xs text-vq-ink-subtle">
-              New accounts start suspended — nothing moves until you activate.
+              </label>
+            )}
+            <p className="mt-3 text-xs text-vq-ink-subtle">
+              New accounts start suspended — nothing moves until you Activate. After creating, open
+              <b> Permissions</b> to hand out exactly what they need.
             </p>
             <div className="mt-3 flex gap-2">
               <MonoButton
@@ -157,7 +217,7 @@ export function AccountsPanel({
                       family,
                       institutionId: family === "register" ? institutionId : null,
                     },
-                    "Account created, suspended. Activate it when the allowlist is set.",
+                    "Account created, suspended. Open Permissions to give them their powers, then Activate.",
                   );
                   if (ok) {
                     setShowCreate(false);
@@ -228,13 +288,53 @@ export function AccountsPanel({
 
                 {showGrants && (
                   <div className="border-t border-vq-forest/10 px-4 py-3">
-                    <SectionHeading note="families never mix">
-                      Permission matrix — {acc.family === "platform" ? "platform family" : "register family"}
+                    <SectionHeading note="one-way wall: platform may hold everything, register never touches platform">
+                      Permission matrix — hand out exactly the role
                     </SectionHeading>
-                    <ul className="mt-2 divide-y divide-vq-forest/10 border border-vq-forest/10">
+
+                    {/* role presets — one click sets a coherent set of grants.
+                        Kai: promoting someone to "workbench or admin" only was
+                        too coarse; these cover the real shapes of a role. */}
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <MonoButton
+                        disabled={busyOp !== null}
+                        onClick={() => applyPreset(acc, "reviewer")}
+                      >
+                        Preset · Reviewer (full desk)
+                      </MonoButton>
+                      <MonoButton
+                        disabled={busyOp !== null}
+                        onClick={() => applyPreset(acc, "money")}
+                      >
+                        Preset · See the money only
+                      </MonoButton>
+                      <MonoButton
+                        disabled={busyOp !== null}
+                        onClick={() => applyPreset(acc, "full")}
+                      >
+                        Preset · Everything
+                      </MonoButton>
+                      <MonoButton
+                        tone="danger"
+                        disabled={busyOp !== null || openGrants.length === 0}
+                        onClick={() => applyPreset(acc, "none")}
+                      >
+                        Clear all
+                      </MonoButton>
+                    </div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-vq-ink-subtle">
+                      Reviewer = read the queue, decide, request corrections. See the money only = the
+                      ledger and the directory, nothing else — cannot promote, demote, or decide. Every
+                      change here is audited.
+                    </p>
+
+                    <ul className="mt-3 divide-y divide-vq-forest/10 border border-vq-forest/10">
                       {permissions.map((perm) => {
                         const holds = !!(openGrants.find((g) => g.permissionKey === perm.key));
-                        const canHoldThis = perm.family === "shared" || perm.family === acc.family;
+                        // One-way wall (Kai's superuser model): platform accounts
+                        // may hold every permission; register accounts never hold
+                        // platform keys.
+                        const canHoldThis = acc.family === "platform" || perm.family !== "platform";
                         return (
                           <li
                             key={perm.key}
@@ -264,7 +364,7 @@ export function AccountsPanel({
                             ) : (
                               <MonoButton
                                 disabled={busyOp !== null || !canHoldThis}
-                                title={canHoldThis ? undefined : "The families never mix"}
+                                title={canHoldThis ? undefined : "Register accounts never hold platform powers"}
                                 onClick={() =>
                                   run(
                                     { op: "grant.set", accountId: acc.id, permissionKey: perm.key, granted: true },

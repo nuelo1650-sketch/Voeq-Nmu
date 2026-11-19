@@ -272,17 +272,38 @@ export async function ReviewView({
           </li>
         ))}
         {feeIntent && (
-          <li className="rounded-xl border border-vq-forest/10 bg-white/70 px-4 py-3 text-sm">
-            <p className="font-semibold text-vq-forest-dark">
-              Fee — {feeIntent.status.replace(/_/g, " ")}
-              <span className="font-normal text-vq-ink-subtle">
-                {" "}· ₦5,200 · issued {timeAgo(feeIntent.issuedAt)}
-                {feeIntent.confirmedAt ? ` · confirmed ${timeAgo(feeIntent.confirmedAt)}` : ""}
-              </span>
-            </p>
+          <li
+            className={`rounded-xl border px-4 py-3 text-sm ${
+              feeIntent.status === "confirmed"
+                ? "border-vq-forest bg-vq-forest/5"
+                : feeIntent.status === "matched" || feeIntent.status === "awaiting_bank_evidence"
+                  ? "border-vq-amber bg-vq-amber-light/60"
+                  : "border-vq-forest/10 bg-white/70"
+            }`}
+          >
+            {feeIntent.status === "confirmed" && (
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-forest-dark">
+                Paid — confirmed · ₦5,200 {feeIntent.confirmedAt ? `· ${timeAgo(feeIntent.confirmedAt)}` : ""}
+              </p>
+            )}
+            {feeIntent.status === "matched" && (
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-amber-dark">
+                Paid — in the bank record · confirm it in the ledger
+              </p>
+            )}
+            {feeIntent.status === "awaiting_bank_evidence" && (
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-amber-dark">
+                Paid claim — the applicant says paid · check tonight&apos;s bank record
+              </p>
+            )}
+            {(feeIntent.status === "issued" || feeIntent.status === "voided") && (
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-ink-subtle">
+                {feeIntent.status === "issued" ? "Not paid yet" : "Voided"} · issued {timeAgo(feeIntent.issuedAt)}
+              </p>
+            )}
             {feeIntent.claimAt && (
               <p className="mt-1 text-vq-ink-muted">
-                Claimed by {feeIntent.claimSenderName} via {feeIntent.claimPayerBank}
+                Claimed by <b>{feeIntent.claimSenderName}</b> via {feeIntent.claimPayerBank}
               </p>
             )}
             {feeIntent.receiptPublicId && (

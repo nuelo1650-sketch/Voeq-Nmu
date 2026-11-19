@@ -2,10 +2,11 @@
 // first screen: what arrived, what state it is in, and the ONE obvious next
 // action for every encounter — a fresh application asks to be opened and
 // decided, a resubmission asks for the diff first, an approved row waits on
-// payment. Overview counts (1.10) sit above the filters.
+// payment. Overview counts (1.10) and the money strip sit above the filters.
 
 import { prisma } from "@voeq/db";
 import Link from "next/link";
+import { formatNaira } from "@voeq/core";
 import { StatusChip, QueueFilterBar, STATUS_META } from "./shared";
 
 const NEXT_ACTION: Record<string, string> = {
@@ -17,8 +18,23 @@ const NEXT_ACTION: Record<string, string> = {
   registered: "on the record",
 };
 
+// What the row says about money, derived from the fee intent (if any).
+function feeWord(fee?: { status: string } | null): { text: string; paid: boolean } | null {
+  if (!fee) return null;
+  switch (fee.status) {
+    case "confirmed":
+      return { text: "paid · confirmed", paid: true };
+    case "matched":
+      return { text: "paid · in bank record, awaiting confirm", paid: true };
+    case "awaiting_bank_evidence":
+      return { text: "PAID CLAIM — check bank record", paid: true };
+    default:
+      return { text: "not paid yet", paid: false };
+  }
+}
+
 export async function QueueView({ statusFilter }: { statusFilter?: string }) {
-  const [apps, counts] = await Promise.all([
+  const [apps, counts, feeSums] = await Promise.all([
     prisma.application.findMany({
       where:
         statusFilter === "resubmitted"
@@ -30,6 +46,7 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
       include: {
         category: { select: { name: true } },
         campus: { select: { name: true } },
+        feeIntent: { select: { status: true } },
         revisions: {
           orderBy: { revisionNo: "desc" },
           take: 1,
@@ -39,7 +56,20 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
       take: 100,
     }),
     prisma.application.groupBy({ by: ["status"], _count: { _all: true } }),
+    // The money strip (Kai: the workbench must show what is owned and what
+    // is coming in — transparency). Three figures, straight from the ledger
+    // of fee intents: confirmed money, claimed money awaiting the bank's
+    // proof, and everything still owed.
+    prisma.feeIntent.groupBy({ by: ["status"], _sum: { totalMinor: true }, _count: { _all: true } }),
   ]);
+
+  const sumOf = (...statuses: string[]): number =>
+    feeSums
+      .filter((s) => statuses.includes(s.status))
+      .reduce((acc, s) => acc + (s._sum.totalMinor ?? 0), 0);
+  const collectedMinor = sumOf("confirmed");
+  const inFlightMinor = sumOf("matched", "awaiting_bank_evidence");
+  const owedMinor = sumOf("issued");
 
   const countOf = (status: string): number =>
     counts.find((c) => c.status === status)?._count._all ?? 0;
@@ -49,8 +79,27 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
 
   return (
     <div>
+      {/* the money strip — what is owned, what is coming in (1.10 + Kai) */}
+      <div className="border border-vq-forest/20 bg-white px-4 py-3">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
+          The money — this register, all time
+        </p>
+        <div className="mt-2 flex flex-wrap gap-x-8 gap-y-2">
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-vq-ink-subtle">
+            Collected <b className="ml-1 text-base text-vq-forest-dark">{formatNaira(collectedMinor)}</b>
+          </p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-vq-ink-subtle">
+            Claimed, awaiting proof{" "}
+            <b className="ml-1 text-base text-vq-amber-dark">{formatNaira(inFlightMinor)}</b>
+          </p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-vq-ink-subtle">
+            Still owed <b className="ml-1 text-base text-vq-ink">{formatNaira(owedMinor)}</b>
+          </p>
+        </div>
+      </div>
+
       {/* overview metrics (1.10) — the desk at a glance */}
-      <div className="flex flex-wrap gap-x-6 gap-y-1 border-y border-vq-forest/15 py-2.5">
+      <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 border-y border-vq-forest/15 py-2.5">
         <Metric label="New" value={countOf("submitted")} />
         <Metric label="In review" value={countOf("under_review")} />
         <Metric label="Awaiting fixes" value={countOf("needs_correction")} />
@@ -81,6 +130,7 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
               a.status === "under_review" && isResubmission
                 ? "resubmitted — read what changed first"
                 : (NEXT_ACTION[a.status] ?? "");
+            const fee = feeWord(a.feeIntent);
             return (
               <li key={a.id}>
                 <Link
@@ -110,6 +160,17 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
                       </p>
                     </div>
                   </div>
+                  {fee && (a.status === "approved" || a.status === "registered") && (
+                    <p
+                      className={`mt-2 inline-block px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] ${
+                        fee.paid
+                          ? "bg-vq-forest text-white"
+                          : "border border-vq-amber text-vq-amber-dark"
+                      }`}
+                    >
+                      {fee.text}
+                    </p>
+                  )}
                   {action && (
                     <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-vq-ink-subtle">
                       → {action}
