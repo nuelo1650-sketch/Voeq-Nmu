@@ -79,35 +79,37 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
 
   return (
     <div>
-      {/* the money strip — what is owned, what is coming in (1.10 + Kai) */}
-      <div className="border border-vq-forest/20 bg-white px-4 py-3">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-vq-ink-subtle">
-          The money — this register, all time
-        </p>
-        <div className="mt-2 flex flex-wrap gap-x-8 gap-y-2">
-          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-vq-ink-subtle">
-            Collected <b className="ml-1 text-base text-vq-forest-dark">{formatNaira(collectedMinor)}</b>
-          </p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-vq-ink-subtle">
-            Claimed, awaiting proof{" "}
-            <b className="ml-1 text-base text-vq-amber-dark">{formatNaira(inFlightMinor)}</b>
-          </p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-vq-ink-subtle">
-            Still owed <b className="ml-1 text-base text-vq-ink">{formatNaira(owedMinor)}</b>
-          </p>
+      {/* the desk header — ONE ruled block, same grammar as the admin
+          overview: hairline-ruled cells, label over a big mono figure.
+          Money reads as a pipeline left to right: owed → claimed →
+          collected (1.10 + Kai's transparency ask). */}
+      <div className="border border-vq-forest/20 bg-white">
+        <div className="grid grid-cols-1 gap-px bg-vq-forest/10 sm:grid-cols-3">
+          <MoneyStat
+            label="Still owed"
+            value={formatNaira(owedMinor)}
+            valueCls="text-vq-ink"
+          />
+          <MoneyStat
+            label="Claimed · awaiting proof"
+            value={formatNaira(inFlightMinor)}
+            valueCls="text-vq-amber-dark"
+          />
+          <MoneyStat
+            label="Collected, all time"
+            value={formatNaira(collectedMinor)}
+            valueCls="text-vq-forest-dark"
+          />
         </div>
-      </div>
-
-      {/* overview metrics (1.10) — the desk at a glance */}
-      <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 border-y border-vq-forest/15 py-2.5">
-        <Metric label="New" value={countOf("submitted")} />
-        <Metric label="In review" value={countOf("under_review")} />
-        <Metric label="Awaiting fixes" value={countOf("needs_correction")} />
-        <Metric label="Awaiting payment" value={countOf("approved")} />
-        <Metric label="Registered" value={countOf("registered")} />
-        {resubmittedCount > 0 && (
-          <Metric label="Resubmitted" value={resubmittedCount} accent />
-        )}
+        {/* queue counts — compact footer strip inside the same block */}
+        <div className="flex flex-wrap gap-x-5 gap-y-1 border-t border-vq-forest/10 px-4 py-2.5">
+          <Count label="New" value={countOf("submitted")} />
+          <Count label="In review" value={countOf("under_review")} />
+          <Count label="Awaiting fixes" value={countOf("needs_correction")} />
+          <Count label="Awaiting payment" value={countOf("approved")} />
+          <Count label="Registered" value={countOf("registered")} />
+          {resubmittedCount > 0 && <Count label="Resubmitted" value={resubmittedCount} accent />}
+        </div>
       </div>
 
       <div className="mt-4">
@@ -171,7 +173,7 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
                       {fee.text}
                     </p>
                   )}
-                  {action && (
+                  {action && !(fee && action === "awaiting payment") && (
                     <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-vq-ink-subtle">
                       → {action}
                     </p>
@@ -186,13 +188,22 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
   );
 }
 
-function Metric({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
+// Money cell — same grammar as the admin overview Metric: micro label over
+// a large mono figure, sitting in a hairline-ruled cell (parent supplies
+// the gap-px rules; this supplies the white surface).
+function MoneyStat({ label, value, valueCls }: { label: string; value: string; valueCls: string }) {
   return (
-    <p className="font-mono text-[11px] uppercase tracking-[0.12em]">
-      <span className={accent ? "text-vq-amber-dark" : "text-vq-ink-subtle"}>
-        {label}
-      </span>{" "}
-      <b className="text-vq-forest-dark">{value}</b>
+    <div className="bg-white px-4 py-3">
+      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-vq-ink-subtle">{label}</p>
+      <p className={`mt-1.5 font-mono text-2xl leading-none ${valueCls}`}>{value}</p>
+    </div>
+  );
+}
+
+function Count({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
+  return (
+    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-vq-ink-subtle">
+      {label} <b className={`ml-0.5 text-xs ${accent ? "text-vq-amber-dark" : "text-vq-forest-dark"}`}>{value}</b>
     </p>
   );
 }
