@@ -236,6 +236,17 @@ async function updateInstitution(
   const before = await prisma.institution.findUnique({ where: { id: input.id } });
   if (!before) return fail(404, "Institution not found");
 
+  // Prefix collision: the reference format is prefix-year-seq, so two
+  // institutions sharing a prefix would collide in the human-readable
+  // references. Checked at create; checked here too (found in review).
+  if (input.prefix !== undefined && input.prefix !== before.prefix) {
+    const clash = await prisma.institution.findFirst({
+      where: { prefix: input.prefix, id: { not: input.id } },
+      select: { id: true },
+    });
+    if (clash) return fail(409, "Another institution already uses that reference prefix");
+  }
+
   // Deactivation guard: an institution with applications in flight can be
   // deactivated (the front door closes, the desk keeps working), but a
   // re-activation is always allowed. Nothing is ever deleted here.
@@ -592,6 +603,11 @@ async function updateAccount(
   if (before.family === "platform" && input.institutionId) {
     return fail(400, "A platform-family account belongs to Voeq, not to an institution");
   }
+  // Same rule on update as on create (found in review): a register-family
+  // account belongs to exactly ONE institution — it cannot be unassigned.
+  if (before.family === "register" && input.institutionId === null) {
+    return fail(400, "A register-family account must stay assigned to an institution");
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.staffAccount.update({
@@ -725,17 +741,22 @@ async function retrySync(
   if (!row) return fail(404, "Sync row not found");
   if (row.status === "synced") return fail(409, "This record is already synced");
 
-  const updated = await prisma.vendorSync.update({
-    where: { id: input.id },
-    data: { status: "pending", lastError: null },
-  });
-  await writeAudit(prisma, {
-    entityType: "VendorSync",
-    entityId: row.id,
-    action: "vendor.sync_requeued",
-    actorEmail: ctx.email,
-    actorFamily: "platform",
-    data: { reference: row.application.reference, previousStatus: row.status },
+  // The requeue and its audit entry commit or die together — the layer's
+  // stated rule is that nothing mutates without its audit row.
+  const updated = await prisma.$transaction(async (tx) => {
+    const u = await tx.vendorSync.update({
+      where: { id: input.id },
+      data: { status: "pending", lastError: null },
+    });
+    await writeAudit(tx, {
+      entityType: "VendorSync",
+      entityId: row.id,
+      action: "vendor.sync_requeued",
+      actorEmail: ctx.email,
+      actorFamily: "platform",
+      data: { reference: row.application.reference, previousStatus: row.status },
+    });
+    return u;
   });
 
   // Try once immediately so the retry gives instant feedback; if voeq.ng is
