@@ -126,8 +126,15 @@ export function AccountsPanel({
     acc: AdminAccount,
     role: "full" | "admin" | "workbench" | "money" | "none",
   ) {
+    // An admin-shaped role on a register-family account first MOVES the
+    // account to the platform desk (Kai: the role cards must never be a
+    // dead-end — the email is unique, so "create another account" was
+    // impossible advice). Moving up is always safe; the institution
+    // assignment falls away with the desk.
+    const needsPlatform = (role === "full" || role === "admin") && acc.family !== "platform";
+    const targetFamily = role === "full" || role === "admin" ? "platform" : acc.family;
     const holdable = permissions.filter(
-      (p) => acc.family === "platform" || p.family !== "platform",
+      (p) => targetFamily === "platform" || p.family !== "platform",
     );
     const targets: string[] =
       role === "workbench"
@@ -146,6 +153,13 @@ export function AccountsPanel({
         ? current
         : current.filter((k) => !targets.includes(k) && holdable.some((p) => p.key === k));
 
+    if (needsPlatform) {
+      const moved = await run(
+        { op: "account.update", id: acc.id, family: "platform", institutionId: null },
+        "",
+      );
+      if (!moved) return;
+    }
     for (const key of toGrant) {
       await run({ op: "grant.set", accountId: acc.id, permissionKey: key, granted: true }, "");
     }
@@ -162,7 +176,11 @@ export function AccountsPanel({
             : role === "workbench"
               ? "workbench"
               : "see the money only";
-    await run({ op: "account.update", id: acc.id, status: acc.status }, `${acc.email}: now ${label}.`);
+    const moveNote = needsPlatform ? " Desk moved to Voeq platform." : "";
+    await run(
+      { op: "account.update", id: acc.id, status: acc.status },
+      `${acc.email}: now ${label}.${moveNote} Every step audited.`,
+    );
   }
 
   return (
@@ -347,49 +365,48 @@ export function AccountsPanel({
                             key: "full" as const,
                             title: "Full access — admin + workbench",
                             desc: "Everything: the admin console AND the register desk. For a trusted co-owner.",
-                            platformOnly: true,
+                            adminShaped: true,
                           },
                           {
                             key: "admin" as const,
                             title: "Admin only",
                             desc: "The admin console: institutions, accounts, audit. No application decisions.",
-                            platformOnly: true,
+                            adminShaped: true,
                           },
                           {
                             key: "workbench" as const,
                             title: "Workbench only",
                             desc: "The register desk: review, decide, request corrections, confirm fees.",
-                            platformOnly: false,
+                            adminShaped: false,
                           },
                           {
                             key: "money" as const,
                             title: "See the money only",
                             desc: "Read the queue and the ledger. Cannot decide, promote, or demote anyone.",
-                            platformOnly: false,
+                            adminShaped: false,
                           },
                         ]
                       ).map((r) => {
-                        const isPlatform = acc.family === "platform";
-                        const allowed = isPlatform || !r.platformOnly;
                         const current = roleLabel(acc);
                         const isCurrent =
                           (r.key === "full" && current === "full access") ||
                           (r.key === "admin" && current === "admin") ||
                           (r.key === "workbench" && current === "workbench") ||
                           (r.key === "money" && current === "see the money only");
+                        const desc =
+                          r.adminShaped && acc.family !== "platform"
+                            ? "Clicking moves this account to the platform desk first, then applies the role."
+                            : r.desc;
                         return (
                           <button
                             key={r.key}
                             type="button"
-                            disabled={busyOp !== null || !allowed}
-                            title={allowed ? undefined : "Admin powers live on platform accounts only"}
+                            disabled={busyOp !== null}
                             onClick={() => applyRole(acc, r.key)}
                             className={`border px-3 py-2.5 text-left transition ${
                               isCurrent
                                 ? "border-vq-forest bg-vq-forest text-white"
-                                : allowed
-                                  ? "border-vq-forest/25 bg-white text-vq-ink hover:border-vq-forest"
-                                  : "border-vq-forest/10 bg-transparent text-vq-ink-subtle opacity-50"
+                                : "border-vq-forest/25 bg-white text-vq-ink hover:border-vq-forest"
                             }`}
                           >
                             <span className="block text-sm font-bold">{r.title}</span>
@@ -398,7 +415,7 @@ export function AccountsPanel({
                                 isCurrent ? "text-white/80" : "text-vq-ink-muted"
                               }`}
                             >
-                              {allowed ? r.desc : "Create a platform account for this role"}
+                              {desc}
                             </span>
                           </button>
                         );

@@ -20,7 +20,7 @@
 
 import { z } from "zod";
 import { prisma } from "@voeq/db";
-import { canHold, validateGrants, type PermissionKey } from "@voeq/core";
+import { canHold, validateGrants, familyOf, type PermissionKey } from "@voeq/core";
 import { writeAudit } from "@/lib/audit-write";
 import type { AdminContext } from "@/lib/admin";
 import { hasPermission } from "@/lib/admin";
@@ -125,6 +125,7 @@ const accountUpdateSchema = z.object({
   id: z.string().min(1),
   name: z.string().trim().max(120).optional(),
   status: z.enum(["active", "suspended", "disabled"]).optional(),
+  family: z.enum(["platform", "register"]).optional(),
   institutionId: z.string().min(1).nullable().optional(),
 });
 
@@ -593,6 +594,11 @@ async function updateAccount(
   const before = await prisma.staffAccount.findUnique({ where: { id: input.id } });
   if (!before) return fail(404, "Account not found");
 
+  // Desk moves (Kai, 2026-11-19: a role card must be able to promote a
+  // register account into an admin role without creating a new account —
+  // the email is unique, so the dead-end advice "create a platform account"
+  // was unactionable). Validate against the RESULTING family, not the old one.
+  const effectiveFamily = input.family ?? before.family;
   if (input.institutionId !== undefined && input.institutionId !== null) {
     const institution = await prisma.institution.findUnique({
       where: { id: input.institutionId },
@@ -600,12 +606,36 @@ async function updateAccount(
     });
     if (!institution) return fail(404, "Institution not found");
   }
-  if (before.family === "platform" && input.institutionId) {
+  if (effectiveFamily === "platform" && input.institutionId) {
     return fail(400, "A platform-family account belongs to Voeq, not to an institution");
   }
-  // Same rule on update as on create (found in review): a register-family
-  // account belongs to exactly ONE institution — it cannot be unassigned.
-  if (before.family === "register" && input.institutionId === null) {
+  if (input.family === "platform" && before.family === "register") {
+    // Moving up is always allowed — platform is the superuser family, and
+    // every register grant the account already holds stays holdable. The
+    // institution assignment falls away with the desk.
+    input.institutionId = null;
+  }
+  if (input.family === "register" && before.family === "platform") {
+    // Moving down: refuse while the account still holds platform-only
+    // powers, so a desk move can never silently strip admin grants.
+    const held = await prisma.roleGrant.findMany({
+      where: { staffAccountId: input.id, revokedAt: null },
+      select: { permissionKey: true },
+    });
+    const platformHeld = held.filter(
+      (g) => familyOf(g.permissionKey as PermissionKey) === "platform",
+    );
+    if (platformHeld.length > 0) {
+      return fail(
+        409,
+        "Revoke this account's platform permissions before moving it to the register desk",
+      );
+    }
+    if (input.institutionId === undefined || input.institutionId === null) {
+      return fail(400, "A register-family account must be assigned to an institution");
+    }
+  }
+  if (effectiveFamily === "register" && input.institutionId === null && input.family === undefined) {
     return fail(400, "A register-family account must stay assigned to an institution");
   }
 
@@ -615,6 +645,7 @@ async function updateAccount(
       data: {
         ...(input.name !== undefined ? { name: input.name } : {}),
         ...(input.status !== undefined ? { status: input.status } : {}),
+        ...(input.family !== undefined ? { family: input.family } : {}),
         ...(input.institutionId !== undefined
           ? { institutionId: input.institutionId }
           : {}),
@@ -624,17 +655,20 @@ async function updateAccount(
       entityType: "StaffAccount",
       entityId: input.id,
       action:
-        input.status !== undefined && input.status !== before.status
-          ? `staff.${input.status === "active" ? "activated" : input.status === "suspended" ? "suspended" : "disabled"}`
-          : "staff.account_updated",
+        input.family !== undefined && input.family !== before.family
+          ? `staff.desk_moved_${input.family}`
+          : input.status !== undefined && input.status !== before.status
+            ? `staff.${input.status === "active" ? "activated" : input.status === "suspended" ? "suspended" : "disabled"}`
+            : "staff.account_updated",
       actorEmail: ctx.email,
       actorFamily: "platform",
       data: {
         email: before.email,
-        before: { name: before.name, status: before.status, institutionId: before.institutionId },
+        before: { name: before.name, status: before.status, family: before.family, institutionId: before.institutionId },
         after: {
           name: input.name ?? before.name,
           status: input.status ?? before.status,
+          family: input.family ?? before.family,
           institutionId: input.institutionId !== undefined ? input.institutionId : before.institutionId,
         },
       },
