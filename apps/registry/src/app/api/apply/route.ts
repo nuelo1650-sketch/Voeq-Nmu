@@ -7,7 +7,7 @@
 // sends letter #1. The reference is issued atomically from the per-year
 // sequence and IS the future payment narration.
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { prisma } from "@voeq/db";
 import { createNotification } from "@voeq/db/outbox";
 import { applicationReceived } from "@voeq/email";
@@ -16,6 +16,7 @@ import { applySchema, missingRequiredImages, CONSENT_DOC_VERSION, IMAGE_FIELDS, 
 import { writeAudit } from "@/lib/audit-write";
 import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { verifyTurnstile, turnstileUserMessage } from "@/lib/turnstile";
+import { drainOutbox } from "@/lib/outbox-drain";
 
 export const dynamic = "force-dynamic";
 
@@ -211,6 +212,9 @@ export async function POST(req: Request) {
       return { reference, applicationId: application.id };
     });
 
+    // Send the confirmation letter now — serverless has no poller worker
+    // (see outbox-drain.ts).
+    after(() => drainOutbox());
     return NextResponse.json({ reference: result.reference }, { status: 201 });
   } catch (err) {
     console.error("[apply] submit failed:", err instanceof Error ? err.message : err);

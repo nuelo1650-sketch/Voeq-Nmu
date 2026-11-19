@@ -7,7 +7,7 @@
 //
 // Fires letter #5 (feeAwaitingEvidence) in the same transaction.
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { prisma } from "@voeq/db";
 import { createNotification } from "@voeq/db/outbox";
 import { feeAwaitingEvidence } from "@voeq/email";
@@ -15,6 +15,7 @@ import { assertFeeIntentTransition } from "@voeq/core";
 import { verifyAccessToken } from "@/lib/access";
 import { z } from "zod";
 import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
+import { drainOutbox } from "@/lib/outbox-drain";
 
 export const dynamic = "force-dynamic";
 
@@ -93,6 +94,9 @@ export async function POST(req: Request) {
     if ("error" in result && result.error) {
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
+    // Send the queued letter now — serverless has no poller worker
+    // (see outbox-drain.ts).
+    after(() => drainOutbox());
     return NextResponse.json({ ok: true, reference: (result as { reference: string }).reference }, { status: 201 });
   } catch (err) {
     return NextResponse.json(

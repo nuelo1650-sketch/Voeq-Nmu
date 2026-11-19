@@ -2,13 +2,14 @@
 // or not the pair matched — nobody can use it to probe the register.
 // Letter #8 (access link) queues through the outbox inside a transaction.
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { prisma } from "@voeq/db";
 import { createNotification } from "@voeq/db/outbox";
 import { applicationAccessLink } from "@voeq/email";
 import { mintAccessToken, ACCESS_LINK_SHORT_MINUTES } from "@/lib/access";
 import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { verifyTurnstile, turnstileUserMessage } from "@/lib/turnstile";
+import { drainOutbox } from "@/lib/outbox-drain";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,8 @@ export async function POST(req: Request) {
         },
       });
     });
+    // Send it now — serverless has no poller worker (see outbox-drain.ts).
+    after(() => drainOutbox());
   }
 
   return NextResponse.json({ ok: true });

@@ -2,9 +2,10 @@
 // the account row on every call), maker-checker ENFORCED: the account that
 // staged a match can never confirm it (doc 07 §2.6 rule 5).
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { confirmAllocation } from "@/lib/ledger";
 import { staffGate } from "@/lib/staff";
+import { drainOutbox } from "@/lib/outbox-drain";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,9 @@ export async function POST(req: Request) {
 
   try {
     const result = await confirmAllocation(body.allocationId, gate.staff.email);
+    // The registration/publication letters queue inside confirmAllocation —
+    // send them now (serverless has no poller worker, see outbox-drain.ts).
+    after(() => drainOutbox());
     return NextResponse.json({ ok: true, ...result }, { status: 200 });
   } catch (err) {
     return NextResponse.json(

@@ -3,9 +3,10 @@
 // gate re-reads the account row server-side on every call, so suspended or
 // disabled accounts lose their power the moment the admin flips the switch.
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { decisionSchema, recordDecision } from "@/lib/decisions";
 import { staffGate } from "@/lib/staff";
+import { drainOutbox } from "@/lib/outbox-drain";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,9 @@ export async function POST(req: Request) {
       email: gate.staff.email,
       family: gate.staff.family,
     });
+    // Decision letters queue in the same transaction — send them now
+    // (serverless has no poller worker, see outbox-drain.ts).
+    after(() => drainOutbox());
     return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json(

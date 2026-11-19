@@ -1,9 +1,10 @@
 // Real statement import — ACTIVE register-family account required (the desk
 // gate re-reads the account row on every call).
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { importStatement } from "@/lib/ledger";
 import { staffGate } from "@/lib/staff";
+import { drainOutbox } from "@/lib/outbox-drain";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,9 @@ export async function POST(req: Request) {
   try {
     const text = await file.text();
     const result = await importStatement(file.name.slice(0, 120), text, gate.staff.email);
+    // Fee-ready letters queue inside importStatement — send them now
+    // (serverless has no poller worker, see outbox-drain.ts).
+    after(() => drainOutbox());
     return NextResponse.json({ ok: true, ...result }, { status: 201 });
   } catch (err) {
     return NextResponse.json(
