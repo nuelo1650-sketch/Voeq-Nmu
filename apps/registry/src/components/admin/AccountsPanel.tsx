@@ -87,25 +87,62 @@ export function AccountsPanel({
 
   const canCreate = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) && (family === "platform" || institutionId !== "");
 
-  async function applyPreset(
+  // The four plain-language roles (Kai: "I want easy stuffs"). One click
+  // sets a coherent, complete grant set — no key-hunting. Fine-tuning stays
+  // below under "Advanced", closed by default.
+  const WORKBENCH_KEYS = [
+    "applications.read",
+    "applications.decide",
+    "applications.request-corrections",
+    "ledger.read",
+    "ledger.import",
+    "ledger.stage-match",
+    "ledger.confirm-fee",
+    "ledger.write-off",
+    "directory.read",
+  ];
+  const MONEY_KEYS = ["applications.read", "ledger.read", "directory.read"];
+
+  function roleLabel(acc: AdminAccount): string {
+    const held = acc.grants.filter((g) => !g.revokedAt).map((g) => g.permissionKey);
+    if (held.length === 0) return "no powers yet";
+    const hasPlatform = held.some((k) => k !== "directory.read" && !WORKBENCH_KEYS.includes(k));
+    const hasDesk = held.some(
+      (k) =>
+        k === "applications.decide" ||
+        k === "ledger.import" ||
+        k === "ledger.stage-match" ||
+        k === "ledger.confirm-fee" ||
+        k === "ledger.write-off",
+    );
+    if (hasPlatform && hasDesk) return "full access";
+    if (hasPlatform) return "admin";
+    if (held.includes("applications.decide")) return "workbench";
+    if (MONEY_KEYS.every((k) => held.includes(k))) return "see the money only";
+    return "custom set";
+  }
+
+  async function applyRole(
     acc: AdminAccount,
-    preset: "reviewer" | "money" | "full" | "none",
+    role: "full" | "admin" | "workbench" | "money" | "none",
   ) {
     const holdable = permissions.filter(
       (p) => acc.family === "platform" || p.family !== "platform",
     );
     const targets: string[] =
-      preset === "reviewer"
-        ? ["applications.read", "applications.decide", "applications.request-corrections", "ledger.read", "directory.read"]
-        : preset === "money"
-          ? ["applications.read", "ledger.read", "directory.read"]
-          : preset === "full"
-            ? holdable.map((p) => p.key)
-            : [];
+      role === "workbench"
+        ? WORKBENCH_KEYS
+        : role === "money"
+          ? MONEY_KEYS
+          : role === "admin"
+            ? permissions.filter((p) => p.family === "platform").map((p) => p.key)
+            : role === "full"
+              ? holdable.map((p) => p.key)
+              : [];
     const current = acc.grants.filter((g) => !g.revokedAt).map((g) => g.permissionKey);
     const toGrant = targets.filter((k) => !current.includes(k));
     const toRevoke =
-      preset === "none"
+      role === "none"
         ? current
         : current.filter((k) => !targets.includes(k) && holdable.some((p) => p.key === k));
 
@@ -116,8 +153,16 @@ export function AccountsPanel({
       await run({ op: "grant.set", accountId: acc.id, permissionKey: key, granted: false }, "");
     }
     const label =
-      preset === "none" ? "all permissions cleared" : `preset applied — ${targets.length} permissions`;
-    await run({ op: "account.update", id: acc.id, status: acc.status }, `${acc.email}: ${label}.`);
+      role === "none"
+        ? "all permissions cleared"
+        : role === "full"
+          ? "full access — admin and workbench"
+          : role === "admin"
+            ? "admin only"
+            : role === "workbench"
+              ? "workbench"
+              : "see the money only";
+    await run({ op: "account.update", id: acc.id, status: acc.status }, `${acc.email}: now ${label}.`);
   }
 
   return (
@@ -250,7 +295,7 @@ export function AccountsPanel({
                         ? "Voeq platform"
                         : `register · ${acc.institutionName ?? "unassigned"}`}
                       {" · "}
-                      {openGrants.length} permission{openGrants.length === 1 ? "" : "s"}
+                      <b className="text-vq-forest-dark">{roleLabel(acc)}</b>
                       {acc.lastLoginAt
                         ? ` · last sign-in ${new Date(acc.lastLoginAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`
                         : " · never signed in"}
@@ -281,104 +326,155 @@ export function AccountsPanel({
                       </MonoButton>
                     )}
                     <MonoButton onClick={() => setGrantsFor(showGrants ? null : acc.id)}>
-                      Permissions
+                      Set role
                     </MonoButton>
                   </div>
                 </div>
 
                 {showGrants && (
                   <div className="border-t border-vq-forest/10 px-4 py-3">
-                    <SectionHeading note="one-way wall: platform may hold everything, register never touches platform">
-                      Permission matrix — hand out exactly the role
+                    <SectionHeading note={`now: ${roleLabel(acc)}`}>
+                      Set a role — one click, done
                     </SectionHeading>
 
-                    {/* role presets — one click sets a coherent set of grants.
-                        Kai: promoting someone to "workbench or admin" only was
-                        too coarse; these cover the real shapes of a role. */}
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <MonoButton
-                        disabled={busyOp !== null}
-                        onClick={() => applyPreset(acc, "reviewer")}
-                      >
-                        Preset · Reviewer (full desk)
-                      </MonoButton>
-                      <MonoButton
-                        disabled={busyOp !== null}
-                        onClick={() => applyPreset(acc, "money")}
-                      >
-                        Preset · See the money only
-                      </MonoButton>
-                      <MonoButton
-                        disabled={busyOp !== null}
-                        onClick={() => applyPreset(acc, "full")}
-                      >
-                        Preset · Everything
-                      </MonoButton>
+                    {/* The four plain-language roles. The current one is lit;
+                        clicking any card replaces ALL grants with that role.
+                        Kai: "full access, workbench, admin, or both" — exactly. */}
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {(
+                        [
+                          {
+                            key: "full" as const,
+                            title: "Full access — admin + workbench",
+                            desc: "Everything: the admin console AND the register desk. For a trusted co-owner.",
+                            platformOnly: true,
+                          },
+                          {
+                            key: "admin" as const,
+                            title: "Admin only",
+                            desc: "The admin console: institutions, accounts, audit. No application decisions.",
+                            platformOnly: true,
+                          },
+                          {
+                            key: "workbench" as const,
+                            title: "Workbench only",
+                            desc: "The register desk: review, decide, request corrections, confirm fees.",
+                            platformOnly: false,
+                          },
+                          {
+                            key: "money" as const,
+                            title: "See the money only",
+                            desc: "Read the queue and the ledger. Cannot decide, promote, or demote anyone.",
+                            platformOnly: false,
+                          },
+                        ]
+                      ).map((r) => {
+                        const isPlatform = acc.family === "platform";
+                        const allowed = isPlatform || !r.platformOnly;
+                        const current = roleLabel(acc);
+                        const isCurrent =
+                          (r.key === "full" && current === "full access") ||
+                          (r.key === "admin" && current === "admin") ||
+                          (r.key === "workbench" && current === "workbench") ||
+                          (r.key === "money" && current === "see the money only");
+                        return (
+                          <button
+                            key={r.key}
+                            type="button"
+                            disabled={busyOp !== null || !allowed}
+                            title={allowed ? undefined : "Admin powers live on platform accounts only"}
+                            onClick={() => applyRole(acc, r.key)}
+                            className={`border px-3 py-2.5 text-left transition ${
+                              isCurrent
+                                ? "border-vq-forest bg-vq-forest text-white"
+                                : allowed
+                                  ? "border-vq-forest/25 bg-white text-vq-ink hover:border-vq-forest"
+                                  : "border-vq-forest/10 bg-transparent text-vq-ink-subtle opacity-50"
+                            }`}
+                          >
+                            <span className="block text-sm font-bold">{r.title}</span>
+                            <span
+                              className={`mt-0.5 block text-xs leading-snug ${
+                                isCurrent ? "text-white/80" : "text-vq-ink-muted"
+                              }`}
+                            >
+                              {allowed ? r.desc : "Create a platform account for this role"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="mt-2 flex items-center justify-between gap-2">
+                      <p className="text-xs leading-relaxed text-vq-ink-subtle">
+                        Clicking a card <b>replaces</b> the account&apos;s whole permission set with that role.
+                        Every change is audited.
+                      </p>
                       <MonoButton
                         tone="danger"
                         disabled={busyOp !== null || openGrants.length === 0}
-                        onClick={() => applyPreset(acc, "none")}
+                        onClick={() => applyRole(acc, "none")}
                       >
-                        Clear all
+                        Remove all powers
                       </MonoButton>
                     </div>
-                    <p className="mt-1.5 text-xs leading-relaxed text-vq-ink-subtle">
-                      Reviewer = read the queue, decide, request corrections. See the money only = the
-                      ledger and the directory, nothing else — cannot promote, demote, or decide. Every
-                      change here is audited.
-                    </p>
 
-                    <ul className="mt-3 divide-y divide-vq-forest/10 border border-vq-forest/10">
-                      {permissions.map((perm) => {
-                        const holds = !!(openGrants.find((g) => g.permissionKey === perm.key));
-                        // One-way wall (Kai's superuser model): platform accounts
-                        // may hold every permission; register accounts never hold
-                        // platform keys.
-                        const canHoldThis = acc.family === "platform" || perm.family !== "platform";
-                        return (
-                          <li
-                            key={perm.key}
-                            className={`flex items-baseline justify-between gap-2 px-3 py-2 ${
-                              canHoldThis ? "" : "opacity-40"
-                            }`}
-                          >
-                            <span>
-                              <span className="font-mono text-xs text-vq-ink">{perm.key}</span>
-                              <span className="ml-2 text-xs text-vq-ink-subtle">
-                                {PERMISSION_NOTES[perm.key] ?? ""}
+                    {/* fine-tuning stays for the odd case; closed by default */}
+                    <details className="mt-3 border border-vq-forest/10 bg-white/70">
+                      <summary className="cursor-pointer px-3 py-2 text-xs font-semibold text-vq-forest">
+                        Advanced — hand out individual permissions
+                      </summary>
+                      <ul className="divide-y divide-vq-forest/10 border-t border-vq-forest/10">
+                        {permissions.map((perm) => {
+                          const holds = !!(openGrants.find((g) => g.permissionKey === perm.key));
+                          // One-way wall (Kai's superuser model): platform accounts
+                          // may hold every permission; register accounts never hold
+                          // platform keys.
+                          const canHoldThis = acc.family === "platform" || perm.family !== "platform";
+                          return (
+                            <li
+                              key={perm.key}
+                              className={`flex items-baseline justify-between gap-2 px-3 py-2 ${
+                                canHoldThis ? "" : "opacity-40"
+                              }`}
+                            >
+                              <span>
+                                <span className="font-mono text-xs text-vq-ink">{perm.key}</span>
+                                <span className="ml-2 text-xs text-vq-ink-subtle">
+                                  {PERMISSION_NOTES[perm.key] ?? ""}
+                                </span>
                               </span>
-                            </span>
-                            {holds ? (
-                              <MonoButton
-                                tone="danger"
-                                disabled={busyOp !== null}
-                                onClick={() =>
-                                  run(
-                                    { op: "grant.set", accountId: acc.id, permissionKey: perm.key, granted: false },
-                                    `${perm.key} taken back from ${acc.email}.`,
-                                  )
-                                }
-                              >
-                                Revoke
-                              </MonoButton>
-                            ) : (
-                              <MonoButton
-                                disabled={busyOp !== null || !canHoldThis}
-                                title={canHoldThis ? undefined : "Register accounts never hold platform powers"}
-                                onClick={() =>
-                                  run(
-                                    { op: "grant.set", accountId: acc.id, permissionKey: perm.key, granted: true },
-                                    `${perm.key} granted to ${acc.email}.`,
-                                  )
-                                }
-                              >
-                                Grant
-                              </MonoButton>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
+                              {holds ? (
+                                <MonoButton
+                                  tone="danger"
+                                  disabled={busyOp !== null}
+                                  onClick={() =>
+                                    run(
+                                      { op: "grant.set", accountId: acc.id, permissionKey: perm.key, granted: false },
+                                      `${perm.key} taken back from ${acc.email}.`,
+                                    )
+                                  }
+                                >
+                                  Revoke
+                                </MonoButton>
+                              ) : (
+                                <MonoButton
+                                  disabled={busyOp !== null || !canHoldThis}
+                                  title={canHoldThis ? undefined : "Register accounts never hold platform powers"}
+                                  onClick={() =>
+                                    run(
+                                      { op: "grant.set", accountId: acc.id, permissionKey: perm.key, granted: true },
+                                      `${perm.key} granted to ${acc.email}.`,
+                                    )
+                                  }
+                                >
+                                  Grant
+                                </MonoButton>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </details>
                   </div>
                 )}
               </li>
