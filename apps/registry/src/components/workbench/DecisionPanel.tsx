@@ -24,12 +24,12 @@ const CHECKLIST = [
 // only starts the thought.
 const CORRECTION_TEMPLATES: { field: string; instruction: string }[] = [
   {
-    field: "Shop photo",
-    instruction: "the photo is too dark — take a new one in daylight, showing the front of the shop",
+    field: "Business flyer",
+    instruction: "the flyer is unreadable — upload a clear one showing the business name",
   },
   {
-    field: "Shop photo",
-    instruction: "the photo is blurry — retake it holding the phone steady",
+    field: "Business flyer",
+    instruction: "the flyer is too dark or blurry — take a new photo of it in daylight",
   },
   {
     field: "Business name",

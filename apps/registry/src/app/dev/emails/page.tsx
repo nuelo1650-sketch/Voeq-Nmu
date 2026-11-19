@@ -21,7 +21,7 @@ import { EmailPreviews } from "./preview-client";
 const REF = "NMU-2026-7";
 const NAME = "Preview Fixture Traders";
 const FIX_ITEMS = [
-  { field: "Shop photo", instruction: "the photo is too dark — take a new one in daylight, showing the front of the shop" },
+  { field: "Business flyer", instruction: "the flyer is too dark or blurry — take a new photo of it in daylight" },
   { field: "Business phone", instruction: "the number starts with +234 but is one digit short — check and re-enter it" },
 ];
 const FIX_REASON =

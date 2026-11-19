@@ -83,6 +83,15 @@ export async function POST(req: Request) {
   if (!campus || !category) {
     return NextResponse.json({ error: "Unknown campus or business category" }, { status: 400 });
   }
+  // "Other" chosen: the applicant's own words are required — same rule as the
+  // fresh application, so a correction cannot drop the note the Media Unit
+  // filed the category from.
+  if (category.slug === "other" && !(input.categoryOther && input.categoryOther.trim().length >= 2)) {
+    return NextResponse.json(
+      { error: "Tell us what the business sells — your own words, one line" },
+      { status: 400 },
+    );
+  }
 
   // Resolve every image: KEPT assets are re-read from the previous revision
   // server-side; FRESH uploads must carry a complete descriptor.
@@ -164,6 +173,7 @@ export async function POST(req: Request) {
             socialHandle: input.socialHandle || null,
             campus: { id: campus.id, name: campus.name },
             category: { id: category.id, name: category.name },
+            categoryOther: input.categoryOther || null,
             ownerName: input.ownerName,
             ownerPhone: input.ownerPhone,
             contactEmail: input.contactEmail,

@@ -27,6 +27,7 @@ export interface ReviseInitial {
   contactEmail: string;
   campusId: string;
   categoryId: string;
+  categoryOther?: string;
   photos: PhotoKept[];
 }
 
@@ -50,7 +51,7 @@ interface PhotoState {
 
 const PHOTO_LABELS: Record<FieldKey, { title: string; hint: string }> = {
   owner_photo: { title: "A photo of you", hint: "Clear face, daylight" },
-  business_photo: { title: "Your shop or stand", hint: "Front view — the signboard helps" },
+  business_photo: { title: "A flyer of your business", hint: "A poster, banner or flyer showing the business name" },
   cac_certificate: { title: "CAC certificate", hint: "Only if the business has one" },
 };
 
@@ -68,6 +69,7 @@ export function ReviseForm({ initial }: { initial: ReviseInitial }) {
     contactEmail: initial.contactEmail,
     campusId: initial.campusId,
     categoryId: initial.categoryId,
+    categoryOther: initial.categoryOther ?? "",
   });
   const [photos, setPhotos] = useState<Record<FieldKey, PhotoState>>(() => {
     const base = {} as Record<FieldKey, PhotoState>;
@@ -193,6 +195,18 @@ export function ReviseForm({ initial }: { initial: ReviseInitial }) {
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
+        {meta?.categories.find((c) => c.id === form.categoryId)?.slug === "other" && (
+          <>
+            <label className="mb-1.5 mt-4 block text-sm font-semibold text-vq-forest-dark">Tell us what it sells</label>
+            <input
+              value={form.categoryOther ?? ""}
+              onChange={(e) => setForm((f) => ({ ...f, categoryOther: e.target.value.slice(0, 80) }))}
+              placeholder="Your own words — the Media Unit will file it properly"
+              maxLength={80}
+              className={inputCls}
+            />
+          </>
+        )}
         <label className="mb-1.5 mt-4 block text-sm font-semibold text-vq-forest-dark">Campus</label>
         <select value={form.campusId} onChange={(e) => setForm((f) => ({ ...f, campusId: e.target.value }))} className={inputCls}>
           {meta?.campuses.map((c) => (
@@ -237,7 +251,6 @@ export function ReviseForm({ initial }: { initial: ReviseInitial }) {
             <input
               type="file"
               accept="image/jpeg,image/png,image/heic,image/webp"
-              capture="environment"
               className="hidden"
               id={`revise-file-${f}`}
               onChange={(e) => {

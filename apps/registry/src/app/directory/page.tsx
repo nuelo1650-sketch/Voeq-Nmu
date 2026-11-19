@@ -87,7 +87,7 @@ export default async function DirectoryPage() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={`https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_480/${photo.promotedPublicId}`}
-                        alt={`The shopfront of ${b.businessName}`}
+                        alt={`The flyer of ${b.businessName}`}
                         className="h-40 w-full border border-vq-forest/10 object-cover sm:w-52"
                       />
                     ) : (

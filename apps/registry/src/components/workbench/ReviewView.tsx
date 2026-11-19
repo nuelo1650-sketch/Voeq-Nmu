@@ -11,7 +11,7 @@ import { DecisionPanel } from "./DecisionPanel";
 
 const FIELD_LABELS: Record<string, string> = {
   owner_photo: "Photo of the owner",
-  business_photo: "Photo of the business",
+  business_photo: "Flyer of the business",
   cac_certificate: "CAC certificate",
 };
 
@@ -185,6 +185,9 @@ export async function ReviewView({
       <dl className="mt-5 divide-y divide-vq-forest/10 rounded-xl border border-vq-forest/10 bg-white/80">
         <Row label="Business name" value={a.businessName} />
         <Row label="Category" value={a.category.name} />
+        {str("categoryOther") && (
+          <Row label="Category (applicant's words)" value={str("categoryOther")} />
+        )}
         <Row label="Campus" value={a.campus.name} />
         <Row label="Owner" value={str("ownerName") || a.ownerName} />
         <Row label="Phone" value={str("ownerPhone") || a.ownerPhone} />

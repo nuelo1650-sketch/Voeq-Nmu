@@ -25,6 +25,9 @@ export const resubmitSchema = z.object({
   socialHandle: z.string().trim().max(80).optional().or(z.literal("")),
   campusId: z.string().min(1),
   categoryId: z.string().min(1),
+  // Applicant's own words when the "Other" category is chosen — same rule as
+  // the fresh application (apply-schema).
+  categoryOther: z.string().trim().min(2).max(80).optional().or(z.literal("")),
   ownerName: z.string().trim().min(3).max(120),
   ownerPhone: nigerianPhone,
   contactEmail: z.string().trim().email().max(160),

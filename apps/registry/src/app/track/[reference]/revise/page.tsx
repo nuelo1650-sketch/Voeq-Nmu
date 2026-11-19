@@ -93,6 +93,7 @@ export default async function RevisePage({
     contactEmail: str("contactEmail") || a.contactEmail,
     campusId: (data.campus as { id?: string } | undefined)?.id ?? "",
     categoryId: (data.category as { id?: string } | undefined)?.id ?? "",
+    categoryOther: str("categoryOther"),
     photos: revision?.images.map((img) => ({
       field: img.field,
       publicId: img.cloudinaryPublicId,

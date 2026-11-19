@@ -81,6 +81,14 @@ export async function POST(req: Request) {
   if (!campus || !category) {
     return NextResponse.json({ error: "Unknown campus or business category" }, { status: 400 });
   }
+  // "Other" chosen: the applicant's own words are REQUIRED — otherwise the
+  // Media Unit receives an unfileable "Other" with nothing to adjust from.
+  if (category.slug === "other" && !(input.categoryOther && input.categoryOther.trim().length >= 2)) {
+    return NextResponse.json(
+      { error: "Tell us what the business sells — your own words, one line" },
+      { status: 400 },
+    );
+  }
 
   const year = new Date().getFullYear();
 
@@ -123,6 +131,7 @@ export async function POST(req: Request) {
             voeqVendorUrl: input.voeqVendorUrl || null,
             campus: { id: campus.id, name: campus.name },
             category: { id: category.id, name: category.name },
+            categoryOther: input.categoryOther || null,
             ownerName: input.ownerName,
             ownerPhone: input.ownerPhone,
             contactEmail: input.contactEmail,

@@ -5,7 +5,10 @@
 // home page. Four steps: Business → Owner → Photos → Review & consents.
 //
 // Image pipeline commitments baked in here (roadmap stages 1–3):
-//   stage 1  camera-first capture ("capture=environment") with gallery fallback
+//   stage 1  photo or file pick — NO capture= attribute on the input (it
+//            forced camera-only on many Android browsers and hid the gallery;
+//            found at first real use 2026-11-19). The OS chooser offers the
+//            camera AND the gallery, which is what "tap to take or choose"
 //   stage 2  compression on the phone BEFORE any byte leaves: canvas
 //            re-encode, longest edge ≤1600px, quality stepped down from 0.85
 //            until ≤200KB, EXIF orientation applied then stripped (no GPS
@@ -64,6 +67,7 @@ export function ApplyForm() {
         socialHandle?: string;
         voeqVendorUrl?: string;
         categoryId?: string;
+        categoryOther?: string;
         campusId?: string;
         ownerName?: string;
         ownerPhone?: string;
@@ -84,6 +88,10 @@ export function ApplyForm() {
   const [socialHandle, setSocialHandle] = useState(draft?.socialHandle ?? "");
   const [voeqVendorUrl, setVoeqVendorUrl] = useState(draft?.voeqVendorUrl ?? "");
   const [categoryId, setCategoryId] = useState(draft?.categoryId ?? "");
+  // "Other" chosen: the applicant names their trade in their own words. The
+  // register stores the generic "Other" category; the Media Unit adjusts it
+  // later — this note is what they adjust FROM.
+  const [categoryOther, setCategoryOther] = useState(draft?.categoryOther ?? "");
   const [campusId, setCampusId] = useState(draft?.campusId ?? "");
   const [ownerName, setOwnerName] = useState(draft?.ownerName ?? "");
   const [ownerPhone, setOwnerPhone] = useState(draft?.ownerPhone ?? "");
@@ -132,6 +140,7 @@ export function ApplyForm() {
             socialHandle,
             voeqVendorUrl,
             categoryId,
+            categoryOther,
             campusId,
             ownerName,
             ownerPhone,
@@ -146,7 +155,7 @@ export function ApplyForm() {
       }
     }, 600);
     return () => clearTimeout(t);
-  }, [step, businessName, businessDescription, website, socialHandle, voeqVendorUrl, categoryId, campusId, ownerName, ownerPhone, contactEmail, consents]);
+  }, [step, businessName, businessDescription, website, socialHandle, voeqVendorUrl, categoryId, categoryOther, campusId, ownerName, ownerPhone, contactEmail, consents]);
 
   const handleFile = useCallback(async (field: FieldKey, file: File) => {
     setImages((prev) => ({ ...prev, [field]: { status: "compressing" } }));
@@ -183,12 +192,15 @@ export function ApplyForm() {
 
   const ownerPhotoDone = images.owner_photo.status === "done";
   const businessPhotoDone = images.business_photo.status === "done";
+  // The "Other" category needs the applicant's own words before it can move.
+  const otherPicked = meta?.categories.find((c) => c.id === categoryId)?.slug === "other";
+  const categoryOtherOk = !otherPicked || categoryOther.trim().length >= 2;
   const photosUploading = (["owner_photo", "business_photo", "cac_certificate"] as FieldKey[]).some(
     (f) => images[f].status === "compressing" || images[f].status === "uploading",
   );
 
   const canNext =
-    (step === 1 && businessName.trim().length >= 2 && categoryId !== "" && campusId !== "") ||
+    (step === 1 && businessName.trim().length >= 2 && categoryId !== "" && categoryOtherOk && campusId !== "") ||
     (step === 2 && ownerName.trim().length >= 3 && ownerPhone.trim().length >= 10 && contactEmail.includes("@")) ||
     (step === 3 && ownerPhotoDone && businessPhotoDone && !photosUploading) ||
     step === 4;
@@ -207,6 +219,7 @@ export function ApplyForm() {
         voeqVendorUrl,
         campusId,
         categoryId,
+        categoryOther: otherPicked ? categoryOther.trim() : undefined,
         ownerName,
         ownerPhone,
         contactEmail,
@@ -310,6 +323,17 @@ export function ApplyForm() {
                 ))}
               </select>
             </Field>
+            {otherPicked && (
+              <Field label="Tell us what it sells" hint="Your own words — the Media Unit will file it properly">
+                <input
+                  value={categoryOther}
+                  onChange={(e) => setCategoryOther(e.target.value.slice(0, 80))}
+                  placeholder="e.g. Phone flashing and software updates"
+                  maxLength={80}
+                  className={inputCls}
+                />
+              </Field>
+            )}
             <Field label="Campus">
               <select value={campusId} onChange={(e) => setCampusId(e.target.value)} className={inputCls}>
                 {meta?.campuses.map((c) => (
@@ -416,8 +440,8 @@ export function ApplyForm() {
             <PhotoField
               fieldKey="business_photo"
               state={images.business_photo}
-              title="Your shop or stand"
-              hint="Front view — the signboard helps"
+              title="A flyer of your business"
+              hint="A poster, banner or flyer showing the business name"
               required
               onPick={handleFile}
               setInputRef={(el) => (fileInputs.current.business_photo = el)}
@@ -441,6 +465,7 @@ export function ApplyForm() {
             <dl className="divide-y divide-vq-forest/10 rounded-xl border border-vq-forest/10 bg-white/60">
               <ReviewRow label="Business" value={businessName} />
               <ReviewRow label="Category" value={meta?.categories.find((c) => c.id === categoryId)?.name ?? "—"} />
+              {otherPicked && <ReviewRow label="Category (your words)" value={categoryOther || "—"} />}
               <ReviewRow label="Campus" value={meta?.campuses.find((c) => c.id === campusId)?.name ?? "—"} />
               <ReviewRow label="Owner" value={ownerName} />
               <ReviewRow label="Phone" value={ownerPhone} />
@@ -454,7 +479,7 @@ export function ApplyForm() {
               />
               <ReviewRow
                 label="Photos"
-                value={`${ownerPhotoDone ? "You ✓" : ""}${ownerPhotoDone && businessPhotoDone ? " · " : ""}${businessPhotoDone ? "Shop ✓" : ""}${images.cac_certificate.status === "done" ? " · CAC ✓" : ""}`}
+                value={`${ownerPhotoDone ? "You ✓" : ""}${ownerPhotoDone && businessPhotoDone ? " · " : ""}${businessPhotoDone ? "Flyer ✓" : ""}${images.cac_certificate.status === "done" ? " · CAC ✓" : ""}`}
               />
             </dl>
 
@@ -479,7 +504,7 @@ export function ApplyForm() {
                 checked={consents.public_listing}
                 onChange={(v) => setConsents((c) => ({ ...c, public_listing: v }))}
               >
-                If approved, I understand my business name, category, campus and shop photo will be publicly listed in the directory.
+                If approved, I understand my business name, category, campus and business flyer will be publicly listed in the directory.
               </Consent>
             </div>
 
@@ -672,7 +697,6 @@ function PhotoField({
         ref={setInputRef}
         type="file"
         accept="image/jpeg,image/png,image/heic,image/webp"
-        capture="environment"
         className="hidden"
         onChange={(e) => {
           const f = e.target.files?.[0];

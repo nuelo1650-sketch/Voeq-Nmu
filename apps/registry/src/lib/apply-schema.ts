@@ -51,6 +51,11 @@ export const applySchema = z.object({
   voeqVendorUrl: z.string().trim().max(200).optional().or(z.literal("")),
   campusId: z.string().min(1),
   categoryId: z.string().min(1),
+  // When the applicant picks the "Other" category: their own words for what
+  // the business sells. The Media Unit files it into a real category later —
+  // this note is what they adjust FROM. Required server-side whenever the
+  // chosen category's slug is "other".
+  categoryOther: z.string().trim().min(2).max(80).optional().or(z.literal("")),
   ownerName: z.string().trim().min(3).max(120),
   ownerPhone: nigerianPhone,
   contactEmail: z.string().trim().email().max(160),
