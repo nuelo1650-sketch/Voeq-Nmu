@@ -43,7 +43,14 @@ export const nigerianPhone = z
 
 export const applySchema = z.object({
   businessName: z.string().trim().min(2).max(120),
-  businessDescription: z.string().trim().max(600).optional().or(z.literal("")),
+  // Required (Kai, 2026-11-20: "description of business is compulsory").
+  // Ten characters minimum — long enough to stop "asdf", short enough that
+  // "I sell food" passes.
+  businessDescription: z
+    .string()
+    .trim()
+    .min(10, "Describe the business in at least 10 characters — what you sell, where, for whom")
+    .max(600, "Keep the description under 600 characters"),
   website: z.string().trim().max(200).optional().or(z.literal("")),
   socialHandle: z.string().trim().max(80).optional().or(z.literal("")),
   // 3.4 light — the applicant's claim of an existing voeq.ng shop. Stored on

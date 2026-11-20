@@ -43,3 +43,20 @@ body {
   outline: 2px solid var(--color-forest);
   outline-offset: 2px;
 }
+
+/* ---------------------------------------------------------------------------
+   The printable record (/staff/record/[reference]) — paper rules. Everything
+   else on the page hides by print:hidden utilities; these rules keep the
+   sheet itself clean: white ground, no breaks inside a row, real margins.
+   ------------------------------------------------------------------------- */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  body {
+    background: #fff !important;
+  }
+  .printable-avoid-break {
+    break-inside: avoid;
+  }
+}

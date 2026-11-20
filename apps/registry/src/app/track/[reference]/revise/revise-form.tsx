@@ -213,13 +213,17 @@ export function ReviseForm({ initial }: { initial: ReviseInitial }) {
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
-        <label className="mb-1.5 mt-4 block text-sm font-semibold text-vq-forest-dark">Describe it</label>
+        <label className="mb-1.5 mt-4 block text-sm font-semibold text-vq-forest-dark">Describe it — required</label>
         <textarea
           value={form.businessDescription}
           onChange={(e) => setForm((f) => ({ ...f, businessDescription: e.target.value.slice(0, 600) }))}
           rows={3}
+          placeholder="What you sell, where exactly, for whom…"
           className={`${inputCls} resize-none`}
         />
+        {form.businessDescription.trim().length < 10 && (
+          <p className="mt-1 text-xs text-vq-amber-dark">At least 10 characters — required</p>
+        )}
         <label className="mb-1.5 mt-4 block text-sm font-semibold text-vq-forest-dark">Website</label>
         <input value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value.trim() }))} className={inputCls} />
         <label className="mb-1.5 mt-4 block text-sm font-semibold text-vq-forest-dark">Social media</label>
@@ -349,7 +353,7 @@ export function ReviseForm({ initial }: { initial: ReviseInitial }) {
 
       <button
         onClick={submit}
-        disabled={!photosReady || !declaration || busy || !form.businessName.trim() || !form.ownerName.trim()}
+        disabled={!photosReady || !declaration || busy || !form.businessName.trim() || !form.ownerName.trim() || form.businessDescription.trim().length < 10}
         className="w-full bg-vq-forest px-5 py-3.5 text-sm font-semibold text-white shadow-md transition enabled:cursor-pointer enabled:hover:bg-vq-forest-mid disabled:opacity-40"
       >
         {busy ? "Resubmitting…" : "Resubmit — same reference"}

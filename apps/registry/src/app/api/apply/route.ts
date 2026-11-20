@@ -11,7 +11,7 @@ import { NextResponse, after } from "next/server";
 import { prisma } from "@voeq/db";
 import { createNotification } from "@voeq/db/outbox";
 import { applicationReceived } from "@voeq/email";
-import { formatReference } from "@voeq/core";
+import { formatReference, registryYear } from "@voeq/core";
 import { applySchema, missingRequiredImages, CONSENT_DOC_VERSION, IMAGE_FIELDS, type ImageField } from "@/lib/apply-schema";
 import { writeAudit } from "@/lib/audit-write";
 import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
@@ -91,7 +91,10 @@ export async function POST(req: Request) {
     );
   }
 
-  const year = new Date().getFullYear();
+  // Year-aware on Nigerian ground: the register's year rolls over at
+  // midnight in Lagos, not at midnight UTC on the server (2027 will issue
+  // NMU-2027-0001 with no change here).
+  const year = registryYear();
 
   try {
     const result = await prisma.$transaction(async (tx) => {

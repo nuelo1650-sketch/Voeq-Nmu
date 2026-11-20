@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { canHold, validateGrants, type PermissionKey } from "./permissions";
 import { hashEntry, canonicalJson, verifyChain } from "./audit";
 import { formatNaira, parseNairaToMinor, FEE_TOTAL_KOBO, FEE_SCHOOL_KOBO, FEE_VOEQ_KOBO } from "./money";
-import { formatReference, parseReference, extractReferenceFromNarration } from "./reference";
+import { formatReference, parseReference, extractReferenceFromNarration, formatCertificateCode, parseCertificateCode, registryYear } from "./reference";
 
 describe("permission matrix — one-way family wall (superuser model)", () => {
   it("register accounts cannot hold platform permissions", () => {
@@ -111,5 +111,27 @@ describe("references", () => {
   it("extracts a reference from a messy bank narration", () => {
     expect(extractReferenceFromNarration("Transfer for NMU-2026-0042 business reg")).toBe("NMU-2026-0042");
     expect(extractReferenceFromNarration("ADA CHUKWUEMEKA no ref")).toBeNull();
+  });
+});
+
+describe("certificate codes and the register year", () => {
+  it("formats the certificate code from the same sequence", () => {
+    expect(formatCertificateCode("NMU", 2026, 1)).toBe("NMU-REG-2026-0001");
+    expect(formatCertificateCode("NMU", 2026, 42)).toBe("NMU-REG-2026-0042");
+  });
+
+  it("parses back, case-insensitively", () => {
+    expect(parseCertificateCode("NMU-REG-2026-0001")).toEqual({ prefix: "NMU", year: 2026, seq: 1 });
+    expect(parseCertificateCode("nmu-reg-2026-0001")).toEqual({ prefix: "NMU", year: 2026, seq: 1 });
+    expect(parseCertificateCode("NMU-2026-0001")).toBeNull();
+    expect(parseCertificateCode("nonsense")).toBeNull();
+  });
+
+  it("the register year follows Africa/Lagos, not the server clock", () => {
+    // 2026-12-31 23:30 UTC == 2027-01-01 00:30 Lagos — the new year on
+    // Nigerian ground, even though the server is still in the old one.
+    const lagosNewYear = new Date("2026-12-31T23:30:00Z");
+    expect(registryYear(lagosNewYear)).toBe(2027);
+    expect(registryYear(new Date("2026-06-15T10:00:00Z"))).toBe(2026);
   });
 });

@@ -200,7 +200,12 @@ export function ApplyForm() {
   );
 
   const canNext =
-    (step === 1 && businessName.trim().length >= 2 && categoryId !== "" && categoryOtherOk && campusId !== "") ||
+    (step === 1 &&
+      businessName.trim().length >= 2 &&
+      categoryId !== "" &&
+      categoryOtherOk &&
+      campusId !== "" &&
+      businessDescription.trim().length >= 10) ||
     (step === 2 && ownerName.trim().length >= 3 && ownerPhone.trim().length >= 10 && contactEmail.includes("@")) ||
     (step === 3 && ownerPhotoDone && businessPhotoDone && !photosUploading) ||
     step === 4;
@@ -344,15 +349,22 @@ export function ApplyForm() {
                 ))}
               </select>
             </Field>
-            <Field label="Describe it in a line or two" hint="Optional — shown on your public entry when approved">
+            <Field
+              label="Describe it in a line or two"
+              hint="Required — what you sell, where exactly, for whom. Shown on your public entry."
+            >
               <textarea
                 value={businessDescription}
                 onChange={(e) => setBusinessDescription(e.target.value.slice(0, 600))}
                 rows={3}
-                placeholder="What you sell, where exactly, when you are open…"
+                placeholder="e.g. I sell textbooks, stationery and printing services at the Okerenkoko main gate, open 8am–6pm daily."
                 className={`${inputCls} resize-none`}
               />
-              <p className="mt-1 text-right text-[11px] text-vq-ink-subtle">{businessDescription.length}/600</p>
+              <p className="mt-1 text-right text-[11px] text-vq-ink-subtle">
+                {businessDescription.trim().length < 10
+                  ? "At least 10 characters — required"
+                  : `${businessDescription.length}/600`}
+              </p>
             </Field>
             <Field label="Website" hint="Optional — if the business has one">
               <input

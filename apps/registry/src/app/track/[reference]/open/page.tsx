@@ -138,12 +138,15 @@ export default async function ApplicationStatusPage({
         </ol>
 
         {/* what is required next — driven by the real status */}
+        {/* StatusNextStep drives on the real status; the certificate code is
+            shown only to the authenticated applicant — never to strangers. */}
         <StatusNextStep
           status={a.status}
           reference={a.reference}
           decisions={a.decisions}
           token={token ?? ""}
           feeIntent={feeIntent}
+          certificateCode={a.certificateCode}
         />
 
         {/* the Voeq funnel (1.17) — a callout, not a footnote: Kai had it as an
@@ -177,6 +180,7 @@ function StatusNextStep({
   decisions,
   token,
   feeIntent,
+  certificateCode,
 }: {
   status: string;
   reference: string;
@@ -190,6 +194,7 @@ function StatusNextStep({
     claimAt: Date | null;
     receiptPublicId: string | null;
   } | null;
+  certificateCode: string | null;
 }) {
   if (status === "submitted" || status === "under_review") {
     return (
@@ -398,11 +403,35 @@ function StatusNextStep({
           On the record
         </p>
         <p className="mt-2 text-sm leading-relaxed text-vq-ink-muted">
-          Payment confirmed on the Media Unit&apos;s bank record.{" "}
-          <b>{reference}</b> is your official proof of registration — keep it.
-          Your business now stands in the official NMU directory, and nobody
-          from this register will ever ask you for another payment.
+          Payment confirmed on the Media Unit&apos;s bank record. Your business now
+          stands in the official NMU directory, and nobody from this register will
+          ever ask you for another payment.
         </p>
+        {certificateCode ? (
+          <div className="mt-4 border-2 border-vq-forest bg-vq-cream px-4 py-4">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-vq-forest">
+              Registration number — keep it safe
+            </p>
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <p className="font-mono text-xl font-bold tracking-wide text-vq-forest-dark">
+                {certificateCode}
+              </p>
+              <CopyText text={certificateCode} />
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-vq-ink-muted">
+              This is the one line that proves this business is formally registered
+              with the University. Show it at the Media Unit and your record comes
+              up on the spot. If you ever lose it, it can be re-sent to the email
+              address you applied with, from the track page.
+            </p>
+          </div>
+        ) : (
+          <p className="mt-3 text-xs leading-relaxed text-vq-ink-subtle">
+            Registered before the certificate-number system began. Your reference{" "}
+            <b>{reference}</b> remains your proof of registration; the Media Unit
+            can confirm your status against it.
+          </p>
+        )}
       </div>
     );
   }

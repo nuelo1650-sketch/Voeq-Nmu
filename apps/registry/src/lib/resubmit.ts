@@ -20,7 +20,12 @@ import { IMAGE_FIELDS, ImageField, nigerianPhone, MAX_IMAGE_BYTES_AFTER_COMPRESS
 
 export const resubmitSchema = z.object({
   businessName: z.string().trim().min(2).max(120),
-  businessDescription: z.string().trim().max(600).optional().or(z.literal("")),
+  // Required, same rule as the fresh application (Kai, 2026-11-20).
+  businessDescription: z
+    .string()
+    .trim()
+    .min(10, "Describe the business in at least 10 characters")
+    .max(600, "Keep the description under 600 characters"),
   website: z.string().trim().max(200).optional().or(z.literal("")),
   socialHandle: z.string().trim().max(80).optional().or(z.literal("")),
   campusId: z.string().min(1),

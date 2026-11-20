@@ -33,15 +33,43 @@ function feeWord(fee?: { status: string } | null): { text: string; paid: boolean
   }
 }
 
-export async function QueueView({ statusFilter }: { statusFilter?: string }) {
+export async function QueueView({ statusFilter, query }: { statusFilter?: string; query?: string }) {
+  // The pseudo-filters (shared.tsx PAYMENT_FILTERS) translate into
+  // fee-intent-aware queries — this is where "who has paid" and "who has
+  // been approved but not paid" are actually answered.
+  const where =
+    query !== undefined && query !== ""
+      ? {
+          OR: [
+            { reference: { contains: query, mode: "insensitive" as const } },
+            { certificateCode: { contains: query, mode: "insensitive" as const } },
+            { businessName: { contains: query, mode: "insensitive" as const } },
+            { ownerName: { contains: query, mode: "insensitive" as const } },
+            { ownerPhone: { contains: query } },
+            { contactEmail: { contains: query, mode: "insensitive" as const } },
+          ],
+        }
+      : statusFilter === "resubmitted"
+        ? { status: "under_review", revisions: { some: { revisionNo: { gt: 1 } } } }
+        : statusFilter === "awaiting-payment"
+          ? // Approved, money not yet in hand: intent still `issued` (or not
+            // yet cut). This is the "approved but pending payment" answer.
+            {
+              status: "approved",
+              OR: [{ feeIntent: null }, { feeIntent: { status: "issued" } }],
+            }
+          : statusFilter === "paid-pending"
+            ? // They say they paid — the desk has not confirmed it yet.
+              {
+                feeIntent: { status: { in: ["awaiting_bank_evidence", "matched"] } },
+              }
+            : statusFilter
+              ? { status: statusFilter }
+              : undefined;
+
   const [apps, counts, feeSums] = await Promise.all([
     prisma.application.findMany({
-      where:
-        statusFilter === "resubmitted"
-          ? { status: "under_review", revisions: { some: { revisionNo: { gt: 1 } } } }
-          : statusFilter
-            ? { status: statusFilter as never }
-            : undefined,
+      where: where as never,
       orderBy: { submittedAt: "desc" },
       include: {
         category: { select: { name: true } },
@@ -82,23 +110,31 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
       {/* the desk header — ONE ruled block, same grammar as the admin
           overview: hairline-ruled cells, label over a big mono figure.
           Money reads as a pipeline left to right: owed → claimed →
-          collected (1.10 + Kai's transparency ask). */}
+          collected (1.10 + Kai's transparency ask). Each figure is a
+          CLICKABLE FILTER — the number answers the question, the click
+          answers it with names (Kai: clear directions for every turn). */}
       <div className="border border-vq-forest/20 bg-white">
         <div className="grid grid-cols-1 gap-px bg-vq-forest/10 sm:grid-cols-3">
           <MoneyStat
             label="Still owed"
             value={formatNaira(owedMinor)}
             valueCls="text-vq-ink"
+            href="?status=awaiting-payment"
+            note="approved · not yet paid"
           />
           <MoneyStat
             label="Claimed · awaiting proof"
             value={formatNaira(inFlightMinor)}
             valueCls="text-vq-amber-dark"
+            href="?status=paid-pending"
+            note="they say paid · check the bank record"
           />
           <MoneyStat
             label="Collected, all time"
             value={formatNaira(collectedMinor)}
             valueCls="text-vq-forest-dark"
+            href="?status=registered"
+            note="confirmed on the bank record"
           />
         </div>
         {/* queue counts — compact footer strip inside the same block */}
@@ -110,10 +146,64 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
           <Count label="Registered" value={countOf("registered")} />
           {resubmittedCount > 0 && <Count label="Resubmitted" value={resubmittedCount} accent />}
         </div>
+        {/* the directions (Kai: clear for each turn). Money questions have
+            two answers and one path each. */}
+        <div className="border-t border-vq-forest/10 bg-vq-cream/60 px-4 py-3 text-xs leading-relaxed text-vq-ink-muted">
+          <p>
+            <b className="text-vq-forest-dark">Who has paid?</b> Click{" "}
+            <span className="font-mono text-[10px] uppercase">Paid — awaiting confirm</span> or{" "}
+            <span className="font-mono text-[10px] uppercase">Paid — on the record</span> below.
+          </p>
+          <p className="mt-1">
+            <b className="text-vq-forest-dark">Approved but not paid?</b> Click{" "}
+            <span className="font-mono text-[10px] uppercase">Awaiting payment</span>. To collect a
+            payment: import the bank statement CSV in the ledger → match the reference → a second
+            account confirms. Full steps sit inside each record.
+          </p>
+        </div>
       </div>
+
+      {/* the register search (Kai: find anyone and say "yes, he's in our
+          records"). Searches certificate codes, references, names, phones. */}
+      <form action="/staff" method="get" className="mt-4 flex gap-2">
+        <input
+          type="search"
+          name="q"
+          defaultValue={query ?? ""}
+          placeholder="Search: NMU-REG-2026-0001, NMU-2026-0001, name, phone, email…"
+          className="min-w-0 flex-1 border border-vq-forest/20 bg-white px-4 py-2.5 font-mono text-sm text-vq-ink placeholder:font-sans placeholder:text-vq-ink-subtle focus:border-vq-forest focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="shrink-0 bg-vq-forest px-4 py-2.5 text-xs font-bold text-white transition hover:opacity-90"
+        >
+          Search the register
+        </button>
+      </form>
+      {query !== undefined && query !== "" && (
+        <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-vq-ink-subtle">
+          searching for “{query}” — {apps.length} match{apps.length === 1 ? "" : "es"} ·{" "}
+          <a href="/staff" className="underline">
+            clear
+          </a>
+        </p>
+      )}
 
       <div className="mt-4">
         <QueueFilterBar current={statusFilter} />
+      </div>
+
+      {/* the way data leaves the register (Kai: downloadable, printable) */}
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <p className="text-xs text-vq-ink-subtle">
+          Need the data outside this screen? The export below opens in Excel.
+        </p>
+        <a
+          href="/api/staff/export/applications"
+          className="shrink-0 border border-vq-forest/25 bg-white px-3 py-2 text-xs font-semibold text-vq-forest transition hover:border-vq-forest"
+        >
+          ⤓ Export all as CSV
+        </a>
       </div>
 
       {apps.length === 0 ? (
@@ -154,6 +244,11 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
                         {a.campus.name.replace(" Campus", "")} · {a.revisions[0]?.images.length ?? 0} photo
                         {(a.revisions[0]?.images.length ?? 0) === 1 ? "" : "s"}
                       </p>
+                      {a.certificateCode && (
+                        <p className="mt-0.5 font-mono text-[11px] font-bold text-vq-forest-dark">
+                          {a.certificateCode}
+                        </p>
+                      )}
                     </div>
                     <div className="shrink-0 text-right">
                       <StatusChip status={a.status} />
@@ -190,13 +285,38 @@ export async function QueueView({ statusFilter }: { statusFilter?: string }) {
 
 // Money cell — same grammar as the admin overview Metric: micro label over
 // a large mono figure, sitting in a hairline-ruled cell (parent supplies
-// the gap-px rules; this supplies the white surface).
-function MoneyStat({ label, value, valueCls }: { label: string; value: string; valueCls: string }) {
-  return (
+// the gap-px rules; this supplies the white surface). The whole cell is a
+// link: the figure answers "how much", the click answers "who".
+function MoneyStat({
+  label,
+  value,
+  valueCls,
+  href,
+  note,
+}: {
+  label: string;
+  value: string;
+  valueCls: string;
+  href?: string;
+  note?: string;
+}) {
+  const body = (
     <div className="bg-white px-4 py-3">
       <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-vq-ink-subtle">{label}</p>
       <p className={`mt-1.5 font-mono text-2xl leading-none ${valueCls}`}>{value}</p>
+      {note && (
+        <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-vq-ink-subtle">
+          {note}
+        </p>
+      )}
     </div>
+  );
+  return href ? (
+    <a href={href} className="block transition hover:bg-vq-cream/50">
+      {body}
+    </a>
+  ) : (
+    body
   );
 }
 

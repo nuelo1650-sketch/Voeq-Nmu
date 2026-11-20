@@ -123,8 +123,25 @@ export async function ReviewView({
           <p className="mt-0.5 text-xs text-vq-ink-muted">
             <span className="font-mono">{a.reference}</span> · submitted {timeAgo(a.submittedAt ?? a.createdAt)}
           </p>
+          {a.certificateCode && (
+            <p className="mt-1 font-mono text-sm font-bold text-vq-forest-dark">
+              {a.certificateCode}
+              <span className="ml-2 font-sans text-[10px] font-normal uppercase tracking-[0.14em] text-vq-ink-subtle">
+                registration number — proof for “he&apos;s in our records”
+              </span>
+            </p>
+          )}
         </div>
-        <StatusChip status={a.status} />
+        <div className="flex flex-col items-end gap-2">
+          <StatusChip status={a.status} />
+          {/* getting data out (Kai): print or save-as-PDF, straight from the browser */}
+          <a
+            href={`/staff/record/${encodeURIComponent(a.reference)}`}
+            className="border border-vq-forest/25 bg-white px-3 py-2 text-xs font-semibold text-vq-forest transition hover:border-vq-forest"
+          >
+            ⎙ Print this record
+          </a>
+        </div>
       </div>
 
       {/* side-by-side revisions — what changed, before the full dossier */}
@@ -287,19 +304,42 @@ export async function ReviewView({
               </p>
             )}
             {feeIntent.status === "matched" && (
-              <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-amber-dark">
-                Paid — in the bank record · confirm it in the ledger
-              </p>
+              <>
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-amber-dark">
+                  Paid — in the bank record
+                </p>
+                <p className="mt-1 text-vq-ink-muted">
+                  <b>What to do now:</b> open the ledger and confirm this fee — and it must be a
+                  second person, not whoever staged the match (maker-checker). Confirmation registers
+                  the business and issues its certificate number.
+                </p>
+              </>
             )}
             {feeIntent.status === "awaiting_bank_evidence" && (
-              <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-amber-dark">
-                Paid claim — the applicant says paid · check tonight&apos;s bank record
-              </p>
+              <>
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-amber-dark">
+                  Paid claim — the applicant says paid
+                </p>
+                <p className="mt-1 text-vq-ink-muted">
+                  <b>What to do now:</b> import the bank statement CSV in the ledger — the reference,
+                  the exact amount and the date must all three agree — then a second account confirms.
+                  Nothing is confirmed on the applicant&apos;s word alone.
+                </p>
+              </>
             )}
             {(feeIntent.status === "issued" || feeIntent.status === "voided") && (
-              <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-ink-subtle">
-                {feeIntent.status === "issued" ? "Not paid yet" : "Voided"} · issued {timeAgo(feeIntent.issuedAt)}
-              </p>
+              <>
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-vq-ink-subtle">
+                  {feeIntent.status === "issued" ? "Not paid yet" : "Voided"} · issued {timeAgo(feeIntent.issuedAt)}
+                </p>
+                {feeIntent.status === "issued" && (
+                  <p className="mt-1 text-vq-ink-muted">
+                    <b>What to do now:</b> nothing on your side until the money moves. The applicant
+                    has the account details and the narration on their own page; the moment the
+                    statement CSV carries this reference, the ledger finds it.
+                  </p>
+                )}
+              </>
             )}
             {feeIntent.claimAt && (
               <p className="mt-1 text-vq-ink-muted">

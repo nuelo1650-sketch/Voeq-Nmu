@@ -252,6 +252,14 @@ model Application {
 
   currentRevisionId String? @unique
 
+  // The permanent identifier of a REGISTERED business (Kai, 2026-11-20):
+  // NMU-REG-2026-0001. Issued once, in the same transaction that registers
+  // the business, derived from the application's own per-year sequence —
+  // unique by construction, never reissued, never deleted. Null until
+  // registration: a mere applicant holds no certificate.
+  certificateCode    String?   @unique
+  certificateIssuedAt DateTime?
+
   submittedAt  DateTime?
   decidedAt    DateTime?
   registeredAt DateTime?

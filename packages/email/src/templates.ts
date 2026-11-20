@@ -387,7 +387,12 @@ export function feeAwaitingEvidence(reference: string): EmailTemplate {
   };
 }
 
-export function feeConfirmed(reference: string, businessName: string, publicUrl: string): EmailTemplate {
+export function feeConfirmed(
+  reference: string,
+  businessName: string,
+  publicUrl: string,
+  certificateCode?: string,
+): EmailTemplate {
   return {
     subject: `${businessName} is on the record — what that means for you`,
     html: shell({
@@ -396,11 +401,18 @@ export function feeConfirmed(reference: string, businessName: string, publicUrl:
       title: "Your business is on the record.",
       body: [
         para(`Payment confirmed. <b>${esc(businessName)}</b> is now registered in the official NMU business directory — matched against the bank's own record, confirmed by a person, and signed into the audit trail. Welcome to the record.`),
-        refChip(reference, "Your official reference"),
+        ...(certificateCode
+          ? [
+              refChip(certificateCode, "Your registration number — keep it safe"),
+              para(`This is your <b>registration number</b>. It is the one line that proves ${esc(businessName)} is formally registered with the University — anyone at the Media Unit can look it up and confirm you are in the records, on the spot. If you ever lose it, request it again from the register's track page and it will be re-sent to this email address.`),
+            ]
+          : [refChip(reference, "Your official reference")]),
         sectionHeading("What being on the record means"),
         bulletsBlock([
           `Your business is listed in the official directory, searchable by students and staff on both campuses.`,
-          `This reference is your proof of registration. Keep it — it is the receipt the University recognises.`,
+          certificateCode
+            ? `Your registration number above is your proof of registration. Keep it — it is what the University recognises.`
+            : `This reference is your proof of registration. Keep it — it is the receipt the University recognises.`,
           `Any change to your entry later goes through the Media Unit, with the same care as this one.`,
         ]),
         sectionHeading("One thing worth knowing"),
@@ -478,6 +490,32 @@ export function applicationAccessLink(
         signoff(),
       ].join(""),
       cta: { href: accessUrl, label: "Open my application's page" },
+    }),
+  };
+}
+
+// Letter #9 — the registration number, re-sent on request (Kai: "easily
+// retrievable if lost"). Fires only when reference AND email both match a
+// registered business; the code is never shown to an arbitrary visitor —
+// it travels by email, to the address already on record.
+export function certificateCodeReminder(
+  reference: string,
+  businessName: string,
+  certificateCode: string,
+): EmailTemplate {
+  return {
+    subject: `Your registration number — ${certificateCode} — re-sent as requested`,
+    html: shell({
+      preheader: `${businessName}'s registration number, sent again to the address on record. Nothing else changed.`,
+      status: { label: "Your registration number", tone: "solid" },
+      title: "Here is your registration number again.",
+      body: [
+        para(`Someone asked the register to re-send the registration number for <b>${esc(businessName)}</b>, and this is it. If that someone was you, everything is in order.`),
+        refChip(certificateCode, "Your registration number — keep it safe"),
+        para(`This number is the one line that proves ${esc(businessName)} is formally registered with the University. Show it at the Media Unit and your record comes up on the spot.`),
+        para(`If you did not request this email, ignore it — nothing changed, and your number only ever goes to this address. But it may be worth telling the Media Unit, in case someone is trying to pose as your business.`),
+        signoff(),
+      ].join(""),
     }),
   };
 }

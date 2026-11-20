@@ -18,7 +18,7 @@
 
 import { createHash } from "node:crypto";
 import { prisma } from "@voeq/db";
-import { isExactMatch, assertFeeIntentTransition, assertApplicationTransition, formatNaira } from "@voeq/core";
+import { isExactMatch, assertFeeIntentTransition, assertApplicationTransition, formatNaira, formatCertificateCode, parseReference } from "@voeq/core";
 import { createNotification } from "@voeq/db/outbox";
 import { feeConfirmed, paymentException } from "@voeq/email";
 import { writeAudit } from "@/lib/audit-write";
@@ -245,6 +245,7 @@ export async function runMatcher(
 export interface ConfirmResult {
   reference: string;
   businessName: string;
+  certificateCode: string;
   schoolMinor: number;
   voeqMinor: number;
 }
@@ -279,6 +280,21 @@ export async function confirmAllocation(
   const base = process.env.APP_URL ?? "http://localhost:3000";
   const publicUrl = `${base}/`; // the public directory entry — placeholder until it exists
 
+  // The certificate code (Kai, 2026-11-20): derived from the application's
+  // own reference — NMU-2026-0003 → NMU-REG-2026-0003 — so it shares the
+  // per-year sequence, is unique by construction, and is year-aware for
+  // free (2027 registrations read NMU-REG-2027-####). Issued exactly once,
+  // in the same transaction that registers the business.
+  const parsed = parseReference(application.reference);
+  if (!parsed) {
+    throw new Error(`Reference "${application.reference}" is not parseable — cannot issue a certificate code`);
+  }
+  const certificateCode = formatCertificateCode(
+    parsed.prefix,
+    parsed.year,
+    parsed.seq,
+  );
+
   await prisma.$transaction(async (tx) => {
     assertFeeIntentTransition("matched", "confirmed");
     await tx.feeAllocation.update({
@@ -292,7 +308,16 @@ export async function confirmAllocation(
     assertApplicationTransition("approved", "registered");
     await tx.application.update({
       where: { id: application.id },
-      data: { status: "registered", publicationStatus: "published" },
+      data: {
+        status: "registered",
+        publicationStatus: "published",
+        // The certificate is minted with the registration, atomically.
+        // If a code somehow already exists (impossible via this path — the
+        // derivation is injective on references), the transaction fails
+        // loudly rather than silently reissuing.
+        certificateCode,
+        certificateIssuedAt: new Date(),
+      },
     });
 
     // Phase 3: the vendor-sync row is created in the SAME transaction as the
@@ -335,7 +360,7 @@ export async function confirmAllocation(
       topic: "fee.confirmed",
       payload: {
         to: application.contactEmail,
-        template: feeConfirmed(application.reference, application.businessName, publicUrl),
+        template: feeConfirmed(application.reference, application.businessName, publicUrl, certificateCode),
       },
     });
     await writeAudit(tx, {
@@ -346,6 +371,7 @@ export async function confirmAllocation(
       actorFamily: "register",
       data: {
         reference: application.reference,
+        certificateCode,
         allocationId: allocation.id,
         totalMinor: allocation.totalMinor,
         schoolMinor: allocation.schoolMinor,
@@ -367,6 +393,7 @@ export async function confirmAllocation(
   return {
     reference: application.reference,
     businessName: application.businessName,
+    certificateCode,
     schoolMinor: allocation.schoolMinor,
     voeqMinor: allocation.voeqMinor,
   };

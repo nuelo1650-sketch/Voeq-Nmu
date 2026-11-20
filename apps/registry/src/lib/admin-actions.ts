@@ -20,7 +20,7 @@
 
 import { z } from "zod";
 import { prisma } from "@voeq/db";
-import { canHold, validateGrants, familyOf, type PermissionKey } from "@voeq/core";
+import { canHold, validateGrants, familyOf, PERMISSIONS, type PermissionKey } from "@voeq/core";
 import { writeAudit } from "@/lib/audit-write";
 import type { AdminContext } from "@/lib/admin";
 import { hasPermission } from "@/lib/admin";
@@ -112,12 +112,53 @@ const categoryDeleteSchema = z.object({
   id: z.string().min(1),
 });
 
+// The four plain-language roles (Kai: "easy stuffs"). The canonical grant
+// sets live HERE, server-side, so the client cannot hand out a half-set:
+// one click in the UI sends one op, and the account is born with a
+// complete, coherent permission set — no key-hunting, no drift.
+const WORKBENCH_KEYS: PermissionKey[] = [
+  "applications.read",
+  "applications.decide",
+  "applications.request-corrections",
+  "ledger.read",
+  "ledger.import",
+  "ledger.stage-match",
+  "ledger.confirm-fee",
+  "ledger.write-off",
+  "directory.read",
+];
+const MONEY_KEYS: PermissionKey[] = ["applications.read", "ledger.read", "directory.read"];
+
+function grantSetForRole(
+  role: "full" | "admin" | "workbench" | "money",
+  family: "platform" | "register",
+): PermissionKey[] {
+  const all = Object.keys(PERMISSIONS) as PermissionKey[];
+  const holdable = all.filter((k) => canHold(family, k));
+  switch (role) {
+    case "full":
+      return holdable; // every permission the family can hold
+    case "admin":
+      return holdable.filter((k) => familyOf(k) === "platform" || k === "directory.read");
+    case "workbench":
+      return WORKBENCH_KEYS.filter((k) => canHold(family, k));
+    case "money":
+      return MONEY_KEYS.filter((k) => canHold(family, k));
+  }
+}
+
 const accountCreateSchema = z.object({
   op: z.literal("account.create"),
   email: z.string().trim().toLowerCase().email(),
   name: z.string().trim().max(120).optional(),
-  family: z.enum(["platform", "register"]),
+  family: z.enum(["platform", "register"]).optional(),
   institutionId: z.string().min(1).nullable().optional(),
+  // The one-flow creation (Kai, 2026-11-20): pick a role card at creation
+  // time and the account is born granted AND active — no
+  // create-then-permissions-then-activate dance. Omitted = the old
+  // suspended, unpowered creation.
+  role: z.enum(["full", "admin", "workbench", "money"]).optional(),
+  activate: z.boolean().optional(),
 });
 
 const accountUpdateSchema = z.object({
@@ -535,10 +576,22 @@ async function createAccount(
   const deniedRes = denied(ctx, "staff.grant");
   if (deniedRes) return deniedRes;
 
-  if (input.family === "register" && !input.institutionId) {
+  // The role decides the desk, not the other way round (one-flow creation).
+  // An admin-shaped role means the platform family; workbench/money mean
+  // the register desk. The client may still send family explicitly when no
+  // role is chosen (the old flow).
+  const family = input.role
+    ? input.role === "full" || input.role === "admin"
+      ? "platform"
+      : "register"
+    : input.family;
+  if (!family) return fail(400, "Choose a desk or a role");
+  const effectiveFamily = family as "platform" | "register";
+
+  if (effectiveFamily === "register" && !input.institutionId) {
     return fail(400, "A register-family account must be assigned to an institution");
   }
-  if (input.family === "platform" && input.institutionId) {
+  if (effectiveFamily === "platform" && input.institutionId) {
     return fail(400, "A platform-family account belongs to Voeq, not to an institution");
   }
 
@@ -553,18 +606,35 @@ async function createAccount(
   const dup = await prisma.staffAccount.findUnique({ where: { email: input.email } });
   if (dup) return fail(409, "An account with that email already exists");
 
+  const targets = input.role ? grantSetForRole(input.role, effectiveFamily) : [];
+  const unlawful = validateGrants(effectiveFamily, targets);
+  if (unlawful.length > 0) {
+    return fail(400, `Role "${input.role}" is not grantable in full: ${unlawful.join(", ")}`);
+  }
+
+  const active = input.role ? (input.activate ?? true) : false;
   const created = await prisma.$transaction(async (tx) => {
     const account = await tx.staffAccount.create({
       data: {
         email: input.email,
         name: input.name ?? null,
-        family: input.family,
+        family: effectiveFamily,
         institutionId: input.institutionId ?? null,
-        // Created suspended: the account cannot act until the super admin
-        // activates it AND signs in succeeds (Google + allowlist still gate).
-        status: "suspended",
+        // Without a role: born suspended, nothing to do until activated
+        // (the old careful default). With a role: born active — that is
+        // the whole point of the one-flow creation.
+        status: active ? "active" : "suspended",
       },
     });
+    if (targets.length > 0) {
+      await tx.roleGrant.createMany({
+        data: targets.map((key) => ({
+          staffAccountId: account.id,
+          permissionKey: key,
+          grantedByEmail: ctx.email,
+        })),
+      });
+    }
     await writeAudit(tx, {
       entityType: "StaffAccount",
       entityId: account.id,
@@ -573,9 +643,11 @@ async function createAccount(
       actorFamily: "platform",
       data: {
         email: input.email,
-        family: input.family,
+        family: effectiveFamily,
         institutionId: input.institutionId ?? null,
-        initialStatus: "suspended",
+        initialStatus: active ? "active" : "suspended",
+        role: input.role ?? null,
+        grantedKeys: targets,
       },
     });
     return account;

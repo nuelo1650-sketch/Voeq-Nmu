@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export default async function StaffHome({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string; status?: string }>;
+  searchParams: Promise<{ id?: string; status?: string; q?: string }>;
 }) {
   const session = await auth();
   if (!session?.user) redirect("/staff/signin");
@@ -51,7 +51,7 @@ export default async function StaffHome({
     );
   }
 
-  const { id, status } = await searchParams;
+  const { id, status, q } = await searchParams;
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
@@ -68,6 +68,12 @@ export default async function StaffHome({
               Platform console
             </a>
           )}
+          <a
+            href="/staff/ledger"
+            className="mr-3 inline-block border border-vq-forest/40 bg-white px-3 py-1.5 text-xs font-bold text-vq-forest transition hover:border-vq-forest"
+          >
+            Fee ledger
+          </a>
           {session.user.email}
         </p>
       </div>
@@ -78,9 +84,9 @@ export default async function StaffHome({
 
       <div className="mt-6">
         {id ? (
-          <ReviewView id={id} devMode={false} backHref="/staff" />
+          <ReviewView id={id} devMode={false} backHref={q ? `/staff?q=${encodeURIComponent(q)}` : "/staff"} />
         ) : (
-          <QueueView statusFilter={status} />
+          <QueueView statusFilter={status} query={q} />
         )}
       </div>
     </main>

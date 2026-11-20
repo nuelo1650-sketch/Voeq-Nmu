@@ -78,14 +78,24 @@ export function AccountsPanel({
   const [showCreate, setShowCreate] = useState(false);
   const [email, setEmail] = useState("");
   const [accName, setAccName] = useState("");
-  const [family, setFamily] = useState<"platform" | "register">("register");
+  // The one-flow creation: the role card IS the setup. It decides the desk
+  // (full/admin → platform, workbench/money → register), the grant set and
+  // the active state — one server op, one audit row.
+  const [role, setRole] = useState<"full" | "admin" | "workbench" | "money">("workbench");
   const [institutionId, setInstitutionId] = useState<string>(
     institutions[0]?.id ?? "",
   );
 
   const [grantsFor, setGrantsFor] = useState<string | null>(null);
 
-  const canCreate = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) && (family === "platform" || institutionId !== "");
+  const canCreate = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) && (role === "full" || role === "admin" || institutionId !== "");
+
+  const ROLE_NAMES: Record<"full" | "admin" | "workbench" | "money", string> = {
+    full: "full access — admin and workbench",
+    admin: "admin only",
+    workbench: "workbench",
+    money: "see the money only",
+  };
 
   // The four plain-language roles (Kai: "I want easy stuffs"). One click
   // sets a coherent, complete grant set — no key-hunting. Fine-tuning stays
@@ -193,10 +203,10 @@ export function AccountsPanel({
         </SectionHeading>
 
         <p className="mt-2 border border-vq-forest/20 bg-white px-4 py-2.5 text-sm leading-relaxed text-vq-ink-muted">
-          <b className="text-vq-forest-dark">Adding someone takes three steps, all here:</b>{" "}
-          1 · create their account below · 2 · open <b>Permissions</b> and hand out exactly what
-          their role needs · 3 · <b>Activate</b>. Then they just sign in with that Google email —
-          no server settings to touch.
+          <b className="text-vq-forest-dark">Adding someone takes one step, here:</b>{" "}
+          their Google email, then a role card below. The account is created powered and
+          active — they just sign in with that email and start. No server settings, no
+          permission hunting.
         </p>
 
         {!showCreate ? (
@@ -221,31 +231,61 @@ export function AccountsPanel({
             </div>
             <div className="mt-3">
               <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-vq-ink-subtle">
-                2 · Which desk do they sit at?
+                2 · What will they do? One card, that&apos;s the whole setup.
               </span>
-              <div className="flex flex-wrap items-center gap-2">
-                {(["register", "platform"] as const).map((f) => (
+              <div className="grid gap-2 sm:grid-cols-2">
+                {(
+                  [
+                    {
+                      key: "full" as const,
+                      title: "Full access — admin + workbench",
+                      desc: "Everything: the admin console AND the register desk. For a trusted co-owner.",
+                    },
+                    {
+                      key: "admin" as const,
+                      title: "Admin only",
+                      desc: "The admin console: institutions, accounts, audit. No application decisions.",
+                    },
+                    {
+                      key: "workbench" as const,
+                      title: "Workbench only",
+                      desc: "The register desk: review, decide, request corrections, confirm fees.",
+                    },
+                    {
+                      key: "money" as const,
+                      title: "See the money only",
+                      desc: "Read the queue and the ledger. Cannot decide, promote, or demote anyone.",
+                    },
+                  ] as const
+                ).map((r) => (
                   <button
-                    key={f}
+                    key={r.key}
                     type="button"
-                    onClick={() => setFamily(f)}
-                    className={`px-4 py-2 text-xs font-bold transition ${
-                      family === f
-                        ? "bg-vq-forest text-white"
-                        : "border border-vq-forest/20 bg-white text-vq-forest hover:border-vq-forest/50"
+                    onClick={() => setRole(r.key)}
+                    className={`border px-3 py-2.5 text-left transition ${
+                      role === r.key
+                        ? "border-vq-forest bg-vq-forest text-white"
+                        : "border-vq-forest/25 bg-white text-vq-ink hover:border-vq-forest"
                     }`}
                   >
-                    {f === "register" ? "Media Unit desk (workbench)" : "Platform console (admin)"}
+                    <span className="block text-sm font-bold">{r.title}</span>
+                    <span
+                      className={`mt-0.5 block text-xs leading-snug ${
+                        role === r.key ? "text-white/80" : "text-vq-ink-muted"
+                      }`}
+                    >
+                      {r.desc}
+                    </span>
                   </button>
                 ))}
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-vq-ink-subtle">
-                {family === "register"
-                  ? "The daily register work: review queue, decisions, the fee ledger."
-                  : "Governance: institutions, accounts, audit chain. A platform account can also be given workbench powers below."}
+                {role === "full" || role === "admin"
+                  ? "This role sits at the Voeq platform desk — no institution assignment needed."
+                  : "This role sits at the Media Unit desk — pick their institution below."}
               </p>
             </div>
-            {family === "register" && institutions.length > 0 && (
+            {(role === "workbench" || role === "money") && institutions.length > 0 && (
               <label className="mt-3 block">
                 <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-vq-ink-subtle">
                   Their institution
@@ -263,10 +303,6 @@ export function AccountsPanel({
                 </select>
               </label>
             )}
-            <p className="mt-3 text-xs text-vq-ink-subtle">
-              New accounts start suspended — nothing moves until you Activate. After creating, open
-              <b> Permissions</b> to hand out exactly what they need.
-            </p>
             <div className="mt-3 flex gap-2">
               <MonoButton
                 tone="confirm"
@@ -277,10 +313,11 @@ export function AccountsPanel({
                       op: "account.create",
                       email: email.trim(),
                       name: accName.trim() || undefined,
-                      family,
-                      institutionId: family === "register" ? institutionId : null,
+                      role,
+                      institutionId: role === "workbench" || role === "money" ? institutionId : null,
+                      activate: true,
                     },
-                    "Account created, suspended. Open Permissions to give them their powers, then Activate.",
+                    `${email.trim()} is live with the "${ROLE_NAMES[role]}" role — they can sign in now.`,
                   );
                   if (ok) {
                     setShowCreate(false);
@@ -289,7 +326,7 @@ export function AccountsPanel({
                   }
                 }}
               >
-                {busyOp === "account.create" ? "Creating…" : "Create account"}
+                {busyOp === "account.create" ? "Creating…" : "Create — powered and active"}
               </MonoButton>
               <MonoButton onClick={() => setShowCreate(false)}>Cancel</MonoButton>
             </div>

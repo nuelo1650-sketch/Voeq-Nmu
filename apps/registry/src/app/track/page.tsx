@@ -13,6 +13,7 @@
 
 import { SiteFooter, SiteHeader } from "@/components/brand";
 import { TrackRequestForm } from "./track-request-form";
+import { RetrieveCodeForm } from "./retrieve-code-form";
 
 export const metadata = { title: "Track your application — NMU Business Register" };
 
@@ -87,6 +88,24 @@ export default function TrackPage() {
               ready to copy character for character.
             </OpenRow>
           </ul>
+        </section>
+
+        {/* lost registration number — the register's "sweet method": the
+            number travels by email, to the address on record, never shown
+            to a stranger (Kai, 2026-11-20). */}
+        <section className="mt-10">
+          <h2 className="font-display text-xl text-vq-forest-dark">
+            Lost your registration number?
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-vq-ink-muted">
+            Registered businesses hold a registration number —{" "}
+            <span className="font-mono">NMU-REG-2026-0001</span> shape. It is
+            the one line that proves the business is formally on the record.
+            If it is lost, this re-sends it to the email you applied with.
+          </p>
+          <div className="mt-4 border border-vq-forest/10 bg-white/80 p-5 shadow-sm">
+            <RetrieveCodeForm />
+          </div>
         </section>
 
         {/* trust rules */}
