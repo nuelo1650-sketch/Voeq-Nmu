@@ -26,17 +26,26 @@ export async function GET(req: Request) {
   if (blocked) return blocked;
 
   const url = new URL(req.url);
-  const reference = (url.searchParams.get("reference") ?? "").trim().toUpperCase();
-  if (!/^NMU-\d{4}-\d{4}$/.test(reference)) {
+  const raw = (url.searchParams.get("reference") ?? "").trim().toUpperCase();
+  // Two ways in: the application reference (NMU-2026-0001, the payment
+  // narration) or the permanent registration number (NMU-REG-2026-0001).
+  // The latter is what a business shows as proof on the ground (Kai,
+  // 2026-11-20) — someone checking it must be able to paste it here.
+  const byCode = /^[A-Z0-9]{2,8}-REG-\d{4}-\d+$/.test(raw);
+  const reference = byCode ? null : /^NMU-\d{4}-\d{4}$/.test(raw) ? raw : null;
+  const certificateCode = byCode ? raw : null;
+  if (!reference && !certificateCode) {
     return json(
-{ valid: false, reason: "Not a register reference" },
+      { valid: false, reason: "Not a register reference or registration number" },
       { status: 400 },
     );
   }
 
   const application = await prisma.application.findUnique({
-    where: { reference },
+    where: reference ? { reference } : { certificateCode: certificateCode! },
     select: {
+      reference: true,
+      certificateCode: true,
       status: true,
       publicationStatus: true,
       businessName: true,
@@ -61,7 +70,8 @@ export async function GET(req: Request) {
 
   return json(
     {
-      reference,
+      reference: application.reference,
+      certificateCode: application.certificateCode,
       valid: active,
       businessName: application.businessName,
       category: application.category.name,

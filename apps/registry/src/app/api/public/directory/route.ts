@@ -28,6 +28,7 @@ export async function GET(req: Request) {
     orderBy: { decidedAt: "desc" },
     select: {
       reference: true,
+      certificateCode: true,
       businessName: true,
       businessDescription: true,
       voeqVendorUrl: true,
@@ -45,8 +46,9 @@ export async function GET(req: Request) {
   return json(
     {
       count: businesses.length,
-      businesses: businesses.map((b) => ({
+        businesses: businesses.map((b) => ({
         reference: b.reference,
+        certificateCode: b.certificateCode,
         businessName: b.businessName,
         description: b.businessDescription,
         category: b.category.name,

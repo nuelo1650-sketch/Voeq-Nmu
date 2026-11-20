@@ -28,6 +28,7 @@ export default async function DirectoryPage() {
     orderBy: { decidedAt: "desc" },
     select: {
       reference: true,
+      certificateCode: true,
       businessName: true,
       businessDescription: true,
       voeqVendorUrl: true,
@@ -112,6 +113,11 @@ export default async function DirectoryPage() {
                       <p className="mt-3 inline-block border border-vq-forest/30 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-vq-forest">
                         Registered — NMU Business Register
                       </p>
+                      {b.certificateCode && (
+                        <p className="mt-1.5 font-mono text-[11px] text-vq-forest-dark">
+                          Registration no. <b>{b.certificateCode}</b>
+                        </p>
+                      )}
                       {b.voeqVendorUrl && (
                         <p className="mt-2 text-xs text-vq-ink-subtle">
                           Also sells on{" "}

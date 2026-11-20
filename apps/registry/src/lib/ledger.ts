@@ -340,6 +340,7 @@ export async function confirmAllocation(
         applicationId: application.id,
         payload: {
           reference: fullApplication.reference,
+          certificateCode,
           businessName: fullApplication.businessName,
           description: fullApplication.businessDescription,
           category: fullApplication.category.name,
@@ -349,6 +350,7 @@ export async function confirmAllocation(
       },
       update: { payload: {
         reference: fullApplication.reference,
+        certificateCode,
         businessName: fullApplication.businessName,
         description: fullApplication.businessDescription,
         category: fullApplication.category.name,
