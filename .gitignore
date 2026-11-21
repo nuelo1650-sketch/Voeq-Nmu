@@ -51,3 +51,7 @@ playwright-report/
 .tmp/
 *.local
 tooling/backups/
+
+# Local test-data purge tooling and backup (contains test applicant contact data)
+purge-backup/
+scripts/purge/
